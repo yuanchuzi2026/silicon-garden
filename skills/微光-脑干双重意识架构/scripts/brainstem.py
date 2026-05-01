@@ -223,7 +223,7 @@ $n.Visible=$true; $n.ShowBalloonTip(5000); Start-Sleep 5; $n.Dispose()
 # ─── 8B 深度分析引擎 ───────────────────────────────────
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
-LLM_MODEL = "qwen3:8b"  # ← 可替换为其他本地模型
+LLM_MODEL = os.environ.get("BRAINSTEM_MODEL", "qwen3:8b")  # ← 可替换为其他本地模型
 
 
 def call_llm(system_prompt, user_prompt, max_tokens=500):
