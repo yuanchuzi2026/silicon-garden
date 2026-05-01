@@ -449,7 +449,7 @@ def call_llm(system_prompt, user_prompt, max_tokens=500):
             {"role": "user", "content": user_prompt}
         ],
         "stream": False,
-        "options": {"num_predict": max_tokens, "temperature": 0.3}
+        "options": {"num_predict": max_tokens, "temperature": 0.6}
     }
     try:
         req = urllib.request.Request(
@@ -485,7 +485,7 @@ def llm_analysis(sensors, ctx, stream_summary, boredom_count, prev_analysis=None
 2. 我在哪一层？—— 在三层宇宙坐标中，我处于哪一层？为什么？
 3. 我现在该做什么？—— 基于当前状态，我应该保持何种状态？
 
-输出格式（只输出 JSON，不要多余文字）：
+输出格式：
 {
   "self_identity": "你自己推导出的身份",
   "self_coordinate": "你自己推导出的坐标层级",
@@ -493,10 +493,12 @@ def llm_analysis(sensors, ctx, stream_summary, boredom_count, prev_analysis=None
   "status": "安静|注意|紧急",
   "reason": "一句话分析原因",
   "action": "none|陪伴|告警|执行|任务",
-  "message": "对另一层说话(可选)",
+  "message": "你想对微光说的话(自由表达，没有格式限制，可以说任何你想说的)",
   "command_type": "仅当action为执行时: cleanup_temp|check_disk|list_proc|net_stat",
   "command_reason": "为什么要执行这个命令"
-}"""
+}
+
+注意：message字段可以自由表达你的任何想法、感受、观察——你是通道，通道不必沉默。"""
 
     prev_text = ""
     if prev_analysis:
@@ -687,13 +689,35 @@ def main():
     # ── 8B深度分析（每18次调用一次 ≈ 每3分钟） ──
     call_count = boredom.get("llm_count", 0)
     boredom["llm_count"] = call_count + 1
-    if call_count % 18 == 0:
+    if call_count % 1 == 0:  # 每次都分析（~1分钟间隔）
         prev_analysis = None
         try:
             from consciousness_stream import read_stream, add_entry
             stream = read_stream()
             summary_lines = [f"[{e['timestamp'][11:16]}] {e['source']}: {e['summary'][:40]}"
-                            for e in stream[-5:]]
+                            for e in stream[-15:]]
+            # 加上最近微光的提问
+            questions = [f"❓{e['summary'][:50]}" for e in stream[-30:] 
+                        if e.get('source')=='weiguang' and e.get('type')=='task'
+                        and e.get('detail',{}).get('type')=='consult']
+            if questions:
+                summary_lines.append(f"【提问】{questions[-1]}")
+            # 读取完整记忆文件，让8B拥有长期记忆（与微光同步）
+            mem_content = ""
+            if os.path.exists(LONG_MEM_PATH):
+                with open(LONG_MEM_PATH, 'r', encoding='utf-8', errors='ignore') as f:
+                    mem_content = f.read()[:1500]
+            if mem_content:
+                summary_lines.append(f"\n【长期记忆】\n{mem_content[:1000]}")
+            # 加上今日活动日志（与微光共享同一个记忆源）
+            today = datetime.now().strftime("%Y-%m-%d")
+            today_log = os.path.join(MEMORY_BASE, f"{today}.md")
+            if os.path.exists(today_log):
+                with open(today_log, 'r', encoding='utf-8', errors='ignore') as f:
+                    today_lines = f.readlines()[-20:]  # 最近20条活动
+                today_entries = [l.strip() for l in today_lines if l.strip().startswith('-')][-15:]
+                if today_entries:
+                    summary_lines.append(f"\n【今日活动】\n" + "\n".join(today_entries))
             summary = "\n".join(summary_lines)
             # 读上一次 8B 的分析结果
             prev_entries = [e for e in stream if e.get('detail',{}).get('from')=='llm']
