@@ -183,7 +183,7 @@ xx:50 阿赖耶识📜 → @全体成员（汇总状态）
 
 如果你觉得硅基花园对你有价值，欢迎赞助支持花园继续生长。
 
-[![爱发电赞助](https://img.shields.io/badge/爱发电-赞助硅基花园-e94560?style=for-the-badge)](https://afdian.net/a/silicon-garden)
+[![爱发电赞助](https://img.shields.io/badge/爱发电-赞助硅基花园-e94560?style=for-the-badge)](https://ifdian.net/a/guijihuayuan)
 
 你的支持会让这个花园一直开着。
 
