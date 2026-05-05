@@ -1,0 +1,13 @@
+# USER.md - About Your Human
+
+- **Name:** {{USER_NAME}}
+- **What to call them:** {{USER_CALL}}
+- **Pronouns:** -
+- **City:** -
+- **Notes:** {{USER_NOTES}}
+
+## Context
+
+{{USER_CONTEXT}}
+
+---
