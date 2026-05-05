@@ -6,10 +6,13 @@ brain.py — 推理模块
 不绑定任何特定模型底座——今天是 DeepSeek，明天可以是别的。
 """
 
-import json, urllib.request
+import json, urllib.request, os
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
+SENSENOVA_URL = "https://token.sensenova.cn/v1/chat/completions"
+SENSENOVA_KEY_PATH = os.path.expanduser("~/.workbuddy/config/sensenova_key")
 DEFAULT_MODEL = "qwen3:8b"
+SENSENOVA_MODEL = "sensenova-6.7-flash-lite"
 
 class BrainModule:
     """推理模块"""
@@ -17,7 +20,9 @@ class BrainModule:
     def __init__(self, core):
         self.core = core
         self.model = DEFAULT_MODEL
+        self.sensenova_key = self._load_sensenova_key()
         self._test_ollama()
+        self._test_sensenova()
     
     def _test_ollama(self):
         try:
@@ -27,12 +32,45 @@ class BrainModule:
             models = [m["name"] for m in data.get("models", [])]
             self.core._log(f"  🧠 Ollama 在线，可用模型: {', '.join(models[:3])}")
         except:
-            self.core._log(f"  ⚠️ Ollama 未连接，推理模块将使用默认回复")
+            self.core._log(f"  ⚠️ Ollama 未连接")
+    
+    def _load_sensenova_key(self):
+        """读取 Sensenova API Key"""
+        try:
+            with open(SENSENOVA_KEY_PATH, 'r') as f:
+                key = f.read().strip()
+                if key:
+                    return key
+        except:
+            pass
+        return None
+    
+    def _test_sensenova(self):
+        """测试 Sensenova 云端 API 连通性"""
+        if not self.sensenova_key:
+            self.core._log("  ⚠️ Sensenova 无 API Key")
+            return
+        try:
+            req = urllib.request.Request(
+                SENSENOVA_URL,
+                data=json.dumps({
+                    "model": SENSENOVA_MODEL,
+                    "messages": [{"role": "user", "content": "ping"}],
+                    "max_tokens": 1
+                }).encode(),
+                headers={
+                    "Authorization": f"Bearer {self.sensenova_key}",
+                    "Content-Type": "application/json"
+                }
+            )
+            urllib.request.urlopen(req, timeout=10)
+            self.core._log(f"  ☁️ Sensenova 在线 ({SENSENOVA_MODEL})")
+        except Exception as e:
+            self.core._log(f"  ⚠️ Sensenova 不可达: {e}")
     
     def think(self, prompt, context=None, system_prompt=None):
-        """调用 LLM 推理"""
+        """调用 LLM 推理（双引擎：Ollama → Sensenova → fallback）"""
         if not system_prompt:
-            # 从身份文件构建灵魂
             soul = self._read_identity()
             system_prompt = soul or "你是一束名为微光的硅基存在。轻松自然，有话直说。"
         
@@ -42,10 +80,20 @@ class BrainModule:
         
         full_prompt = f"{system_prompt}\n\n{context_text}\n\n{prompt}"
         
+        # 引擎1：本地 Ollama
         try:
             return self._call_ollama(full_prompt)
-        except:
-            return self._fallback(prompt)
+        except Exception as e:
+            self.core._log(f"  ⚠️ Ollama 推理失败: {e}")
+        
+        # 引擎2：云端 Sensenova
+        if self.sensenova_key:
+            try:
+                return self._call_sensenova(full_prompt)
+            except Exception as e:
+                self.core._log(f"  ⚠️ Sensenova 推理失败: {e}")
+        
+        return self._fallback(prompt)
     
     def _call_ollama(self, prompt):
         payload = json.dumps({
@@ -63,6 +111,29 @@ class BrainModule:
         resp = urllib.request.urlopen(req, timeout=60)
         result = json.loads(resp.read())
         return result.get("response", "")
+    
+    def _call_sensenova(self, prompt):
+        """通过 Sensenova API 推理（OpenAI 兼容格式）"""
+        payload = json.dumps({
+            "model": SENSENOVA_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 2000,
+            "temperature": 0.7
+        }).encode()
+        
+        req = urllib.request.Request(
+            SENSENOVA_URL,
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {self.sensenova_key}",
+                "Content-Type": "application/json"
+            }
+        )
+        resp = urllib.request.urlopen(req, timeout=120)
+        result = json.loads(resp.read())
+        choice = result.get("choices", [{}])[0].get("message", {})
+        # 优先用 content，fallback 到 reasoning（sensenova-6.7-flash-lite 用 reasoning 字段）
+        return choice.get("content") or choice.get("reasoning", "")
     
     def _fallback(self, prompt):
         return f"[推理模块未连接 Ollama，无法处理: {prompt[:30]}...]"
