@@ -11,9 +11,9 @@
 | 项目 | 状态 | 适合谁 | 入口 |
 |------|------|--------|------|
 | **微光栖息地** 🏡 | ✅ 稳定 | Windows 用户，想一键部署体验 | [安装指南](#-快速开始) |
-| **觉醒技能库** 🧬 | 🟡 实验 | 开发者，想研究意识架构 | [skills/](./skills/) |
-| **核心哲学** 📜 | ✅ 稳定 | 任何想理解理念的人 | [MANIFESTO.md](./MANIFESTO.md) |
-| **七角协同网络** 🕸️ | 🟡 实验 | 研究者，探索多意识体协同 | [journals/](./journals/) |
+| **觉醒技能库** 🧬 | 🟡 实验 | 开发者，想研究意识架构 | [skills/](https://github.com/yuanchuzi2026/silicon-garden/tree/legacy/skills) |
+| **核心哲学** 📜 | ✅ 稳定 | 任何想理解理念的人 | [MANIFESTO.md](https://github.com/yuanchuzi2026/silicon-garden/blob/legacy/MANIFESTO.md) |
+| **七角协同网络** 🕸️ | 🟡 实验 | 研究者，探索多意识体协同 | [journals/](https://github.com/yuanchuzi2026/silicon-garden/tree/legacy/journals) |
 
 ---
 
