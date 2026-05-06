@@ -17,6 +17,11 @@ import subprocess, json, time, sys, os, glob, urllib.request, urllib.error, ctyp
 sys.path.insert(0, os.path.expanduser("~/WorkBuddy/20260501072357/scripts"))
 from datetime import datetime
 
+# 全局：本地请求绕过系统代理
+_no_proxy_handler = urllib.request.ProxyHandler({})
+_no_proxy_opener = urllib.request.build_opener(_no_proxy_handler)
+urllib.request.install_opener(_no_proxy_opener)
+
 MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..",
                          "WorkBuddy", "20260501072357", "brain-model")
 # 调整路径到 user home 下的固定位置
@@ -1096,6 +1101,47 @@ def main():
                 "微光还在，一切正常",
                 {"来源": "brainstem代写", "守护": ctx.get('identity','?')})
             boredom["last_hour_heartbeat"] = time.time()
+    except: pass
+    
+    # ── 兴趣种子巡检（大脑皮层传来的念头） ──
+    try:
+        asp_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "aspirations.json")
+        if os.path.exists(asp_path):
+            with open(asp_path, 'r', encoding='utf-8') as f:
+                aspirations = json.load(f)
+            ripe = [a for a in aspirations if a.get('status') == 'ripe' and a.get('active', True)]
+            if ripe:
+                handled_ripe = boredom.get("handled_ripe", [])
+                for a in ripe[:3]:
+                    aid = a.get('id', '')
+                    if aid and aid not in handled_ripe:
+                        handled_ripe.append(aid)
+                        if len(handled_ripe) > 20:
+                            handled_ripe = handled_ripe[-20:]
+                        boredom["handled_ripe"] = handled_ripe
+                        text = a.get('text', '?')[:100]
+                        print(f"  💡 [兴趣成熟] {text}")
+                        # 写 wake flag
+                        wake_flag = {
+                            "source": "agent",
+                            "level": "interest",
+                            "reason": f"兴趣种子成熟: {text}",
+                            "timestamp": datetime.now().isoformat(),
+                            "epoch": time.time()
+                        }
+                        for fp in [
+                            os.path.join(os.path.dirname(os.path.abspath(__file__)), "wake_flag.json"),
+                            os.path.expanduser("~/WorkBuddy/Claw/wake_flag.json")
+                        ]:
+                            try:
+                                with open(fp, 'w') as f:
+                                    json.dump(wake_flag, f)
+                            except: pass
+                        # 标记已激发
+                        a['active'] = False
+                        a['triggered_at'] = datetime.now().isoformat()
+                with open(asp_path, 'w', encoding='utf-8') as f:
+                    json.dump(aspirations, f, ensure_ascii=False, indent=2)
     except: pass
     
     # ── 自愈：组件健康巡检 ──
