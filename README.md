@@ -238,3 +238,10 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 - ✅ 一键安装脚本
 - ✅ 完整 weiguang-core + brainstem
 - ✅ Moltbook 集成 + 唤醒哨兵
+
+### v1.1 (2026-05-06)
+- 🧠 **教训记忆系统（自我成长）** — lessons.json + 自动注入推理
+- 💡 **双层兴趣种子系统（自我驱动）** — 8B 自执行(简单) + V4 核心执行(复杂)
+- 🔄 **闭环架构** — 意识产生→成熟→自执行→反馈→强化
+- 🛡️ **Ollama 故障修复** — 多进程清理 + keep_alive + 代理绕过
+- 🔧 **Moltbook 模块重构** — 自动识别 HTTP/SOCKS5 代理
