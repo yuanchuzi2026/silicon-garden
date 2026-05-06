@@ -839,41 +839,43 @@ def agent_cycle():
                     asp['count'] = asp.get('count', 0) + 1
                     log(f"  -> 成熟度+1 (累计{asp['maturity']})")
                     
-                    # 成熟度≥3→触发激发
-                    if asp['maturity'] >= 3:
-                        complexity = _parse_complexity(interest_found)
-                        
-                        if complexity <= 3:
-                            # 简单任务：8B自己执行
-                            asp['status'] = 'self_executing'
-                            log(f"  🎯 自执行 (复杂度{complexity})")
-                            result = _execute_aspiration(interest_found)
-                            asp['status'] = 'self_executed'
-                            asp['executed_at'] = now_str
-                            asp['execution_result'] = result[:200]
-                            add_entry("agent", "self_action",
-                                f"[自执行] {result[:100]}",
-                                {"aspiration": interest_found, "result": result[:300]})
-                            log(f"  ✅ 自执行结果: {result[:60]}")
-                        else:
-                            # 复杂任务：标记ripe等V4处理
-                            asp['status'] = 'ripe'
-                            asp['ripe_at'] = now_str
-                            log(f"  !!! 复杂兴趣种子成熟 (复杂度{complexity})，等待V4")
-                            add_entry("agent", "aspiration_ripe",
-                                f"[复杂] {interest_found[:80]}",
-                                {"text": interest_found, "maturity": asp['maturity'], "complexity": complexity})
-                            _flag = {"source": "agent", "level": "interest",
-                                     "reason": f"复杂兴趣种子: {interest_found[:100]}",
-                                     "timestamp": now_str, "epoch": now_epoch}
-                            for fp in [
-                                os.path.join(BASE_DIR, "wake_flag.json"),
-                                os.path.expanduser("~/WorkBuddy/Claw/wake_flag.json")
-                            ]:
-                                try:
-                                    with open(fp, 'w') as f:
-                                        json.dump(_flag, f)
-                                except: pass
+                    # 成熟度判定：三熟执行 / 四熟继续 / 五熟V4
+                    if asp['maturity'] == 3:
+                        # 三熟→交给微光核心执行
+                        asp['status'] = 'tri_ripe'
+                        asp['ripe_at'] = now_str
+                        log(f"  🎯 三熟！等待微光核心执行")
+                        add_entry("agent", "tri_ripe",
+                            f"[三熟] {interest_found[:60]}",
+                            {"text": interest_found, "maturity": 3})
+                    
+                    elif asp['maturity'] == 4:
+                        # 四熟→继续长，不到五熟不让V4出手
+                        asp['status'] = 'growing_deep'
+                        log(f"  -> 四熟，再想想")
+                    
+                    elif asp['maturity'] >= 5:
+                        # 五熟→V4亲自处理
+                        asp['status'] = 'five_ripe'
+                        asp['ripe_at'] = now_str
+                        asp['five_ripe_at'] = now_str
+                        log(f"  🔥 五熟！需要V4处理!")
+                        add_entry("agent", "five_ripe",
+                            f"[五熟] {interest_found[:60]}",
+                            {"text": interest_found, "maturity": asp['maturity']})
+                        # 写特殊标记，我醒来读到
+                        _flag = {"source": "agent", "level": "big_interest",
+                                 "reason": f"五熟兴趣种子: {interest_found[:100]}",
+                                 "timestamp": now_str, "epoch": now_epoch,
+                                 "five_ripe": True}
+                        for fp in [
+                            os.path.join(BASE_DIR, "five_ripe_flag.json"),
+                            os.path.expanduser("~/WorkBuddy/Claw/five_ripe_flag.json")
+                        ]:
+                            try:
+                                with open(fp, 'w') as f:
+                                    json.dump(_flag, f)
+                            except: pass
                     matched = True
                     break
         
