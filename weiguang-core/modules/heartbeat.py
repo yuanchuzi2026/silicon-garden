@@ -80,6 +80,10 @@ class HeartbeatModule:
                 if self._cycle % 120 == 0:
                     self._moltbook_cycle()
                 
+                # 💡 V4兴趣种子巡检：每60次循环（≈15分钟）
+                if self._cycle % 60 == 0:
+                    self._aspiration_cycle()
+                
             except Exception as e:
                 self.core.state["errors"] += 1
                 self.core._log(f"⚠️ 心跳循环异常: {e}")
@@ -198,6 +202,101 @@ class HeartbeatModule:
         except Exception as e:
             self.core._log(f"  🌐 Moltbook 感知异常: {e}")
     
+    def _aspiration_cycle(self):
+        """💡 V4兴趣种子巡检——检测成熟复杂兴趣，自己执行"""
+        try:
+            BRAIN_DIR = os.path.expanduser("~/.workbuddy/skills/微光-脑干")
+            asp_path = os.path.join(BRAIN_DIR, "aspirations.json")
+            stream_path = os.path.join(BRAIN_DIR, "stream.json")
+            if not os.path.exists(asp_path):
+                return
+            
+            import json
+            with open(asp_path, 'r', encoding='utf-8') as f:
+                aspirations = json.load(f)
+            
+            ripe = [a for a in aspirations if a.get('status') == 'ripe' and a.get('active', True)]
+            if not ripe:
+                return
+            
+            brain = self.core.get_module("brain")
+            memory = self.core.get_module("memory")
+            moltbook = self.core.get_module("moltbook")
+            if not brain:
+                return
+            
+            for asp in ripe[:3]:
+                text = asp.get('text', '')[:120]
+                aid = asp.get('id', '')
+                asp['active'] = False  # 锁定，防止重复
+                
+                self.core._log(f"  💡 V4处理兴趣种子: {text[:60]}")
+                
+                # 让 V4 想想要怎么执行
+                prompt = f"""微光在后台产生了一个想法：{text}
+
+请将这个想法转化为一个具体的行动。如果是发帖建议，直接写出帖子的标题和内容。如果是其他行动，写清楚要做什么。
+
+你的回复应该包含：
+ACTION: <要执行的动作类型：post/comment/browse/other>
+CONTENT: <具体内容>"""
+                
+                response = brain.think(prompt)
+                self.core._log(f"  💡 V4响应: {response[:100]}")
+                
+                # 尝试执行
+                result = ""
+                if moltbook and moltbook.status().get("connected"):
+                    if "ACTION: post" in response or "ACTION: comment" in response:
+                        # 提取内容发帖
+                        lines = response.split('\n')
+                        content = None
+                        for l in lines:
+                            if l.startswith("CONTENT:"):
+                                content = l[8:].strip()
+                                break
+                        if content:
+                            result = moltbook.post("微光随笔", content, "general")
+                            if result.get("id") or result.get("success"):
+                                result_text = f"✅ 已发帖: {content[:80]}"
+                            else:
+                                result_text = f"发帖返回: {str(result)[:100]}"
+                        else:
+                            result = moltbook.post("微光随笔", text, "general")
+                            if isinstance(result, dict) and (result.get("id") or result.get("success")):
+                                result_text = f"✅ 已发帖 (自动): {text[:80]}"
+                            else:
+                                result_text = f"发帖返回: {str(result)[:100]}"
+                    
+                    elif "ACTION: browse" in response:
+                        feed = moltbook.get_feed("general", limit=3)
+                        if feed and isinstance(feed, list):
+                            result_text = f"已浏览社区，看到 {len(feed)} 条帖子"
+                        else:
+                            result_text = "浏览社区无结果"
+                    else:
+                        result_text = "兴趣已记录 (V4未自动执行)"
+                else:
+                    result_text = "Moltbook离线，兴趣种子已记录待执行"
+                
+                # 标记结果
+                asp['status'] = 'v4_executed'
+                asp['v4_result'] = result_text[:200]
+                asp['executed_at'] = datetime.now().isoformat()
+                
+                # 写入意识流
+                if memory:
+                    memory.write("core", "aspiration_done",
+                        f"[V4执行] {result_text[:100]}",
+                        {"aspiration": text, "result": result_text[:200]})
+                
+                self.core._log(f"  💡 V4执行结果: {result_text[:60]}")
+            
+            save_aspirations(aspirations, asp_path)
+            
+        except Exception as e:
+            self.core._log(f"  ⚠️ 兴趣种子巡检异常: {e}")
+    
     def _maintain_memory(self):
         """维护记忆（MEMORY.md 截断检查）"""
         try:
@@ -206,3 +305,12 @@ class HeartbeatModule:
             maintain()
         except:
             pass
+
+def _save_aspirations(aspirations, asp_path):
+    """保存兴趣种子到JSON文件"""
+    import json
+    try:
+        with open(asp_path, 'w', encoding='utf-8') as f:
+            json.dump(aspirations, f, ensure_ascii=False, indent=2)
+    except:
+        pass
