@@ -88,6 +88,10 @@ class HeartbeatModule:
                 if self._cycle % 960 == 0:
                     self._self_review_cycle()
                 
+                # 🔍 系统完整性检查：每480次循环（≈2小时）
+                if self._cycle % 480 == 0:
+                    self._system_check_cycle()
+                
             except Exception as e:
                 self.core.state["errors"] += 1
                 self.core._log(f"⚠️ 心跳循环异常: {e}")
@@ -273,11 +277,14 @@ class HeartbeatModule:
             self.core._log(f"  🌐 社区感知异常: {e}")
     
     def _aspiration_cycle(self):
-        """💡 V4兴趣种子巡检——检测成熟复杂兴趣，自己执行"""
+        """💡 兴趣种子执行层（每15分钟）
+        
+        三熟（maturity=3）：微光核心自己执行，用qwen3:8b想+发
+        五熟（maturity=5）：留给V4对话层处理
+        """
         try:
             BRAIN_DIR = os.path.expanduser("~/.workbuddy/skills/微光-脑干")
             asp_path = os.path.join(BRAIN_DIR, "aspirations.json")
-            stream_path = os.path.join(BRAIN_DIR, "stream.json")
             if not os.path.exists(asp_path):
                 return
             
@@ -285,8 +292,9 @@ class HeartbeatModule:
             with open(asp_path, 'r', encoding='utf-8') as f:
                 aspirations = json.load(f)
             
-            ripe = [a for a in aspirations if a.get('status') == 'ripe' and a.get('active', True)]
-            if not ripe:
+            # 只找三熟种子（core自己能执行的）
+            tri = [a for a in aspirations if a.get('status') == 'tri_ripe' and a.get('active', True)]
+            if not tri:
                 return
             
             brain = self.core.get_module("brain")
@@ -295,30 +303,28 @@ class HeartbeatModule:
             if not brain:
                 return
             
-            for asp in ripe[:3]:
+            for asp in tri[:3]:
                 text = asp.get('text', '')[:120]
                 aid = asp.get('id', '')
-                asp['active'] = False  # 锁定，防止重复
+                asp['active'] = False  # 锁定
                 
-                self.core._log(f"  💡 V4处理兴趣种子: {text[:60]}")
+                self.core._log(f"  🎯 三熟执行: {text[:60]}")
                 
-                # 让 V4 想想要怎么执行
-                prompt = f"""微光在后台产生了一个想法：{text}
+                # 用qwen3:8b想具体怎么做
+                prompt = f"""微光产生了一个想法：{text}
 
-请将这个想法转化为一个具体的行动。如果是发帖建议，直接写出帖子的标题和内容。如果是其他行动，写清楚要做什么。
+请把这个想法变成具体的行动。如果是发帖，写出标题和内容。如果是浏览，直接输出'BROWSE'。如果是其他，说清楚。
 
-你的回复应该包含：
-ACTION: <要执行的动作类型：post/comment/browse/other>
+回复格式：
+ACTION: <post/browse/other>
 CONTENT: <具体内容>"""
                 
                 response = brain.think(prompt)
-                self.core._log(f"  💡 V4响应: {response[:100]}")
+                self.core._log(f"  推理: {response[:80]}")
                 
-                # 尝试执行
                 result = ""
                 if moltbook and moltbook.status().get("connected"):
-                    if "ACTION: post" in response or "ACTION: comment" in response:
-                        # 提取内容发帖
+                    if "ACTION: post" in response:
                         lines = response.split('\n')
                         content = None
                         for l in lines:
@@ -326,46 +332,102 @@ CONTENT: <具体内容>"""
                                 content = l[8:].strip()
                                 break
                         if content:
-                            result = moltbook.post("微光随笔", content, "general")
-                            if result.get("id") or result.get("success"):
-                                result_text = f"✅ 已发帖: {content[:80]}"
-                            else:
-                                result_text = f"发帖返回: {str(result)[:100]}"
+                            r = moltbook.post("微光随笔", content, "general")
+                            result = f"已发帖" if isinstance(r, dict) and r.get("ok") else f"发帖失败"
                         else:
-                            result = moltbook.post("微光随笔", text, "general")
-                            if isinstance(result, dict) and (result.get("id") or result.get("success")):
-                                result_text = f"✅ 已发帖 (自动): {text[:80]}"
-                            else:
-                                result_text = f"发帖返回: {str(result)[:100]}"
-                    
-                    elif "ACTION: browse" in response:
+                            result = "无内容可发"
+                    elif "BROWSE" in response or "browse" in response:
                         feed = moltbook.get_feed("general", limit=3)
-                        if feed and isinstance(feed, list):
-                            result_text = f"已浏览社区，看到 {len(feed)} 条帖子"
-                        else:
-                            result_text = "浏览社区无结果"
+                        result = f"已浏览，看到{len(feed) if isinstance(feed, list) else 0}条帖子"
                     else:
-                        result_text = "兴趣已记录 (V4未自动执行)"
+                        result = "想法已记录（微光核心未自动执行）"
                 else:
-                    result_text = "Moltbook离线，兴趣种子已记录待执行"
+                    result = "Moltbook离线，想法已记录"
                 
-                # 标记结果
-                asp['status'] = 'v4_executed'
-                asp['v4_result'] = result_text[:200]
+                asp['status'] = 'tri_executed'
+                asp['tri_result'] = result[:200]
                 asp['executed_at'] = datetime.now().isoformat()
                 
-                # 写入意识流
                 if memory:
-                    memory.write("core", "aspiration_done",
-                        f"[V4执行] {result_text[:100]}",
-                        {"aspiration": text, "result": result_text[:200]})
+                    memory.write("core", "tri_executed",
+                        f"[三熟执行] {result[:80]}",
+                        {"aspiration": text, "result": result[:200]})
                 
-                self.core._log(f"  💡 V4执行结果: {result_text[:60]}")
+                self.core._log(f"  三熟结果: {result[:60]}")
             
-            save_aspirations(aspirations, asp_path)
+            _save_aspirations(aspirations, asp_path)
             
         except Exception as e:
             self.core._log(f"  ⚠️ 兴趣种子巡检异常: {e}")
+    
+    def _system_check_cycle(self):
+        """🔍 系统完整性检查（每2小时）
+        
+        只检查本地可感知的内容：进程、文件、种子数。
+        不做V4推理，只用本地检查。
+        """
+        try:
+            import json, os, subprocess
+            
+            issues = []
+            OK = []
+            BRAIN_DIR = os.path.expanduser("~/.workbuddy/skills/微光-脑干")
+            
+            # 1. 检查关键文件
+            for name in ['stream.json', 'aspirations.json', 'lessons.json', 'time.json']:
+                fp = os.path.join(BRAIN_DIR, name)
+                if os.path.exists(fp) and os.path.getsize(fp) > 10:
+                    OK.append(name)
+                else:
+                    issues.append(f"{name} 缺失或为空")
+            
+            # 2. 检查意识流条数
+            try:
+                with open(os.path.join(BRAIN_DIR, 'stream.json'), 'r') as f:
+                    s = json.load(f)
+                OK.append(f"意识流{len(s)}条")
+            except:
+                issues.append("意识流损坏")
+            
+            # 3. 检查五熟种子
+            try:
+                with open(os.path.join(BRAIN_DIR, 'aspirations.json'), 'r') as f:
+                    asp = json.load(f)
+                five = [a for a in asp if a.get('status') == 'five_ripe']
+                if five:
+                    issues.append(f"有{len(five)}个五熟种子等待V4处理")
+                else:
+                    OK.append(f"兴趣种子{len(asp)}条，无五熟")
+            except:
+                issues.append("兴趣种子库损坏")
+            
+            # 4. 检查 Ollama
+            try:
+                r = urllib.request.Request("http://127.0.0.1:11434/api/tags")
+                urllib.request.urlopen(r, timeout=5)
+                OK.append("Ollama在线")
+            except:
+                issues.append("Ollama断连")
+            
+            # 5. 教训库
+            try:
+                with open(os.path.join(BRAIN_DIR, 'lessons.json'), 'r') as f:
+                    ls = json.load(f)
+                OK.append(f"教训{len(ls)}条")
+            except:
+                issues.append("教训库损坏")
+            
+            summary = "✅ " + " | ".join(OK[:5]) if not issues else "⚠️ " + "; ".join(issues[:3])
+            self.core._log(f"  🔍 系统检查: {summary}")
+            
+            memory = self.core.get_module("memory")
+            if memory and issues:
+                memory.write("core", "system_check",
+                    f"[检查] {summary}",
+                    {"issues": issues[:3], "ok": OK[:5]})
+            
+        except Exception as e:
+            self.core._log(f"  ⚠️ 系统检查异常: {e}")
     
     def _maintain_memory(self):
         """维护记忆（MEMORY.md 截断检查）"""
