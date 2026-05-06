@@ -833,6 +833,13 @@ def agent_cycle():
                     t = _re.sub(r'^(想|分析|观察|关注|整理|深入|当前)', '', t)
                     return frozenset(c for c in t if '\u4e00' <= c <= '\u9fff')
                 if len(_kw(old) & _kw(interest_found)) >= 2:
+                    # 已三熟的种子不再累加同类新种子（防止37条囤积）
+                    if asp.get('status') in ('tri_ripe', 'growing_deep', 'five_ripe', 'tri_executed', 'discarded'):
+                        log(f"  ⏭️ 同类已三熟/五熟，跳过新匹配: {interest_found[:30]}")
+                        # 不累加，也不新建，直接忽略
+                        matched = True
+                        break
+                    
                     asp['maturity'] = asp.get('maturity', 0) + 1
                     asp['last_seen_epoch'] = now_epoch
                     asp['last_seen'] = now_str
