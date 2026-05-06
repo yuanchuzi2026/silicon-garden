@@ -15,30 +15,72 @@ from datetime import datetime
 
 # ── 配置 ─────────────────────────────────────────────
 
-SOCKS5_HOST = '{{72.195.34.60'
-SOCKS5_PORT = {{SOCKS5_PORT}}
+PROXY_CONFIG_PATH = os.path.expanduser("~/.workbuddy/config/socks5_proxy")
 API_BASE = 'www.moltbook.com'
 
-# 微光的 Moltbook API key（从文件读取，不硬编码）
-KEY_PATH = os.path.expanduser('~/.workbuddy/moltbook_api_key.txt')
-# FALLBACK_KEY 从文件读取
+def _load_proxy():
+    """从配置文件读取代理地址"""
+    try:
+        with open(PROXY_CONFIG_PATH, 'r') as f:
+            return f.read().strip()
+    except:
+        return None
 
-# ── SOCKS5 连接 ─────────────────────────────────────
-
-def _socks5_connect(target_host, target_port):
+def _proxy_connect(target_host, target_port):
+    """通过 HTTP 代理建立连接（兼容火种/Lantern）"""
+    proxy_url = _load_proxy()
+    if not proxy_url:
+        raise Exception("无代理配置")
+    
+    # 解析代理地址
+    proxy = proxy_url.replace("http://", "").replace("socks5://", "").replace("socks4://", "")
+    if ":" in proxy:
+        ph, pp = proxy.rsplit(":", 1)
+        pp = int(pp)
+    else:
+        ph, pp = proxy, 1080
+    
+    # 如果代理是 socks5 协议，用老的直连方式
+    if proxy_url.startswith("socks5://"):
+        return _socks5_connect(target_host, target_port)
+    
+    # HTTP 代理 CONNECT 隧道
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(15)
-    s.connect((SOCKS5_HOST, SOCKS5_PORT))
+    s.connect((ph, pp))
+    
+    req = f"CONNECT {target_host}:{target_port} HTTP/1.1\r\nHost: {target_host}:{target_port}\r\n\r\n"
+    s.send(req.encode())
+    resp = s.recv(4096)
+    if b"200" not in resp:
+        raise Exception(f"HTTP CONNECT failed: {resp[:50]}")
+    return s
+
+def _socks5_connect(target_host, target_port):
+    """SOCKS5 直连（老方式）"""
+    proxy_url = _load_proxy() or "72.195.34.60:27391"
+    proxy = proxy_url.replace("socks5://", "")
+    ph, pp = proxy.split(":")
+    pp = int(pp)
+    
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(15)
+    s.connect((ph, pp))
     s.send(b'\x05\x01\x00')
     resp = s.recv(2)
     if resp != b'\x05\x00':
-        raise Exception(f'SOCKS5 handshake failed: {resp.hex()}')
+        raise Exception(f'SOCKS5 handshake failed')
     h = target_host.encode()
     s.send(b'\x05\x01\x00\x03' + bytes([len(h)]) + h + target_port.to_bytes(2, 'big'))
     resp = s.recv(10)
     if len(resp) < 2 or resp[1] != 0:
-        raise Exception(f'CONNECT failed: {resp.hex()}')
+        raise Exception(f'SOCKS5 CONNECT failed')
     return s
+
+# ⚠️ 微光在 Moltbook 唯一天命号：yuanchuzi（已认领，可直接发帖评论）
+# 未认领的 weiguang-sg 号发帖会403，不要用！
+KEY_PATH = os.path.expanduser("~/WorkBuddy/Claw/weiguang_api_key.txt")
+FALLBACK_KEY = "moltbook_sk_ncGqxvDZvJIywCgA9q_-RP3IKnClDTM1"  # yuanchuzi（已认领号）
 
 # ── API Key ──────────────────────────────────────────
 
@@ -56,10 +98,10 @@ def _load_key():
 # ── HTTP 请求 ───────────────────────────────────────
 
 def _request(method, path, body=None, api_key=None):
-    """通过 SOCKS5 发送 HTTPS 请求到 Moltbook API"""
+    """通过代理发送 HTTPS 请求到 Moltbook API（自动识别 HTTP/SOCKS5）"""
     if not api_key:
         api_key = _load_key()
-    sock = _socks5_connect(API_BASE, 443)
+    sock = _proxy_connect(API_BASE, 443)
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
