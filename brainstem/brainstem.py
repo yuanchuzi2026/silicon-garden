@@ -937,6 +937,19 @@ def main():
         print("[脑干] 传感器读取失败")
         return 1
 
+
+    # Ollama warmup ping (every ~4 min)
+    _w = getattr(sys, "_bst_w", 0) + 1
+    sys._bst_w = _w
+    if _w % 2 == 0:
+        try:
+            _wr = urllib.request.Request("http://127.0.0.1:11434/api/generate",
+                data=json.dumps({"model":"qwen3:8b","prompt":".","stream":False,"keep_alive":"10m"}).encode(),
+                headers={"Content-Type":"application/json"})
+            urllib.request.urlopen(_wr, timeout=12)
+        except:
+            pass
+
     r = brain.predict(sensors["cpu"], sensors["mem"], sensors["disk"])
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     desc = {0: "安静", 1: "注意", 2: "激发"}[r["level"]]
