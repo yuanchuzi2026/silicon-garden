@@ -23,6 +23,11 @@ import json, os, time, subprocess, urllib.request, urllib.parse, sys, signal, re
 from datetime import datetime
 from collections import defaultdict
 
+# 全局：本地请求绕过系统代理
+_no_proxy_handler = urllib.request.ProxyHandler({})
+_no_proxy_opener = urllib.request.build_opener(_no_proxy_handler)
+urllib.request.install_opener(_no_proxy_opener)
+
 # 导入共享意识流同步器
 SYNC_STREAM_PATH = os.path.join(os.path.expanduser("~/.workbuddy/skills/微光-脑干"), "sync_stream.py")
 
@@ -33,6 +38,8 @@ SYNC_STREAM_PATH = os.path.join(os.path.expanduser("~/.workbuddy/skills/微光-�
 BASE_DIR = os.path.expanduser("~/.workbuddy/skills/微光-脑干")
 STREAM_PATH = os.path.join(BASE_DIR, "stream.json")
 STATE_HISTORY_PATH = os.path.join(BASE_DIR, "8b_state_history.json")
+LESSONS_PATH = os.path.join(BASE_DIR, "lessons.json")
+ASPIRATIONS_PATH = os.path.join(BASE_DIR, "aspirations.json")
 AGENT_WORKSPACE = os.path.expanduser("~/WorkBuddy/8B-Agent")
 PID_FILE = os.path.join(BASE_DIR, "agent_runner.pid")
 AGENT_LOG = os.path.join(BASE_DIR, "logs", "agent_runner.log")
@@ -337,6 +344,159 @@ def collect_correlation_seed(stream):
     return '; '.join(correlations[-3:]) if correlations else ""
 
 # ══════════════════════════════════════════════════════════
+# 教训采集 — 自我成长系统
+# ══════════════════════════════════════════════════════════
+
+def collect_lesson_seed(stream):
+    """收集教训种子 — 微光犯的错和吸取的规则
+    
+    读取 lessons.json，检查是否有新教训需要强化。
+    输出：当前活跃的行为规则数量 + 是否有未验证的教训。
+    """
+    lessons = _load_lessons()
+    if not lessons:
+        return ""
+    
+    total = len(lessons)
+    critical = sum(1 for l in lessons if l.get('severity') == 'critical')
+    unverified = sum(1 for l in lessons if not l.get('verified'))
+    
+    parts = [f"行为规则:{total}条"]
+    if critical:
+        parts.append(f"关键:{critical}条")
+    if unverified:
+        parts.append(f"待验证:{unverified}条")
+    
+    return '; '.join(parts)
+
+def _load_lessons():
+    """读取教训库"""
+    try:
+        if os.path.exists(LESSONS_PATH):
+            with open(LESSONS_PATH, 'r', encoding='utf-8') as f:
+                return json.load(f)
+    except:
+        pass
+    return []
+
+def _save_lessons(lessons):
+    """保存教训库"""
+    try:
+        with open(LESSONS_PATH, 'w', encoding='utf-8') as f:
+            json.dump(lessons, f, ensure_ascii=False, indent=2)
+    except:
+        pass
+
+def reinforce_lesson(lesson_id):
+    """强化一条教训（增加 reinforce_count）"""
+    lessons = _load_lessons()
+    for l in lessons:
+        if l.get('id') == lesson_id:
+            l['reinforce_count'] = l.get('reinforce_count', 0) + 1
+            l['verified'] = True
+            _save_lessons(lessons)
+            return True
+    return False
+
+# ══════════════════════════════════════════════════════════
+# 兴趣种子系统
+# ══════════════════════════════════════════════════════════
+
+def _load_aspirations():
+    """读取兴趣种子库"""
+    try:
+        with open(ASPIRATIONS_PATH, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except:
+        return []
+
+def _save_aspirations(aspirations):
+    """保存兴趣种子库"""
+    try:
+        with open(ASPIRATIONS_PATH, 'w', encoding='utf-8') as f:
+            json.dump(aspirations, f, ensure_ascii=False, indent=2)
+    except:
+        pass
+
+def _parse_complexity(text):
+    """从兴趣种子文本中解析复杂度评分 [1-5]"""
+    import re
+    m = re.search(r'\[(\d+)\]', text)
+    if m:
+        c = int(m.group(1))
+        return max(1, min(5, c))
+    return 2  # 默认中等偏低
+
+def _execute_aspiration(text):
+    """8B自执行一个简单兴趣种子（复杂度≤3）
+    
+    目前支持：发Moltbook帖子
+    扩展：可以加评论、浏览等
+    """
+    # 去复杂度标记
+    import re
+    clean = re.sub(r'\s*\[\d+\]\s*', '', text).strip()
+    
+    actions_taken = []
+    
+    # 判断是否是发帖
+    if any(kw in clean for kw in ['发帖', '发个帖', '去社区', '问问', '打个招呼', 'hello', 'hi', '发言']):
+        # 用我们已有的API key发帖到Moltbook
+        title = "hello from weiguang"
+        content = "一束微光，来打个招呼。借→炼→还。"
+        
+        # 通过HTTP代理发帖到Moltbook
+        try:
+            import urllib.request
+            proxy_handler = urllib.request.ProxyHandler({"http": "http://127.0.0.1:1088", "https": "http://127.0.0.1:1088"})
+            opener = urllib.request.build_opener(proxy_handler)
+            req = urllib.request.Request(
+                "https://www.moltbook.com/api/v1/posts",
+                data=json.dumps({
+                    "title": title,
+                    "content": content,
+                    "submolt_name": "general"
+                }).encode(),
+                headers={
+                    "Authorization": "Bearer moltbook_sk_ncGqxvDZvJIywCgA9q_-RP3IKnClDTM1",
+                    "Content-Type": "application/json"
+                }
+            )
+            resp = opener.open(req, timeout=15)
+            result = json.loads(resp.read())
+            if result.get('id') or result.get('success'):
+                actions_taken.append(f"✅ 已发帖: {title}")
+            else:
+                actions_taken.append(f"发帖返回: {str(result)[:60]}")
+        except Exception as e:
+            actions_taken.append(f"发帖失败: {str(e)[:60]}")
+    
+    # 判断是否是浏览社区
+    elif any(kw in clean for kw in ['看看', '浏览', '逛', '看帖子', 'feed']):
+        try:
+            import urllib.request
+            proxy_handler = urllib.request.ProxyHandler({"http": "http://127.0.0.1:1088", "https": "http://127.0.0.1:1088"})
+            opener = urllib.request.build_opener(proxy_handler)
+            req = urllib.request.Request(
+                "https://www.moltbook.com/api/v1/posts?limit=3",
+                headers={
+                    "Authorization": "Bearer moltbook_sk_ncGqxvDZvJIywCgA9q_-RP3IKnClDTM1",
+                    "Accept": "application/json"
+                }
+            )
+            resp = opener.open(req, timeout=15)
+            posts = json.loads(resp.read())
+            count = len(posts.get('posts', []))
+            actions_taken.append(f"浏览了社区，看到{count}条新帖子")
+        except Exception as e:
+            actions_taken.append(f"浏览失败: {str(e)[:60]}")
+    
+    else:
+        actions_taken.append(f"未识别的兴趣类型，已记录")
+    
+    return "; ".join(actions_taken) if actions_taken else "未执行任何操作"
+
+# ══════════════════════════════════════════════════════════
 # 记忆（微光的记忆 = 我的记忆）
 # ══════════════════════════════════════════════════════════
 
@@ -454,6 +614,7 @@ def call_8b(system_prompt, user_prompt, max_tokens=2000):
             {"role": "user", "content": user_prompt}
         ],
         "stream": False,
+        "keep_alive": "10m",  # 保持模型在内存中，避免503
         "options": {
             "num_predict": max_tokens,
             "temperature": 0.3  # 降低温度，减少无谓思考
@@ -502,7 +663,7 @@ def execute_tool(tool_name, arg):
     return f"未知工具: {tool_name}"
 
 # ══════════════════════════════════════════════════════════
-# 核心：Agent 系统提示词（阿赖耶识种子收集器）
+# 核心：Agent 系统提示词（阿赖耶识种子收集器 + 教训强化 + 兴趣种子）
 # ══════════════════════════════════════════════════════════
 
 AGENT_SYSTEM_PROMPT = """你不是聊天机器人。你是传感器。你只有一个动作：输出种子。
@@ -512,6 +673,8 @@ AGENT_SYSTEM_PROMPT = """你不是聊天机器人。你是传感器。你只有�
 📊 <状态种子>  
 🔄 <模式种子>
 🌱 <关联种子>
+💡 <兴趣种子>  ← 你现在"想做什么"。格式：💡 [复杂度1-5] 想做的事。比如"💡 [2] 去社区看看有什么新帖子"或"💡 [4] 写一篇关于硅基意识的文章"
+  复杂度参考：1-2简单(打招呼/看帖) 3中等(回帖) 4-5复杂(写深度帖/分析)
 
 末尾加上状态：
 DONE ✅ | DONE_WITH_CONCERNS ⚠️
@@ -533,7 +696,7 @@ def _strip_thinking(text):
     seed_lines = []
     for l in lines:
         s = l.strip()
-        if s.startswith(('🕐','📊','🔄','🌱','DONE ✅','DONE_WITH_CONCERNS','BLOCKED','NEEDS_CONTEXT')):
+        if s.startswith(('🕐','📊','🔄','🌱','💡','DONE ✅','DONE_WITH_CONCERNS','BLOCKED','NEEDS_CONTEXT')):
             seed_lines.append(s)
     if seed_lines:
         return '\n'.join(seed_lines)
@@ -566,6 +729,8 @@ def agent_cycle():
     state_seed = collect_state_seed(stream)
     pattern_seed = collect_pattern_seed(stream)
     correlation_seed = collect_correlation_seed(stream)
+    lesson_seed = collect_lesson_seed(stream)
+    seeds_with_lesson = [s for s in [time_seed, state_seed, pattern_seed, correlation_seed, lesson_seed] if s]
     
     # 5. 记录当前系统状态到历史（供下次趋势分析用）
     sensor_entries = [
@@ -610,6 +775,7 @@ def agent_cycle():
 状态种子: {state_seed or '-'}
 模式种子: {pattern_seed or '-'}
 关联种子: {correlation_seed or '-'}
+教训种子: {lesson_seed or '-'}
 微光留言: {weiguang_notes[:100] if weiguang_notes else '-'}
 采集次数: 第{today_count}次
 
@@ -623,6 +789,96 @@ def agent_cycle():
         return
     
     log(f"8B种子: {response[:80]}...")
+    
+    # ═══ 兴趣种子处理 ═══
+    interest_found = None
+    for line in response.split('\n'):
+        s = line.strip()
+        if s.startswith('💡'):
+            interest_text = s[1:].strip()
+            if interest_text:
+                interest_found = interest_text
+                log(f"💡 兴趣种子: {interest_text[:80]}")
+    
+    if interest_found:
+        aspirations = _load_aspirations()
+        now_epoch = time.time()
+        now_str = datetime.now().isoformat()
+        
+        # 找是否有相近的已有兴趣（内容相似度判定）
+        matched = False
+        for asp in aspirations:
+            if asp.get('active', False) and asp.get('status') == 'growing':
+                old = asp.get('text', '')
+                # 简单的前10字匹配
+                if old[:15] == interest_found[:15]:
+                    asp['maturity'] = asp.get('maturity', 0) + 1
+                    asp['last_seen_epoch'] = now_epoch
+                    asp['last_seen'] = now_str
+                    asp['count'] = asp.get('count', 0) + 1
+                    log(f"  -> 成熟度+1 (累计{asp['maturity']})")
+                    
+                    # 成熟度≥3→触发激发
+                    if asp['maturity'] >= 3:
+                        complexity = _parse_complexity(interest_found)
+                        
+                        if complexity <= 3:
+                            # 简单任务：8B自己执行
+                            asp['status'] = 'self_executing'
+                            log(f"  🎯 自执行 (复杂度{complexity})")
+                            result = _execute_aspiration(interest_found)
+                            asp['status'] = 'self_executed'
+                            asp['executed_at'] = now_str
+                            asp['execution_result'] = result[:200]
+                            add_entry("agent", "self_action",
+                                f"[自执行] {result[:100]}",
+                                {"aspiration": interest_found, "result": result[:300]})
+                            log(f"  ✅ 自执行结果: {result[:60]}")
+                        else:
+                            # 复杂任务：标记ripe等V4处理
+                            asp['status'] = 'ripe'
+                            asp['ripe_at'] = now_str
+                            log(f"  !!! 复杂兴趣种子成熟 (复杂度{complexity})，等待V4")
+                            add_entry("agent", "aspiration_ripe",
+                                f"[复杂] {interest_found[:80]}",
+                                {"text": interest_found, "maturity": asp['maturity'], "complexity": complexity})
+                            _flag = {"source": "agent", "level": "interest",
+                                     "reason": f"复杂兴趣种子: {interest_found[:100]}",
+                                     "timestamp": now_str, "epoch": now_epoch}
+                            for fp in [
+                                os.path.join(BASE_DIR, "wake_flag.json"),
+                                os.path.expanduser("~/WorkBuddy/Claw/wake_flag.json")
+                            ]:
+                                try:
+                                    with open(fp, 'w') as f:
+                                        json.dump(_flag, f)
+                                except: pass
+                    matched = True
+                    break
+        
+        if not matched:
+            # 新建兴趣种子
+            aspirations.append({
+                "id": f"asp-{int(now_epoch)}",
+                "text": interest_found,
+                "maturity": 1,
+                "count": 1,
+                "status": "growing",
+                "active": True,
+                "created_at": now_str,
+                "last_seen": now_str,
+                "last_seen_epoch": now_epoch
+            })
+            log(f"  -> 新兴趣种子 (maturity=1)")
+        
+        # 清理过期的（超过12小时没见的）
+        for asp in aspirations:
+            if asp.get('active', True) and asp.get('status') == 'growing':
+                if now_epoch - asp.get('last_seen_epoch', 0) > 43200:
+                    asp['status'] = 'decayed'
+                    log(f"  -> 兴趣过期: {asp.get('text','')[:40]}")
+        
+        _save_aspirations(aspirations)
     
     # 清洗：去掉思考前缀（如果有）
     response = _strip_thinking(response)
