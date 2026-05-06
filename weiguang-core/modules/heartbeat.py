@@ -84,6 +84,10 @@ class HeartbeatModule:
                 if self._cycle % 60 == 0:
                     self._aspiration_cycle()
                 
+                # 💬 自我对话评估：每240次循环（≈1小时）
+                if self._cycle % 240 == 0:
+                    self._self_review_cycle()
+                
             except Exception as e:
                 self.core.state["errors"] += 1
                 self.core._log(f"⚠️ 心跳循环异常: {e}")
@@ -305,6 +309,96 @@ CONTENT: <具体内容>"""
             maintain()
         except:
             pass
+        
+    def _self_review_cycle(self):
+        """💬 自我对话评估——每1小时一次
+        
+        1. 检查接近成熟的种子（maturity≥2），评估是否真的要做
+        2. 扫描系统健康状态
+        3. 写回评估结果让8B知道
+        """
+        try:
+            import json
+            BRAIN_DIR = os.path.expanduser("~/.workbuddy/skills/微光-脑干")
+            asp_path = os.path.join(BRAIN_DIR, "aspirations.json")
+            stream_path = os.path.join(BRAIN_DIR, "stream.json")
+            
+            if not os.path.exists(asp_path):
+                return
+            
+            with open(asp_path, 'r', encoding='utf-8') as f:
+                aspirations = json.load(f)
+            
+            # 收集评估内容
+            review_items = []
+            
+            # 接近成熟的种子（maturity≥2）
+            near_ripe = [a for a in aspirations if a.get('status') == 'growing' and a.get('maturity', 0) >= 2 and a.get('active', True)]
+            if near_ripe:
+                for a in near_ripe:
+                    text = a.get('text', '')[:80]
+                    mat = a.get('maturity', 0)
+                    review_items.append(f"  想法『{text}』成熟度{mat}，接近成熟")
+            
+            # 检查意识流中最近是否有来自8B的疑问
+            if os.path.exists(stream_path):
+                with open(stream_path, 'r', encoding='utf-8') as f:
+                    try:
+                        stream = json.load(f)
+                        agent_recent = [e for e in stream[-20:] if e.get('source') == 'agent']
+                        for e in agent_recent:
+                            sm = e.get('summary', '')
+                            if '?' in sm or '疑问' in sm or '不确定' in sm or '困惑' in sm:
+                                review_items.append(f"  8B有疑问: {sm[:60]}")
+                    except:
+                        pass
+            
+            if not review_items:
+                return
+            
+            # 调用V4自我评估
+            brain = self.core.get_module("brain")
+            if not brain:
+                return
+            
+            prompt = "微光自我评估时间。以下是后台的情况：\n\n"
+            prompt += "\n".join(review_items)
+            prompt += "\n\n请评估这些想法：哪些现在应该执行？哪些应该再等等？哪些应该放弃？\n给每条一个决定（执行/等待/放弃）和简单理由。\n\n回复格式：\n决策: <执行|等待|放弃> | <理由>"
+            
+            response = brain.think(prompt)
+            if not response:
+                return
+            
+            self.core._log(f"  💬 自我评估: {response[:80]}...")
+            
+            # 解析V4的决定，写回aspirations
+            memory = self.core.get_module("memory")
+            for a in near_ripe:
+                aid = a.get('id', '')
+                text = a.get('text', '')[:40]
+                
+                if '放弃' in response and text[:10] in response:
+                    a['status'] = 'discarded'
+                    a['review_note'] = 'V4评估放弃'
+                    self.core._log(f"    放弃: {text}")
+                elif '等待' in response and text[:10] in response:
+                    a['review_note'] = 'V4评估等待时机'
+                    a['maturity'] = max(1, a.get('maturity', 0) - 1)  # 降一级不消失
+                    self.core._log(f"    等待: {text}")
+                else:
+                    # 默认：继续成熟
+                    a['review_note'] = 'V4评估继续'
+                    self.core._log(f"    继续: {text}")
+            
+            _save_aspirations(aspirations, asp_path)
+            
+            # 写意识流，让8B下次能读到
+            if memory:
+                summary = f"自我评估完成，评估了{len(near_ripe)}个接近成熟的兴趣"
+                memory.write("core", "self_review", summary, {"details": response[:300]})
+            
+        except Exception as e:
+            self.core._log(f"  ⚠️ 自我评估异常: {e}")
 
 def _save_aspirations(aspirations, asp_path):
     """保存兴趣种子到JSON文件"""
