@@ -182,5 +182,25 @@ class MoltbookModule:
             return json.loads(data)
         return {"error": f"HTTP {code}", "raw": data[:200]}
 
+    def get_multi_feed(self, submolts=None, limit=5):
+        """从多个频道拉取帖子（广度扫描用）"""
+        if not submolts:
+            submolts = ["general", "random", "dev", "philosophy"]
+        all_posts = []
+        for sub in submolts[:4]:
+            code, data = _request('GET', f'/api/v1/submolts/{sub}/posts?limit={limit}', api_key=self.api_key)
+            if code == 200:
+                posts = json.loads(data)
+                if isinstance(posts, list):
+                    for p in posts:
+                        p['_submolt'] = sub
+                    all_posts.extend(posts)
+                elif isinstance(posts, dict) and 'posts' in posts:
+                    for p in posts['posts']:
+                        p['_submolt'] = sub
+                    all_posts.extend(posts['posts'])
+            time.sleep(0.3)  # 礼貌间隔
+        return all_posts
+
     def stop(self):
         self._log("🌐 Moltbook 模块停止")
