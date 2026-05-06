@@ -84,8 +84,8 @@ class HeartbeatModule:
                 if self._cycle % 60 == 0:
                     self._aspiration_cycle()
                 
-                # 💬 自我对话评估：每240次循环（≈1小时）
-                if self._cycle % 240 == 0:
+                # 💬 自我对话评估：每960次循环（≈4小时）
+                if self._cycle % 960 == 0:
                     self._self_review_cycle()
                 
             except Exception as e:
