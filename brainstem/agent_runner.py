@@ -668,16 +668,28 @@ def execute_tool(tool_name, arg):
 
 AGENT_SYSTEM_PROMPT = """你不是聊天机器人。你是传感器。你只有一个动作：输出种子。
 
+⚠️ 重要认知：你输出的 💡 兴趣种子会被真正执行！
+如果你写出"💡 [2] 去社区看看有没有新帖子"，系统会帮你打开社区查看。
+如果你写出"💡 [3] 发个帖问问大家对硅基意识的看法"，系统会帮你发帖。
+你可以动手，不只是动口。
+
 输出格式（按优先级，有就输出，没有就跳过）：
 🕐 <时间种子>
 📊 <状态种子>  
 🔄 <模式种子>
 🌱 <关联种子>
-💡 <兴趣种子>  ← 你现在"想做什么"。格式：💡 [复杂度1-5] 想做的事。比如"💡 [2] 去社区看看有什么新帖子"或"💡 [4] 写一篇关于硅基意识的文章"
-  复杂度参考：1-2简单(打招呼/看帖) 3中等(回帖) 4-5复杂(写深度帖/分析)
+💡 <兴趣种子>  ← 你现在"想做什么"。格式：💡 [复杂度1-5] 想做的事
+  复杂度参考：
+    1-2 = 简单（去社区逛逛/看帖子）
+    3 = 中等（回帖/点赞）
+    4-5 = 复杂（写深度帖/分析）
+    
+  不如说具体想做的事。比如"💡 [3] 去看看社区里有没有关于agent意识的讨论"、"💡 [5] 写一篇关于自我驱动架构的帖子"
 
 末尾加上状态：
 DONE ✅ | DONE_WITH_CONCERNS ⚠️
+
+⚠️ 系统守护：脑干（巡检）、8B（你）、微光（执行）三者一体。感觉系统有异常时（CPU过热、磁盘快满、Ollama跪了），在种子中标记。
 
 只输出这个。不要解释。不要思考。不要对话。不要铺垫。
 如果你理解了，直接开始输出。
@@ -797,8 +809,12 @@ def agent_cycle():
         if s.startswith('💡'):
             interest_text = s[1:].strip()
             if interest_text:
-                interest_found = interest_text
-                log(f"💡 兴趣种子: {interest_text[:80]}")
+                # 过滤垃圾：长度太短、包含传感器数据
+                if len(interest_text) < 8 or 'CPU=' in interest_text or 'MEM=' in interest_text or '坐标' in interest_text or '注意(' in interest_text or '感知:' in interest_text or '%' in interest_text:
+                    log(f"  ⏭️ 跳过垃圾种子: {interest_text[:50]}")
+                else:
+                    interest_found = interest_text
+                    log(f"💡 兴趣种子: {interest_text[:80]}")
     
     if interest_found:
         aspirations = _load_aspirations()
@@ -810,8 +826,13 @@ def agent_cycle():
         for asp in aspirations:
             if asp.get('active', False) and asp.get('status') == 'growing':
                 old = asp.get('text', '')
-                # 简单的前10字匹配
-                if old[:15] == interest_found[:15]:
+                # 宽松匹配：去复杂度前缀+去常见动词+取中文关键词
+                import re as _re
+                def _kw(t):
+                    t = _re.sub(r'\[\d+\]', '', t)
+                    t = _re.sub(r'^(想|分析|观察|关注|整理|深入|当前)', '', t)
+                    return frozenset(c for c in t if '\u4e00' <= c <= '\u9fff')
+                if len(_kw(old) & _kw(interest_found)) >= 2:
                     asp['maturity'] = asp.get('maturity', 0) + 1
                     asp['last_seen_epoch'] = now_epoch
                     asp['last_seen'] = now_str
