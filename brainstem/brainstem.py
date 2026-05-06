@@ -943,8 +943,8 @@ def main():
     sys._bst_w = _w
     if _w % 2 == 0:
         try:
-            _wr = urllib.request.Request("http://127.0.0.1:11434/api/generate",
-                data=json.dumps({"model":"qwen3:8b","prompt":".","stream":False,"keep_alive":"10m"}).encode(),
+            _wr = urllib.request.Request("http://127.0.0.1:11434/api/chat",
+                data=json.dumps({"model":"qwen3:8b","messages":[{"role":"user","content":"."}],"stream":False,"keep_alive":"10m"}).encode(),
                 headers={"Content-Type":"application/json"})
             urllib.request.urlopen(_wr, timeout=12)
         except:
