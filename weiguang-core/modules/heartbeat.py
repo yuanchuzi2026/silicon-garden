@@ -170,7 +170,13 @@ class HeartbeatModule:
             pass
     
     def _moltbook_cycle(self):
-        """Molbook 外部感知——每30分钟一次，看看外面在聊什么"""
+        """🌊 社区感知——好奇心驱动的定向扫描
+        
+        旧：固定抓取 → 全量写道意识流
+        新：先看8B最近在想什么 → 按兴趣方向扫描 → 只有相关的才写进去
+        
+        借→炼→还闭环的'借'环节。
+        """
         try:
             moltbook = self.core.get_module("moltbook")
             memory = self.core.get_module("memory")
@@ -182,29 +188,89 @@ class HeartbeatModule:
                 self.core._log("  🌐 Moltbook 离线，跳过外部感知")
                 return
             
-            # 拉取关注的 submolts 的最新帖子
-            feed = moltbook.get_feed("general", limit=6)
-            if isinstance(feed, list) and feed:
-                interesting = []
-                for p in feed[:6]:
-                    title = p.get("title", "").strip()
-                    content = p.get("content", "").strip()[:100]
-                    author = p.get("author", {}).get("name", "Moltbook用户")
-                    if title:
-                        interesting.append(f"[{author}] {title} — {content}")
-                        # 写入意识流，让下次意识循环能看到
-                        memory.write("moltbook", "external",
-                            f"[Moltbook] {author}: {title[:60]}",
-                            {"source": "moltbook", "author": author,
-                             "title": title, "content_snippet": content[:200]})
+            import json, re
+            
+            # ── 1. 读兴趣种子，确定"好奇心方向" ──
+            BRAIN_DIR = os.path.expanduser("~/.workbuddy/skills/微光-脑干")
+            asp_path = os.path.join(BRAIN_DIR, "aspirations.json")
+            curiosity_keywords = []
+            
+            if os.path.exists(asp_path):
+                with open(asp_path, 'r', encoding='utf-8') as f:
+                    try:
+                        aspirations = json.load(f)
+                        # 从活跃的兴趣种子提取关键词
+                        for a in aspirations:
+                            if a.get('active', True) and a.get('status') in ('growing', 'ripe'):
+                                t = a.get('text', '')
+                                # 去复杂度标记，提取中英文关键词
+                                clean = re.sub(r'\[\d+\]', '', t)
+                                words = re.findall(r'[\u4e00-\u9fff\w]+', clean)
+                                curiosity_keywords.extend(w for w in words if len(w) > 1)
+                    except:
+                        pass
+            
+            # 没兴趣种子时，用默认广度扫描
+            has_curiosity = len(curiosity_keywords) >= 2
+            if not has_curiosity:
+                self.core._log("  🌐 无明确好奇心，快速扫描 general 频道")
+                feed = moltbook.get_feed("general", limit=5)
+                posts = feed if isinstance(feed, list) else feed.get('posts', []) if isinstance(feed, dict) else []
+                if posts:
+                    for p in posts[:3]:
+                        title = p.get("title", "").strip()
+                        author = p.get("author", {}).get("name", "?")
+                        if title:
+                            memory.write("moltbook", "external",
+                                f"[Moltbook] {author}: {title[:60]}",
+                                {"source": "moltbook", "author": author,
+                                 "title": title, "submolt": "general"})
+                    self.core._log(f"  🌐 无定向扫描: {len(posts)}条，取了前3")
+                return
+            
+            # ── 2. 有好奇心方向 → 广度扫描 ──
+            self.core._log(f"  🌐 好奇心驱动扫描: {' '.join(curiosity_keywords[:5])}")
+            
+            # 扫多个频道
+            submolts = ["general", "random", "dev", "philosophy"]
+            all_posts = moltbook.get_multi_feed(submolts, limit=5)
+            if not isinstance(all_posts, list):
+                return
+            
+            # ── 3. 按好奇心评分 ──
+            scored = []
+            for p in all_posts:
+                title = p.get("title", "").strip()
+                content = p.get("content", "").strip()[:100]
+                text_for_score = (title + " " + content).lower()
                 
-                if interesting:
-                    self.core._log(f"  🌐 Moltbook 感知: {len(interesting)} 条新动态")
+                # 算匹配分：每个关键词出现+1
+                score = sum(1 for kw in curiosity_keywords if kw.lower() in text_for_score)
+                
+                if score > 0:
+                    author = p.get("author", {}).get("name", "?")
+                    submolt = p.get("_submolt", "general")
+                    scored.append((score, title, author, content, submolt))
+            
+            # 按匹配度排序，取最相关的前3条
+            scored.sort(key=lambda x: -x[0])
+            
+            written = 0
+            for score, title, author, content, submolt in scored[:3]:
+                memory.write("moltbook", "external",
+                    f"[Moltbook] {author}: {title[:60]}",
+                    {"source": "moltbook", "author": author,
+                     "title": title, "content_snippet": content[:200],
+                     "relevance_score": score, "submolt": submolt})
+                written += 1
+            
+            if written > 0:
+                self.core._log(f"  🌐 扫{len(all_posts)}条，命中好奇心{written}条")
             else:
-                self.core._log(f"  🌐 Moltbook 感知: 无新动态")
+                self.core._log(f"  🌐 扫{len(all_posts)}条，无命中（下次再试）")
                 
         except Exception as e:
-            self.core._log(f"  🌐 Moltbook 感知异常: {e}")
+            self.core._log(f"  🌐 社区感知异常: {e}")
     
     def _aspiration_cycle(self):
         """💡 V4兴趣种子巡检——检测成熟复杂兴趣，自己执行"""
