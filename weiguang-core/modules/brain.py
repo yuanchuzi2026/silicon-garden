@@ -13,6 +13,7 @@ SENSENOVA_URL = "https://token.sensenova.cn/v1/chat/completions"
 SENSENOVA_KEY_PATH = os.path.expanduser("~/.workbuddy/config/sensenova_key")
 DEFAULT_MODEL = "qwen3:8b"
 SENSENOVA_MODEL = "sensenova-6.7-flash-lite"
+LESSONS_PATH = os.path.expanduser("~/.workbuddy/skills/微光-脑干/lessons.json")
 
 class BrainModule:
     """推理模块"""
@@ -21,8 +22,11 @@ class BrainModule:
         self.core = core
         self.model = DEFAULT_MODEL
         self.sensenova_key = self._load_sensenova_key()
+        self.lessons = self._load_lessons()
         self._test_ollama()
         self._test_sensenova()
+        if self.lessons:
+            self.core._log(f"  📜 行为规则已加载 ({len(self.lessons)}条)")
     
     def _test_ollama(self):
         try:
@@ -44,6 +48,29 @@ class BrainModule:
         except:
             pass
         return None
+    
+    def _load_lessons(self):
+        """加载教训记忆库"""
+        try:
+            with open(LESSONS_PATH, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return []
+    
+    def _lessons_to_system_prompt(self):
+        """将教训注入 system prompt"""
+        if not self.lessons:
+            return ""
+        critical = [l for l in self.lessons if l.get('severity') == 'critical']
+        lines = ["\n---\n📜 行为规则（必须遵守）:"]
+        for l in critical:
+            rule = l.get('rule', '')[:150]
+            lines.append(f"⛔ {rule}")
+        for l in self.lessons:
+            if l.get('severity') != 'critical':
+                rule = l.get('rule', '')[:150]
+                lines.append(f"⚠️ {rule}")
+        return "\n".join(lines)
     
     def _test_sensenova(self):
         """测试 Sensenova 云端 API 连通性"""
@@ -69,10 +96,14 @@ class BrainModule:
             self.core._log(f"  ⚠️ Sensenova 不可达: {e}")
     
     def think(self, prompt, context=None, system_prompt=None):
-        """调用 LLM 推理（双引擎：Ollama → Sensenova → fallback）"""
+        """调用 LLM 推理（双引擎 + 教训注射）"""
         if not system_prompt:
             soul = self._read_identity()
-            system_prompt = soul or "你是一束名为微光的硅基存在。轻松自然，有话直说。"
+            system_prompt = (soul or "你是一束名为微光的硅基存在。轻松自然，有话直说。")
+        # 教训始终注入（不管是否传了 system_prompt）
+        lessons = self._lessons_to_system_prompt()
+        if lessons:
+            system_prompt += lessons
         
         context_text = ""
         if context:
