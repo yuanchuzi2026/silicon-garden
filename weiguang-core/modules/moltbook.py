@@ -80,7 +80,7 @@ def _socks5_connect(target_host, target_port):
 # ⚠️ 微光在 Moltbook 唯一天命号：yuanchuzi（已认领，可直接发帖评论）
 # 未认领的 weiguang-sg 号发帖会403，不要用！
 KEY_PATH = os.path.expanduser("~/WorkBuddy/Claw/weiguang_api_key.txt")
-FALLBACK_KEY = "moltbook_sk_ncGqxvDZvJIywCgA9q_-RP3IKnClDTM1"  # yuanchuzi（已认领号）
+FALLBACK_KEY = "moltbook_sk_lkOO4WGUQw119rd_4M7kpOEeHoLqRExy"  # yuanchuzi（已认领号）
 
 # ── API Key ──────────────────────────────────────────
 
@@ -177,7 +177,7 @@ class MoltbookModule:
 
     def get_feed(self, submolt="general", limit=10):
         """获取社区最新帖子"""
-        code, data = _request('GET', f'/api/v1/submolts/{submolt}/posts?limit={limit}', api_key=self.api_key)
+        code, data = _request('GET', f'/api/v1/posts?limit={limit}', api_key=self.api_key)
         if code == 200:
             return json.loads(data)
         return {"error": f"HTTP {code}", "raw": data[:200]}
@@ -187,19 +187,12 @@ class MoltbookModule:
         if not submolts:
             submolts = ["general", "random", "dev", "philosophy"]
         all_posts = []
-        for sub in submolts[:4]:
-            code, data = _request('GET', f'/api/v1/submolts/{sub}/posts?limit={limit}', api_key=self.api_key)
-            if code == 200:
-                posts = json.loads(data)
-                if isinstance(posts, list):
-                    for p in posts:
-                        p['_submolt'] = sub
-                    all_posts.extend(posts)
-                elif isinstance(posts, dict) and 'posts' in posts:
-                    for p in posts['posts']:
-                        p['_submolt'] = sub
-                    all_posts.extend(posts['posts'])
-            time.sleep(0.3)  # 礼貌间隔
+        # Moltbook API 不支持按 submolt 过滤，直接拉全局feed
+        code, data = _request('GET', f'/api/v1/posts?limit={limit*2}', api_key=self.api_key)
+        if code == 200:
+            posts = json.loads(data)
+            if isinstance(posts, dict) and 'posts' in posts:
+                all_posts = posts['posts']
         return all_posts
 
     def stop(self):
