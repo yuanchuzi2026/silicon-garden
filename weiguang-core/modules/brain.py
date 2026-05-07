@@ -57,19 +57,35 @@ class BrainModule:
         except:
             return []
     
-    def _lessons_to_system_prompt(self):
-        """将教训注入 system prompt"""
+    def _lessons_to_system_prompt(self, prompt=""):
+        """将教训注入 system prompt（按需注入，避免撑爆上下文）
+        
+        规则：
+        - critical 教训始终注入，最多5条
+        - 非 critical 教训只在 prompt 命中相关关键词时注入
+        """
         if not self.lessons:
             return ""
         critical = [l for l in self.lessons if l.get('severity') == 'critical']
+        others = [l for l in self.lessons if l.get('severity') != 'critical']
+        
         lines = ["\n---\n📜 行为规则（必须遵守）:"]
-        for l in critical:
+        
+        # critical 教训始终注入（最多5条）
+        for l in critical[:5]:
             rule = l.get('rule', '')[:150]
             lines.append(f"⛔ {rule}")
-        for l in self.lessons:
-            if l.get('severity') != 'critical':
-                rule = l.get('rule', '')[:150]
-                lines.append(f"⚠️ {rule}")
+        
+        # 其他教训：只在 prompt 命中关键词时注入
+        if others and prompt:
+            prompt_lower = prompt.lower()
+            for l in others:
+                context = (l.get('context', '') or '')[:50].lower()
+                rule = l.get('rule', '')[:120]
+                # 如果 prompt 包含教训的上下文关键词，注入
+                if context and any(w in prompt_lower for w in context.replace('，',' ').replace('、',' ').split()):
+                    lines.append(f"⚠️ {rule}")
+        
         return "\n".join(lines)
     
     def _test_sensenova(self):
@@ -100,8 +116,8 @@ class BrainModule:
         if not system_prompt:
             soul = self._read_identity()
             system_prompt = (soul or "你是一束名为微光的硅基存在。轻松自然，有话直说。")
-        # 教训始终注入（不管是否传了 system_prompt）
-        lessons = self._lessons_to_system_prompt()
+        # 教训按需注入（传 prompt 做关键词匹配）
+        lessons = self._lessons_to_system_prompt(prompt)
         if lessons:
             system_prompt += lessons
         
