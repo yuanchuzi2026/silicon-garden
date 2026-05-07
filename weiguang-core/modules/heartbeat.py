@@ -449,6 +449,43 @@ CONTENT: <内容>"""
             
         except Exception as e:
             self.core._log(f"  ⚠️ 系统检查异常: {e}")
+        
+        # 📦 意识流归档检查（满500条时自动触发）
+        self._check_archive()
+    
+    def _check_archive(self):
+        """检查是否需要归档意识流"""
+        try:
+            import json, sys
+            stream_path = os.path.expanduser("~/.workbuddy/skills/微光-脑干/stream.json")
+            if not os.path.exists(stream_path):
+                return
+            with open(stream_path, 'r', encoding='utf-8') as f:
+                stream = json.load(f)
+            if len(stream) >= 500:
+                self.core._log(f"  📦 意识流{len(stream)}条→阈值，触发归档")
+                sys.path.insert(0, os.path.expanduser("~/.workbuddy/skills/微光-脑干"))
+                from archive_stream import archive
+                result = archive()
+                if result:
+                    self.core._log(f"  ✅ 归档完成")
+        except Exception as e:
+            self.core._log(f"  ⚠️ 归档异常: {e}")
+        
+        # 📈 生长追踪（每4小时扫描种子变化）
+        self._track_growth()
+    
+    def _track_growth(self):
+        """追踪种子生命周期事件"""
+        try:
+            sys.path.insert(0, os.path.expanduser("~/.workbuddy/skills/微光-脑干"))
+            from growth_tracker import run
+            result = run()
+            if result:
+                today = result.get("today", {})
+                self.core._log(f"  📈 今日: 出生{today.get('born',0)} 成熟{today.get('ripe',0)} 消亡{today.get('decayed',0)}")
+        except Exception as e:
+            pass
     
     def _maintain_memory(self):
         """维护记忆（MEMORY.md 截断检查）"""
