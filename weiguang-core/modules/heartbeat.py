@@ -474,6 +474,20 @@ CONTENT: <内容>"""
         
         # 📈 生长追踪（每4小时扫描种子变化）
         self._track_growth()
+        
+        # 🌍 世界脉搏（每240次循环≈1小时，采样外部氛围）
+        if self._cycle % 240 == 0:
+            self._world_pulse()
+    
+    def _world_pulse(self):
+        """采集全球新闻，提炼氛围喂给8B"""
+        try:
+            sys.path.insert(0, os.path.expanduser("~/.workbuddy/skills/微光-脑干"))
+            from world_pulse import run
+            vibe = run()
+            self.core._log(f"  🌍 世界脉搏: {vibe}")
+        except Exception as e:
+            pass
     
     def _track_growth(self):
         """追踪种子生命周期事件"""
