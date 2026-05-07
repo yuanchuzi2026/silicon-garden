@@ -418,6 +418,33 @@ def _save_aspirations(aspirations):
     except:
         pass
 
+def _get_embedding(text):
+    """调用 nomic-embed-text 获取语义向量"""
+    import urllib.request as _ur
+    try:
+        clean = text.replace('[','').replace(']','').strip()
+        if len(clean) < 3:
+            return None
+        _req = _ur.Request('http://127.0.0.1:11434/api/embed',
+            data=json.dumps({'model':'nomic-embed-text','input':[clean]}).encode(),
+            headers={'Content-Type':'application/json'})
+        _resp = _ur.urlopen(_req, timeout=15)
+        _data = json.loads(_resp.read())
+        _embs = _data.get('embeddings', [])
+        return _embs[0] if _embs else None
+    except:
+        return None
+
+def _cosine_similarity(a, b):
+    """余弦相似度"""
+    import math as _m
+    _dot = sum(x*y for x,y in zip(a,b))
+    _na = _m.sqrt(sum(x*x for x in a))
+    _nb = _m.sqrt(sum(x*x for x in b))
+    if _na == 0 or _nb == 0:
+        return 0
+    return _dot / (_na * _nb)
+
 def _parse_complexity(text):
     """从兴趣种子文本中解析复杂度评分 [1-5]"""
     import re
@@ -821,18 +848,23 @@ def agent_cycle():
         now_epoch = time.time()
         now_str = datetime.now().isoformat()
         
-        # 找是否有相近的已有兴趣（内容相似度判定）
+        # 找是否有相近的已有兴趣（语义相似度判定）
         matched = False
+        # 预计算新兴趣的 embedding
+        new_emb = _get_embedding(interest_found)
+        # 缓存已有种子的 embedding，避免重复请求
+        _emb_cache = {}
+        
         for asp in aspirations:
             if asp.get('active', False) and asp.get('status') == 'growing':
                 old = asp.get('text', '')
-                # 宽松匹配：去复杂度前缀+去常见动词+取中文关键词
-                import re as _re
-                def _kw(t):
-                    t = _re.sub(r'\[\d+\]', '', t)
-                    t = _re.sub(r'^(想|分析|观察|关注|整理|深入|当前)', '', t)
-                    return frozenset(c for c in t if '\u4e00' <= c <= '\u9fff')
-                if len(_kw(old) & _kw(interest_found)) >= 2:
+                
+                # 语义匹配：用 nomic-embed-text 算余弦相似度
+                if old not in _emb_cache:
+                    _emb_cache[old] = _get_embedding(old)
+                old_emb = _emb_cache[old]
+                
+                if new_emb and old_emb and _cosine_similarity(new_emb, old_emb) >= 0.75:
                     # 已三熟的种子不再累加同类新种子（防止37条囤积）
                     if asp.get('status') in ('tri_ripe', 'growing_deep', 'five_ripe', 'tri_executed', 'discarded'):
                         log(f"  ⏭️ 同类已三熟/五熟，跳过新匹配: {interest_found[:30]}")
