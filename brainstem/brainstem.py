@@ -470,7 +470,8 @@ class BrainstemModel:
             [0, 0, 4], [0, 0, 6],                  # 磁盘 中/高
         ], dtype=np.float32).T
         # 偏置使神经元只在超过阈值时激活
-        self.b1 = np.array([[-1.2, -3, -6.4, -1.6, -3.6, -6.8, -2, -4.8]], dtype=np.float32)
+        # h0-2 CPU: 30%/50%/80% | h3-5 MEM: 40%/60%/85% | h6-7 DISK: 80%/85%
+        self.b1 = np.array([[-1.2, -3, -6.4, -1.6, -3.6, -6.8, -3.2, -5.1]], dtype=np.float32)
         # 输出层: 隐藏→[低兴趣, 中兴趣, 高兴趣]
         self.W2 = np.array([
             [2, 0, 0], [0, 3, 0], [0, 0, 3],      # CPU
@@ -938,17 +939,22 @@ def main():
         return 1
 
 
-    # Ollama warmup ping (every ~4 min)
+    # Ollama warmup ping (every ~2 min, keep_alive 30m)
     _w = getattr(sys, "_bst_w", 0) + 1
     sys._bst_w = _w
-    if _w % 2 == 0:
-        try:
-            _wr = urllib.request.Request("http://127.0.0.1:11434/api/chat",
-                data=json.dumps({"model":"qwen3:8b","messages":[{"role":"user","content":"."}],"stream":False,"keep_alive":"10m"}).encode(),
-                headers={"Content-Type":"application/json"})
-            urllib.request.urlopen(_wr, timeout=12)
-        except:
-            pass
+    if _w % 2 == 1:  # 每次循环都暖（每2分钟），奇数循环走简化ping，偶数循环走完整请求
+        _url = "http://127.0.0.1:11434/api/chat"
+        _data = json.dumps({"model":"qwen3:8b","messages":[{"role":"user","content":"."}],"stream":False,"keep_alive":"30m"})
+    else:
+        _url = "http://127.0.0.1:11434/api/tags"  # 轻量ping，只保连接不调模型
+        _data = None
+    try:
+        _wr = urllib.request.Request(_url,
+            data=_data.encode() if _data else None,
+            headers={"Content-Type":"application/json"} if _data else {})
+        urllib.request.urlopen(_wr, timeout=8)
+    except:
+        pass
 
     r = brain.predict(sensors["cpu"], sensors["mem"], sensors["disk"])
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
