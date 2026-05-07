@@ -61,7 +61,7 @@ OLLAMA_CHAT_URL = f"{OLLAMA_BASE}/api/chat"
 LLM_MODEL = "qwen3:8b"
 
 # 循环间隔（秒）
-LOOP_INTERVAL = 45  # 每45秒收集一次种子
+LOOP_INTERVAL = 120  # 每2分钟采一次念头（低频沉思，不要催）
 
 # 唤醒冷却（秒）：唤醒微光后至少等60秒才能再次唤醒
 WAKE_COOLDOWN = 60
