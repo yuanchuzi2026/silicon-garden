@@ -1202,7 +1202,7 @@ def main():
 if __name__ == "__main__":
     if "--loop" in sys.argv:
         # ── 持续监测模式 ──
-        loop_interval = int(os.environ.get("BRAINSTEM_INTERVAL", "120"))  # 默认2分钟
+        loop_interval = int(os.environ.get("BRAINSTEM_INTERVAL", "30"))  # 默认30秒（高频守护）
         print(f"[脑干] 启动持续监测模式 (每{loop_interval}秒)")
         try:
             from consciousness_stream import add_entry
