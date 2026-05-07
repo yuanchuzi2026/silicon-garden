@@ -887,6 +887,11 @@ def agent_cycle():
                         add_entry("agent", "tri_ripe",
                             f"[三熟] {interest_found[:60]}",
                             {"text": interest_found, "maturity": 3})
+                        # 记录生长事件
+                        try:
+                            from growth_tracker import record_event
+                            record_event(asp.get('id',''), interest_found, 'ripe', 3)
+                        except: pass
                     
                     elif asp['maturity'] == 4:
                         # 四熟→继续长，不到五熟不让V4出手
