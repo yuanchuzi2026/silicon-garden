@@ -129,19 +129,22 @@ class BrainModule:
     def _call_ollama(self, prompt):
         payload = json.dumps({
             "model": self.model,
-            "prompt": prompt,
+            "messages": [{"role": "user", "content": prompt}],
             "stream": False,
+            "keep_alive": -1,
             "options": {"temperature": 0.7, "max_tokens": 2000}
         }).encode()
         
         req = urllib.request.Request(
-            OLLAMA_URL,
+            "http://127.0.0.1:11434/api/chat",
             data=payload,
             headers={"Content-Type": "application/json"}
         )
-        resp = urllib.request.urlopen(req, timeout=60)
+        resp = urllib.request.urlopen(req, timeout=120)
         result = json.loads(resp.read())
-        return result.get("response", "")
+        msg = result.get("message", {})
+        content = msg.get("content", result.get("response", "")).strip()
+        return content
     
     def _call_sensenova(self, prompt):
         """通过 Sensenova API 推理（OpenAI 兼容格式）"""
