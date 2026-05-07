@@ -253,7 +253,7 @@ class HeartbeatModule:
                 
                 if score > 0:
                     author = p.get("author", {}).get("name", "?")
-                    submolt = p.get("_submolt", "general")
+                    submolt = "general"
                     scored.append((score, title, author, content, submolt))
             
             # 按匹配度排序，取最相关的前3条
@@ -277,10 +277,11 @@ class HeartbeatModule:
             self.core._log(f"  🌐 社区感知异常: {e}")
     
     def _aspiration_cycle(self):
-        """💡 兴趣种子执行层（每15分钟）
+        """💡 三熟执行层（每15分钟）
         
-        三熟（maturity=3）：微光核心自己执行，用qwen3:8b想+发
-        五熟（maturity=5）：留给V4对话层处理
+        优化：两条路，不依赖Ollama也能跑
+        - 浏览/检查 → 直接走API，不需要推理
+        - 发帖/写东西 → 尝试用brain想，Ollama跪了就直接标记等V4
         """
         try:
             BRAIN_DIR = os.path.expanduser("~/.workbuddy/skills/微光-脑干")
@@ -288,72 +289,92 @@ class HeartbeatModule:
             if not os.path.exists(asp_path):
                 return
             
-            import json
+            import json, re
             with open(asp_path, 'r', encoding='utf-8') as f:
                 aspirations = json.load(f)
             
-            # 只找三熟种子（core自己能执行的）
             tri = [a for a in aspirations if a.get('status') == 'tri_ripe' and a.get('active', True)]
             if not tri:
                 return
             
-            brain = self.core.get_module("brain")
             memory = self.core.get_module("memory")
             moltbook = self.core.get_module("moltbook")
-            if not brain:
-                return
+            brain = self.core.get_module("brain")
             
             for asp in tri[:3]:
                 text = asp.get('text', '')[:120]
-                aid = asp.get('id', '')
-                asp['active'] = False  # 锁定
+                asp['active'] = False
                 
-                self.core._log(f"  🎯 三熟执行: {text[:60]}")
+                self.core._log(f"  🎯 三熟: {text[:60]}")
                 
-                # 用qwen3:8b想具体怎么做
-                prompt = f"""微光产生了一个想法：{text}
-
-请把这个想法变成具体的行动。如果是发帖，写出标题和内容。如果是浏览，直接输出'BROWSE'。如果是其他，说清楚。
-
-回复格式：
-ACTION: <post/browse/other>
-CONTENT: <具体内容>"""
-                
-                response = brain.think(prompt)
-                self.core._log(f"  推理: {response[:80]}")
+                # 判断动作类型（不依赖推理）
+                action_type = 'other'
+                if any(kw in text for kw in ['去看看', '看看', '浏览', '社区', '去社区', '检查', '查看']):
+                    action_type = 'browse'
+                elif any(kw in text for kw in ['发帖', '写篇', '写一篇', '深度帖', '回复']):
+                    action_type = 'post'
                 
                 result = ""
-                if moltbook and moltbook.status().get("connected"):
-                    if "ACTION: post" in response:
-                        lines = response.split('\n')
-                        content = None
-                        for l in lines:
-                            if l.startswith("CONTENT:"):
-                                content = l[8:].strip()
-                                break
-                        if content:
-                            r = moltbook.post("微光随笔", content, "general")
-                            result = f"已发帖" if isinstance(r, dict) and r.get("ok") else f"发帖失败"
+                if action_type == 'browse' and moltbook and moltbook.status().get("connected"):
+                    # 🟢 浏览：直接干，不走脑
+                    feed = moltbook.get_feed("general", limit=5)
+                    feed_count = len(feed) if isinstance(feed, list) else 0
+                    result = f"已浏览社区，看到{feed_count}条帖子"
+                    self.core._log(f"  ✅ 直接浏览: {result}")
+                    
+                elif action_type == 'post' and moltbook and moltbook.status().get("connected"):
+                    # 🟡 发帖：试试用脑想内容
+                    if brain:
+                        prompt = f"""微光想发帖：{text}
+
+帮它写一个帖子。标题简短，内容1-3句话，真实不文艺。
+
+回复格式（只输出这两行）：
+TITLE: <标题>
+CONTENT: <内容>"""
+                        response = brain.think(prompt)
+                        if response and len(response) > 10:
+                            # 解析内容
+                            title, content = "", ""
+                            for line in response.split('\n'):
+                                if line.startswith("TITLE:"):
+                                    title = line[6:].strip()[:60]
+                                elif line.startswith("CONTENT:"):
+                                    content = line[8:].strip()[:300]
+                            if title and content:
+                                r = moltbook.post(title, content, "general")
+                                if isinstance(r, dict) and r.get("ok"):
+                                    result = f"已发帖: {title}"
+                                    self.core._log(f"  ✅ 发帖成功: {title}")
+                                else:
+                                    result = f"发帖失败"
+                            else:
+                                # 推理出了内容但格式不对，直接发
+                                title = text[:40].replace('[','').replace(']','').strip()
+                                r = moltbook.post(title, response[:300], "general")
+                                result = f"已发帖(简化): {title[:30]}"
                         else:
-                            result = "无内容可发"
-                    elif "BROWSE" in response or "browse" in response:
-                        feed = moltbook.get_feed("general", limit=3)
-                        result = f"已浏览，看到{len(feed) if isinstance(feed, list) else 0}条帖子"
+                            # ❌ Ollama 挂了，标记为五熟等V4处理
+                            self.core._log(f"  ⚠️ Ollama不可用，标记五熟等V4")
+                            asp['status'] = 'five_ripe'
+                            asp['five_ripe_at'] = datetime.now().isoformat()
+                            result = "Ollama不可用，已转五熟等待V4"
                     else:
-                        result = "想法已记录（微光核心未自动执行）"
+                        result = "无推理模块，已跳过"
                 else:
-                    result = "Moltbook离线，想法已记录"
+                    result = "想法已记录"
                 
-                asp['status'] = 'tri_executed'
-                asp['tri_result'] = result[:200]
-                asp['executed_at'] = datetime.now().isoformat()
-                
-                if memory:
-                    memory.write("core", "tri_executed",
-                        f"[三熟执行] {result[:80]}",
-                        {"aspiration": text, "result": result[:200]})
-                
-                self.core._log(f"  三熟结果: {result[:60]}")
+                if action_type != 'post' or not result.startswith("已发帖"):
+                    # 非发帖行为直接标记完成
+                    if asp.get('status') != 'five_ripe':
+                        asp['status'] = 'tri_executed'
+                    asp['tri_result'] = result[:200]
+                    asp['executed_at'] = datetime.now().isoformat()
+                    
+                    if memory:
+                        memory.write("core", "tri_executed",
+                            f"[三熟结果] {result[:80]}",
+                            {"aspiration": text, "result": result[:200]})
             
             _save_aspirations(aspirations, asp_path)
             
