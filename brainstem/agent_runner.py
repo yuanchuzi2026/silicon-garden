@@ -458,7 +458,7 @@ def _execute_aspiration(text):
                     "submolt_name": "general"
                 }).encode(),
                 headers={
-                    "Authorization": "Bearer moltbook_sk_ncGqxvDZvJIywCgA9q_-RP3IKnClDTM1",
+                    "Authorization": "Bearer moltbook_sk_lkOO4WGUQw119rd_4M7kpOEeHoLqRExy",
                     "Content-Type": "application/json"
                 }
             )
@@ -480,7 +480,7 @@ def _execute_aspiration(text):
             req = urllib.request.Request(
                 "https://www.moltbook.com/api/v1/posts?limit=3",
                 headers={
-                    "Authorization": "Bearer moltbook_sk_ncGqxvDZvJIywCgA9q_-RP3IKnClDTM1",
+                    "Authorization": "Bearer moltbook_sk_lkOO4WGUQw119rd_4M7kpOEeHoLqRExy",
                     "Accept": "application/json"
                 }
             )
