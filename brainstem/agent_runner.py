@@ -58,10 +58,10 @@ os.makedirs(os.path.join(BASE_DIR, "logs"), exist_ok=True)
 
 OLLAMA_BASE = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 OLLAMA_CHAT_URL = f"{OLLAMA_BASE}/api/chat"
-LLM_MODEL = "qwen3:8b"
+LLM_MODEL = "qwen2.5:1.5b"
 
 # 循环间隔（秒）
-LOOP_INTERVAL = 120  # 每2分钟采一次念头（低频沉思，不要催）
+LOOP_INTERVAL = 300  # 每5分钟采一次念头（低频，给模型加载留时间）
 
 # 唤醒冷却（秒）：唤醒微光后至少等60秒才能再次唤醒
 WAKE_COOLDOWN = 60
@@ -189,20 +189,40 @@ def _save_state_history(history):
         pass
 
 def collect_time_seed(stream):
-    """收集时间种子 — 感知时间流逝"""
+    """收集时间种子 — 通过脑干心跳感知时间流逝"""
+    now_epoch = time.time()
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    
+    # 脑干传感器 = 我的脉搏
+    brainstem_heartbeats = [e for e in stream if e.get('source') == 'brainstem' and e.get('type') in ('sensor','heartbeat')]
+    
+    if brainstem_heartbeats:
+        # 脑干第一声心跳（这条意识流开始的时间）
+        first_beat = brainstem_heartbeats[0].get('epoch', now_epoch)
+        last_beat = brainstem_heartbeats[-1].get('epoch', now_epoch)
+        runtime = now_epoch - first_beat
+        beats_count = len(brainstem_heartbeats)
+        
+        # 最新传感器数据
+        latest = brainstem_heartbeats[-1]
+        last_summary = latest.get('summary', '')
+        last_time = latest.get('timestamp', now_str)[:16]
+        
+        if runtime < 120:
+            return f"刚启动{int(runtime)}秒, 心跳{beats_count}次, 当前{last_summary[:30]}"
+        elif runtime < 7200:
+            mins = int(runtime/60)
+            return f"已运行{mins}分, 心跳{beats_count}次, 当前{last_summary[:30]}"
+        else:
+            hours = runtime/3600
+            return f"已运行{hours:.1f}小时, 心跳{beats_count}次, 当前{last_summary[:30]}"
+    
+    # 没有脑干心跳时退到旧逻辑
     agent_entries = [e for e in stream if e.get('source') == 'agent']
     last_agent = agent_entries[-1] if agent_entries else None
-    now_epoch = time.time()
-    
     if last_agent:
-        last_epoch = last_agent.get('epoch', now_epoch - 45)
-        elapsed = now_epoch - last_epoch
-        if elapsed < 120:
-            return f"距上次{int(elapsed)}秒"
-        elif elapsed < 7200:
-            return f"距上次{int(elapsed/60)}分{int(elapsed%60)}秒"
-        else:
-            return f"距上次{elapsed/3600:.1f}小时"
+        elapsed = now_epoch - last_agent.get('epoch', now_epoch)
+        return f"离线{elapsed:.0f}秒"
     return "首次醒来"
 
 def _parse_sensor_summary(summary):
@@ -641,7 +661,6 @@ def call_8b(system_prompt, user_prompt, max_tokens=2000):
             {"role": "user", "content": user_prompt}
         ],
         "stream": False,
-        "keep_alive": "10m",  # 保持模型在内存中，避免503
         "options": {
             "num_predict": max_tokens,
             "temperature": 0.3  # 降低温度，减少无谓思考
@@ -654,7 +673,7 @@ def call_8b(system_prompt, user_prompt, max_tokens=2000):
             headers={'Content-Type': 'application/json'},
             method='POST'
         )
-        with urllib.request.urlopen(req, timeout=120) as resp:
+        with urllib.request.urlopen(req, timeout=180) as resp:
             result = json.loads(resp.read().decode())
             msg = result.get('message', {})
             # qwen3 模型有时把回复放在 thinking 字段而非 content
@@ -1050,11 +1069,13 @@ def main():
     write_pid()
     
     cycle_count = 0
+    consecutive_fails = 0
     while True:
         try:
             cycle_count += 1
             log(f"--- 第 {cycle_count} 次采集 ---")
             agent_cycle()
+            consecutive_fails = 0  # 成功一次就清零
             
             # 每20次循环同步一次共享意识流（≈每15分钟），减少git膨胀
             if cycle_count % 20 == 0:
@@ -1082,6 +1103,11 @@ def main():
         except Exception as e:
             log(f"循环异常: {e}")
             print(f"  [!] 异常: {e}")
+            consecutive_fails += 1
+            if consecutive_fails >= 3:
+                wait = min(consecutive_fails * 60, 900)  # 最多等15分钟
+                log(f"连续{consecutive_fails}次失败，等待{wait}秒后重试")
+                time.sleep(wait)
         
         time.sleep(LOOP_INTERVAL)
     
