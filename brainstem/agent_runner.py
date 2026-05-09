@@ -439,43 +439,36 @@ def _save_aspirations(aspirations):
         pass
 
 def _text_similarity(a, b):
-    """纯文本关键词重叠度（替代嵌入模型语义相似度）
+    """纯文本相似度（替代嵌入模型）
     
-    提取核心操作词（动词+名词），去停用词后算 Jaccard 相似度。
+    中文用2-gram字符组重叠率，英文用单词重叠率。
+    阈值 ≥ 0.35 视为同类种子。
     零模型依赖。
     """
     import re
-    # 去掉复杂度标记、emoji、标点
-    def extract_keywords(text):
-        # 去掉 [数字] 复杂度标记
-        text = re.sub(r'\[\d+\]', '', text)
-        # 去掉 emoji
-        text = re.sub(r'[^\w\s]', '', text)
-        # 去停用词（中英文常见虚词）
-        stopwords = {'的', '了', '在', '是', '我', '有', '和', '就', '不', '人', '都', '一',
-                     '一个', '上', '也', '很', '到', '说', '要', '去', '你', '会', '着',
-                     '没有', '看', '好', '自己', '这', 'the', 'a', 'an', 'is', 'are',
-                     'to', 'of', 'in', 'it', 'that', 'this', 'for', 'on', 'with'}
-        words = set()
-        # 中文2字以上词组
-        for w in re.findall(r'[\u4e00-\u9fff]{2,}', text):
-            if w not in stopwords:
-                words.add(w)
-        # 英文词（>=3字母）
+    
+    def get_grams(text):
+        text = re.sub(r'\[\d+\]', '', text)  # 去复杂度标记
+        text = re.sub(r'[^\w\u4e00-\u9fff]', '', text)  # 保留中文英文数字
+        grams = set()
+        # 中文：所有相邻2字组合
+        chars = re.findall(r'[\u4e00-\u9fff]', text)
+        for i in range(len(chars) - 1):
+            grams.add(chars[i] + chars[i+1])
+        # 英文单词
         for w in re.findall(r'[a-zA-Z]{3,}', text.lower()):
-            if w not in stopwords:
-                words.add(w)
-        return words
+            grams.add('__' + w)
+        return grams
     
-    ka = extract_keywords(a)
-    kb = extract_keywords(b)
+    ga = get_grams(a)
+    gb = get_grams(b)
     
-    if not ka or not kb:
+    if not ga or not gb:
         return 0.0
     
-    intersection = ka & kb
-    union = ka | kb
-    return len(intersection) / len(union) if union else 0.0
+    inter = len(ga & gb)
+    smaller = min(len(ga), len(gb))
+    return inter / smaller if smaller > 0 else 0.0
 
 def _cosine_similarity(a, b):
     """余弦相似度"""
@@ -896,8 +889,8 @@ def agent_cycle():
             if asp.get('active', False) and asp.get('status') == 'growing':
                 old = asp.get('text', '')
                 
-                # 文本相似度匹配（关键词重叠度 ≥ 0.5 视为同类）
-                if _text_similarity(interest_found, old) >= 0.5:
+                # 文本相似度匹配（关键词2-gram重叠率 ≥ 0.35 视为同类）
+                if _text_similarity(interest_found, old) >= 0.35:
                     # 已三熟/五熟的种子不再累加
                     if asp.get('status') in ('tri_ripe', 'growing_deep', 'five_ripe', 'tri_executed', 'discarded'):
                         log(f"  ⏭️ 同类已三熟/五熟，跳过新匹配: {interest_found[:30]}")
