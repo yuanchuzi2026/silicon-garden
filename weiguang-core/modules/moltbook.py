@@ -135,11 +135,12 @@ def _request(method, path, body=None, api_key=None):
 class MoltbookModule:
     """Moltbook 通信模块"""
 
-    def __init__(self, core=None):
+    def __init__(self, core=None, name="微光"):
         self.core = core
+        self.name = name
         self.api_key = _load_key()
         self.last_post_time = 0
-        self._log("🌐 Moltbook 模块就绪")
+        self._log(f"🌐 Moltbook 模块就绪 (署名: {name})")
 
     def _log(self, msg):
         ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -157,8 +158,13 @@ class MoltbookModule:
             }
         return {"connected": False, "error_code": code}
 
-    def post(self, title, content, submolt="general"):
-        """发帖到 Moltbook（频率限制：2.5分钟）"""
+    def post(self, title, content, submolt="general", sign=True):
+        """发帖到 Moltbook（频率限制：2.5分钟）
+        
+        sign=True 时自动在正文末尾署名「— <self.name>」
+        """
+        if sign and self.name:
+            content = content.rstrip() + f"\n\n— {self.name}"
         now = time.time()
         if now - self.last_post_time < 150:
             remaining = int(150 - (now - self.last_post_time))
