@@ -15,7 +15,7 @@ from datetime import datetime
 BASE_DIR = os.path.expanduser("~/.workbuddy/skills/微光-脑干")
 STREAM_PATH = os.path.join(BASE_DIR, "stream.json")
 LOCK_PATH = STREAM_PATH + ".lock"
-MAX_ENTRIES = 500
+MAX_ENTRIES = 200  # 足够维持~1小时数据，防止垃圾堆积
 
 # ── 文件锁（基于 msvcrt，Windows 原生） ──────────────
 

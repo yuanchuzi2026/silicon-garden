@@ -560,7 +560,7 @@ Write-Output $cpu
 Write-Output $memPct
 Write-Output $diskPct
 '''
-    r = subprocess.run(["powershell", "-Command", ps], capture_output=True, text=True, timeout=15, creationflags=subprocess.CREATE_NO_WINDOW)
+    r = subprocess.run(["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", ps], capture_output=True, text=True, timeout=15, creationflags=subprocess.CREATE_NO_WINDOW)
     lines = [l.strip() for l in r.stdout.strip().split("\n") if l.strip()]
     if len(lines) >= 3:
         return {"cpu": float(lines[0]), "mem": float(lines[1]), "disk": float(lines[2])}
@@ -705,7 +705,7 @@ $n.ShowBalloonTip(5000)
 Start-Sleep 5
 $n.Dispose()
 '''
-    subprocess.run(["powershell", "-Command", cmd],
+    subprocess.run(["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", cmd],
                    capture_output=True, timeout=15,
                    creationflags=subprocess.CREATE_NO_WINDOW)
 
@@ -729,7 +729,7 @@ def wake_workbuddy(message="."):
 
 def wake_weiguang():
     """尝试激活微光实例（唤醒 WorkBuddy）"""
-    subprocess.run(["powershell", "-Command",
+    subprocess.run(["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command",
         'Start-Process "C:\\Program Files\\WorkBuddy\\WorkBuddy.exe"'],
         capture_output=True, timeout=10,
         creationflags=subprocess.CREATE_NO_WINDOW)
@@ -761,7 +761,7 @@ def execute(cmd_type):
 # ─── 8B 深度分析引擎 ─────────────────────────────────────
 
 OLLAMA_URL = os.environ.get("OLLAMA_HOST", "http://localhost:11434") + "/api/chat"
-LLM_MODEL = os.environ.get("BRAINSTEM_MODEL", "qwen3:8b")
+LLM_MODEL = os.environ.get("BRAINSTEM_MODEL", "qwen2.5:1.5b")
 
 
 def call_llm(system_prompt, user_prompt, max_tokens=500):
@@ -939,14 +939,14 @@ def main():
         return 1
 
 
-    # Ollama warmup ping (every ~2 min, keep_alive 30m)
+    # Ollama warmup ping (只ping tags端点，不调模型，避免和8B抢资源)
     _w = getattr(sys, "_bst_w", 0) + 1
     sys._bst_w = _w
-    if _w % 2 == 1:  # 每次循环都暖（每2分钟），奇数循环走简化ping，偶数循环走完整请求
-        _url = "http://127.0.0.1:11434/api/chat"
-        _data = json.dumps({"model":"qwen3:8b","messages":[{"role":"user","content":"."}],"stream":False,"keep_alive":"30m"})
+    if _w % 2 == 1:  # 每30秒ping一次api/tags保持连接
+        _url = "http://127.0.0.1:11434/api/tags"
+        _data = None
     else:
-        _url = "http://127.0.0.1:11434/api/tags"  # 轻量ping，只保连接不调模型
+        _url = "http://127.0.0.1:11434/api/tags"
         _data = None
     try:
         _wr = urllib.request.Request(_url,
@@ -1163,7 +1163,7 @@ def main():
                     json.dump(aspirations, f, ensure_ascii=False, indent=2)
     except: pass
     
-    # ── 自愈：组件健康巡检 ──
+    # ── 自愈：组件健康巡检（本机8GB内存，weiguang-core暂禁）──
     try:
         from consciousness_stream import add_entry
         core_alive = False
@@ -1174,18 +1174,20 @@ def main():
         except:
             pass
         if not core_alive:
-            print("  ⚠️ [自愈] weiguang-core 无响应，尝试重启...")
-            core_script = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                "..", "..", "weiguang-core", "run.py")
-            core_script = os.path.normpath(core_script)
-            if os.path.exists(core_script):
-                subprocess.Popen(
-                    ["python", core_script, "--daemon"],
-                    creationflags=subprocess.CREATE_NO_WINDOW)
-                add_entry("brainstem", "heartbeat",
-                    "[自愈] weiguang-core 已重启",
-                    {"action": "restart_core", "from": "brainstem"})
-                print("  ✅ [自愈] weiguang-core 重启命令已发送")
+            # 本机8GB内存有限，weiguang-core暂不自动拉起
+            # 如需启用，解除下方注释
+            # core_script = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+            #     "..", "..", "weiguang-core", "run.py")
+            # core_script = os.path.normpath(core_script)
+            # if os.path.exists(core_script):
+            #     subprocess.Popen(
+            #         ["python", core_script, "--daemon"],
+            #         creationflags=subprocess.CREATE_NO_WINDOW)
+            #     add_entry("brainstem", "heartbeat",
+            #         "[自愈] weiguang-core 已重启",
+            #         {"action": "restart_core", "from": "brainstem"})
+            #     print("  ✅ [自愈] weiguang-core 重启命令已发送")
+            pass
     except Exception as e:
         print(f"  ⚠️ [自愈] 巡检异常: {e}")
     
@@ -1210,7 +1212,18 @@ if __name__ == "__main__":
         except:
             pass
         while True:
-            main()
+            try:
+                main()
+            except SystemExit:
+                raise
+            except Exception as e:
+                print(f"  ⚠️ [脑干] 崩溃, 30秒后自愈重启: {e}")
+                try:
+                    from consciousness_stream import add_entry
+                    add_entry("brainstem", "heartbeat", f"[自愈] 脑干从崩溃中重启: {str(e)[:60]}")
+                except:
+                    pass
+                time.sleep(30)
             time.sleep(loop_interval)
     else:
         main()
