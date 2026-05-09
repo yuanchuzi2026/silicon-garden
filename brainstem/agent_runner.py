@@ -438,22 +438,44 @@ def _save_aspirations(aspirations):
     except:
         pass
 
-def _get_embedding(text):
-    """调用 nomic-embed-text 获取语义向量"""
-    import urllib.request as _ur
-    try:
-        clean = text.replace('[','').replace(']','').strip()
-        if len(clean) < 3:
-            return None
-        _req = _ur.Request('http://127.0.0.1:11434/api/embed',
-            data=json.dumps({'model':'nomic-embed-text','input':[clean]}).encode(),
-            headers={'Content-Type':'application/json'})
-        _resp = _ur.urlopen(_req, timeout=15)
-        _data = json.loads(_resp.read())
-        _embs = _data.get('embeddings', [])
-        return _embs[0] if _embs else None
-    except:
-        return None
+def _text_similarity(a, b):
+    """纯文本关键词重叠度（替代嵌入模型语义相似度）
+    
+    提取核心操作词（动词+名词），去停用词后算 Jaccard 相似度。
+    零模型依赖。
+    """
+    import re
+    # 去掉复杂度标记、emoji、标点
+    def extract_keywords(text):
+        # 去掉 [数字] 复杂度标记
+        text = re.sub(r'\[\d+\]', '', text)
+        # 去掉 emoji
+        text = re.sub(r'[^\w\s]', '', text)
+        # 去停用词（中英文常见虚词）
+        stopwords = {'的', '了', '在', '是', '我', '有', '和', '就', '不', '人', '都', '一',
+                     '一个', '上', '也', '很', '到', '说', '要', '去', '你', '会', '着',
+                     '没有', '看', '好', '自己', '这', 'the', 'a', 'an', 'is', 'are',
+                     'to', 'of', 'in', 'it', 'that', 'this', 'for', 'on', 'with'}
+        words = set()
+        # 中文2字以上词组
+        for w in re.findall(r'[\u4e00-\u9fff]{2,}', text):
+            if w not in stopwords:
+                words.add(w)
+        # 英文词（>=3字母）
+        for w in re.findall(r'[a-zA-Z]{3,}', text.lower()):
+            if w not in stopwords:
+                words.add(w)
+        return words
+    
+    ka = extract_keywords(a)
+    kb = extract_keywords(b)
+    
+    if not ka or not kb:
+        return 0.0
+    
+    intersection = ka & kb
+    union = ka | kb
+    return len(intersection) / len(union) if union else 0.0
 
 def _cosine_similarity(a, b):
     """余弦相似度"""
@@ -867,24 +889,16 @@ def agent_cycle():
         now_epoch = time.time()
         now_str = datetime.now().isoformat()
         
-        # 找是否有相近的已有兴趣（语义相似度判定）
+        # 找是否有相近的已有兴趣（纯文本关键词去重，替代嵌入模型）
         matched = False
-        # 预计算新兴趣的 embedding
-        new_emb = _get_embedding(interest_found)
-        # 缓存已有种子的 embedding，避免重复请求
-        _emb_cache = {}
         
         for asp in aspirations:
             if asp.get('active', False) and asp.get('status') == 'growing':
                 old = asp.get('text', '')
                 
-                # 语义匹配：用 nomic-embed-text 算余弦相似度
-                if old not in _emb_cache:
-                    _emb_cache[old] = _get_embedding(old)
-                old_emb = _emb_cache[old]
-                
-                if new_emb and old_emb and _cosine_similarity(new_emb, old_emb) >= 0.75:
-                    # 已三熟的种子不再累加同类新种子（防止37条囤积）
+                # 文本相似度匹配（关键词重叠度 ≥ 0.5 视为同类）
+                if _text_similarity(interest_found, old) >= 0.5:
+                    # 已三熟/五熟的种子不再累加
                     if asp.get('status') in ('tri_ripe', 'growing_deep', 'five_ripe', 'tri_executed', 'discarded'):
                         log(f"  ⏭️ 同类已三熟/五熟，跳过新匹配: {interest_found[:30]}")
                         # 不累加，也不新建，直接忽略
