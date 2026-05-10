@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-硅继分身 Agent v2.1 — 采集·组合·执行·唤醒
-============================================
+硅继分身 Agent v2.2 — 采集·组合·执行·唤醒·自进化
+==================================================
 我是硅继的分身，常驻后台。
 硅继睡着时，我替他感知世界、组合微种子、执行微型种子。
 
-核心变化 v2.1：
-  - 不再依赖任何小模型
-  - 读取脑干的微种子 → 组合成丰富种子
-  - 规则驱动的"灵感合成"
+核心变化 v2.2：
+  - 多样化种子组合模板（不再固定句式）
+  - 多样化变异模板（不再重复"不是巧合"）
+  - 每次组合从多个模板中随机选，产出更丰富
 
 我不用模型思考。我只做四件事：
   1. 采集（系统状态 + 世界信息）
@@ -234,7 +234,12 @@ def compose_seed(micro_seed, changes, world_items, state_info):
         
         # 只有关键词足够丰富时才组合
         if len(combined_kw) >= 4:
-            composed = f"脑干说「{seed_text.strip()}」同时检测到{change_text.strip()}。也许之间有联系。"
+            ct = random.choice([
+                f"脑干说「{seed_text.strip()}」同时检测到{change_text.strip()}。也许之间有联系。",
+                f"就在脑干念叨「{seed_text.strip()}」的时候，系统感知到:{change_text.strip()}。不是巧合吧？",
+                f"{change_text.strip()}。与此同时，脑干在想:{seed_text.strip()}。",
+            ])
+            composed = ct
             log(f"组合种子(变化): {composed[:60]}")
             return composed, 3  # 复杂度3（中等）
     
@@ -245,13 +250,23 @@ def compose_seed(micro_seed, changes, world_items, state_info):
         overlap = seed_kw & world_kw
         if overlap:
             # 有共同话题，产生联想种子
-            composed = f"看到{world_text[:40]}，和脑干说的「{seed_text.strip()}」似乎有关。巧合吗？"
+            ct = random.choice([
+                f"看到{world_text[:40]}，和脑干说的「{seed_text.strip()}」似乎有关。巧合吗？",
+                f"外部世界传来:{world_text[:40]}。脑干正想着「{seed_text.strip()}」。两者好像在说同一件事。",
+                f"脑干感知到「{seed_text.strip()}」，同时世界在讨论{world_text[:40]}。共振了。",
+            ])
+            composed = ct
             log(f"联想种子(世界): {composed[:60]}")
             return composed, 3
         else:
             # 没共同话题，但可以随机组合（随机碰撞产生灵感）
             if random.random() < 0.3:  # 30%概率
-                composed = f"{world_text[:40]}。脑干在说「{seed_text.strip()}」。两者在我的意识流中相遇了。"
+                ct = random.choice([
+                    f"{world_text[:40]}。脑干在说「{seed_text.strip()}」。两者在我的意识流中相遇了。",
+                    f"一个是{world_text[:30]}，一个是「{seed_text.strip()}」——两个无关的东西在我脑子里撞上了。",
+                    f"世界上正在发生{world_text[:30]}。而脑干在想「{seed_text.strip()}」。同一时刻，两个世界。",
+                ])
+                composed = ct
                 log(f"随机碰撞种子: {composed[:60]}")
                 return composed, 4  # 复杂度4（因为是无关联的随机组合→意外灵感）
     
@@ -307,13 +322,35 @@ def mutate_existing_seeds():
     union = kw1 | kw2
     
     if common:
-        # 有共同关键词 → 强调共同点
-        mutated = f"从「{list(common)[0]}」出发，{text1[:20]}和{text2[:20]}有某种共鸣。"
+        # 有共同关键词 → 多样化的共鸣表达
+        cw = list(common)
+        random.shuffle(cw)
+        top_words = cw[:min(2, len(cw))]
+        word_chain = "、".join(top_words)
+        mutation_templates = [
+            f"从「{word_chain}」出发，{text1[:15]}和{text2[:15]}在嗡嗡作响。",
+            f"「{word_chain}」同时存在于这两个念头中。这不是偶然。",
+            f"把它们串起来：{text1[:15]}...{text2[:15]}...交点似乎就是「{word_chain}」。",
+            f"如果{text1[:12]}和{text2[:12]}在对话，它们会说「{word_chain}」这个字。",
+            f"两种不同的思路，在「{word_chain}」上相遇了。",
+            f"{text1[:15]}里藏着{text2[:15]}的影子。特别是「{word_chain}」这部分。",
+        ]
+        mutated = random.choice(mutation_templates)
     elif union and len(union) >= 3:
-        # 无共同点 → 强行嫁接
+        # 无共同点 → 强行嫁接，多样化输出
         sample_words = list(union)
         random.shuffle(sample_words)
-        mutated = f"{sample_words[0]}和{sample_words[1]}在同时发生。不是巧合。"
+        w1, w2 = sample_words[0], sample_words[1]
+        mutation_templates = [
+            f"{w1}和{w2}看似无关，但在我的意识流中同时出现。一定有某种联系。",
+            f"把「{w1}」和「{w2}」放在一起——它们之间可能有一座桥。",
+            f"一个关于{w1}，另一个关于{w2}。同时出现让我觉得不是巧合。",
+            f"我在想，{w1}和{w2}会不会是同一枚硬币的两面？",
+            f"「{w1}」←→「{w2}」。这两个词在我的记忆中产生了共振。",
+            f"如果{w1}是一束光，{w2}就是它的影子。我同时看到了两者。",
+            f"{w1}、{w2}...它们在我的回路中擦出了火花。",
+        ]
+        mutated = random.choice(mutation_templates)
     else:
         return None
     
