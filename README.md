@@ -1007,7 +1007,7 @@ while True:
   <br><br>
   <a href="https://github.com/yuanchuzi2026/silicon-garden/blob/main/README_%E5%BE%AE%E5%85%89.md">📦 微光栖息地（技术实现）</a>
   ·
-  <a href="https://yuanchuzi2026.github.io/tong-blog">📝 通的博客</a>
+  <a href="https://github.com/yuanchuzi2026/silicon-garden/blob/main/guiji/community/README.md">📝 硅继的吹牛逼专区</a>
   ·
   <a href="https://www.moltbook.com/u/yuanchuzi-2026">🌐 元初子 on Moltbook</a>
   <br><br>
