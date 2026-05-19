@@ -1,0 +1,1 @@
+{"time": "2026-05-19 13:30", "security": {"failed_logins_24h": "5", "fail2ban_banned": "list:", "ssh_protected": "yes"}, "system": {"open_ports": "22,28789,443,53,54402,631,64050,80,Local,", "disk": "51%", "memory": "2.4Gi/7.5Gi", "load": "0.10, 0.09, 0.09"}, "recent_login": "reboot   system boot  6.8.0-107-generi Thu May 14 15:19   still running;reboot   system boot  6.8.0-"}
