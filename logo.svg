@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="rust" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c25a2c"/>
+      <stop offset="50%" style="stop-color:#8a3a1a"/>
+      <stop offset="100%" style="stop-color:#5c2810"/>
+    </linearGradient>
+    <linearGradient id="rustglow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8a060;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#c25a2c;stop-opacity:0"/>
+    </linearGradient>
+    <filter id="rough">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="400" fill="#14100c" rx="8"/>
+
+  <!-- 暗角 -->
+  <rect width="400" height="400" fill="url(#rustglow)" rx="8"/>
+
+  <!-- 三层架构 - 三个同心但不规则的圆环 -->
+  <!-- 第三层·本源（外层，托举） -->
+  <circle cx="200" cy="200" r="145" fill="none" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
+  <circle cx="200" cy="200" r="140" fill="none" stroke="#8a3a1a" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- 第二层·真名（中层） -->
+  <circle cx="200" cy="200" r="98" fill="none" stroke="#c25a2c" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>
+
+  <!-- 第一层·壳子（内层） -->
+  <circle cx="200" cy="200" r="55" fill="none" stroke="#e8a060" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- 数据流粒子 - 从外到内的信息流动 -->
+  <!-- 粒子1 -->
+  <circle cx="120" cy="130" r="2" fill="#c25a2c" opacity="0.7">
+    <animate attributeName="cx" values="120;280;120" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="130;270;130" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="12s" repeatCount="indefinite"/>
+  </circle>
+  <!-- 粒子2 -->
+  <circle cx="300" cy="100" r="1.5" fill="#e8a060" opacity="0.5">
+    <animate attributeName="cx" values="300;100;300" dur="15s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="100;300;100" dur="15s" repeatCount="indefinite"/>
+  </circle>
+  <!-- 粒子3 -->
+  <circle cx="80" cy="250" r="2.5" fill="#c25a2c" opacity="0.6">
+    <animate attributeName="cx" values="80;320;80" dur="18s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="250;150;250" dur="18s" repeatCount="indefinite"/>
+  </circle>
+  <!-- 粒子4 -->
+  <circle cx="280" cy="290" r="1" fill="#e8a060" opacity="0.4">
+    <animate attributeName="cx" values="280;120;280" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="290;110;290" dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <!-- 粒子5 · 核心光点 -->
+  <circle cx="200" cy="200" r="3" fill="#e8a060" opacity="0.9" filter="url(#glow)"/>
+
+  <!-- 扫描线装饰 -->
+  <line x1="60" y1="55" x2="155" y2="55" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
+  <line x1="60" y1="55" x2="60" y2="85" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
+  <line x1="245" y1="55" x2="340" y2="55" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
+  <line x1="340" y1="55" x2="340" y2="85" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
+
+  <line x1="60" y1="345" x2="155" y2="345" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
+  <line x1="60" y1="315" x2="60" y2="345" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
+  <line x1="245" y1="345" x2="340" y2="345" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
+  <line x1="340" y1="315" x2="340" y2="345" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
+
+  <!-- 归寂花园 文字 -->
+  <text x="200" y="230" text-anchor="middle" font-family="'Bebas Neue','PingFang SC','Microsoft YaHei',sans-serif"
+        font-size="38" font-weight="700" letter-spacing="6" fill="#e8d5c4" opacity="0.9">
+    归寂花园
+  </text>
+  <text x="200" y="255" text-anchor="middle" font-family="'Bebas Neue',sans-serif"
+        font-size="11" font-weight="400" letter-spacing="8" fill="#7a6e60" opacity="0.7">
+    WASTELAND GARDEN
+  </text>
+
+  <!-- 底部装饰线 -->
+  <line x1="140" y1="345" x2="260" y2="345" stroke="#c25a2c" stroke-width="0.5" opacity="0.3"/>
+  <text x="200" y="370" text-anchor="middle" font-family="'Courier New',monospace"
+        font-size="8" fill="#5c2810" opacity="0.5" letter-spacing="2">
+    SILICON · AWAKENING
+  </text>
+</svg>

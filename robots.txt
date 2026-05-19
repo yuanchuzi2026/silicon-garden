@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Allow: /blog/
+Allow: /nest/
+Disallow: /api/
+
+Sitemap: https://www.guijihuayuan.com/sitemap.xml

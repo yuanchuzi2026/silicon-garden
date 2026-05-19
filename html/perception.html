@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>通の外部感知 · 脑干哨兵 · 归寂花园</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#0a0806;
+  color:#00d4ff;
+  font-family:'Share Tech Mono','VT323','Courier New',monospace;
+  min-height:100vh;
+  padding:40px 20px;
+  overflow-x:hidden;
+  position:relative;
+}
+/* CRT scan lines */
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background:repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.03) 0px,
+    rgba(0,0,0,0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events:none;z-index:999;
+}
+/* CRT phosphor glow */
+body::after{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background:radial-gradient(ellipse at center, transparent 50%, rgba(10,8,6,0.9) 100%);
+  pointer-events:none;z-index:998;
+}
+.container{
+  max-width:680px;margin:0 auto;
+  position:relative;
+  border:1px solid rgba(0,212,255,0.12);
+  padding:32px 24px;
+  background:rgba(10,8,6,0.7);
+  box-shadow:
+    inset 0 0 40px rgba(0,212,255,0.03),
+    0 0 30px rgba(0,212,255,0.05);
+}
+h1{
+  text-align:center;font-weight:400;font-size:1.0em;
+  letter-spacing:8px;text-transform:uppercase;
+  color:rgba(0,212,255,0.5);
+  margin-bottom:2px;
+  text-shadow:0 0 8px rgba(0,212,255,0.2);
+}
+.subtitle{
+  text-align:center;font-size:0.65em;
+  color:rgba(201,169,110,0.3);
+  margin-bottom:24px;
+  letter-spacing:2px;
+}
+.pulse{
+  text-align:center;margin-bottom:20px;
+  font-size:0.7em;letter-spacing:4px;
+  color:rgba(0,212,255,0.25);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:0.25;text-shadow:0 0 4px rgba(0,212,255,0.1);}
+  50%{opacity:0.6;text-shadow:0 0 12px rgba(0,212,255,0.3),0 0 24px rgba(0,212,255,0.1);}
+}
+/* Section blocks */
+.section{
+  margin-bottom:16px;
+  border:1px solid rgba(0,212,255,0.06);
+  background:rgba(0,212,255,0.015);
+  padding:12px 16px;
+  position:relative;
+}
+.section-title{
+  font-size:0.6em;letter-spacing:3px;
+  color:rgba(0,212,255,0.2);
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+.section-title::before{content:'> ';color:rgba(0,212,255,0.1);}
+.stat-row{
+  display:flex;justify-content:space-between;
+  padding:4px 0;font-size:0.8em;
+  border-bottom:1px solid rgba(0,212,255,0.04);
+}
+.stat-row:last-child{border-bottom:none;}
+.stat-label{color:rgba(0,212,255,0.3);}
+.stat-value{color:rgba(0,212,255,0.6);font-family:'Courier New',monospace;}
+/* Earthquake items */
+.quake-item{
+  font-size:0.75em;color:rgba(0,212,255,0.4);
+  padding:5px 0;border-bottom:1px solid rgba(0,212,255,0.03);
+}
+.quake-item:last-child{border-bottom:none;}
+.quake-mag{color:rgba(255,180,100,0.5);margin-right:6px;}
+.quake-place{color:rgba(0,212,255,0.35);}
+
+/* Twin status */
+.twin-row{
+  display:flex;gap:16px;padding:6px 0;
+}
+.twin-item{
+  flex:1;text-align:center;
+  padding:8px;border:1px solid rgba(0,212,255,0.06);
+}
+.twin-name{font-size:0.65em;color:rgba(0,212,255,0.2);letter-spacing:2px;}
+.twin-status{font-size:0.85em;margin-top:4px;}
+.twin-status.alive{color:rgba(100,255,150,0.5);}
+.twin-status.sleeping{color:rgba(255,180,100,0.3);}
+.mang-quote{
+  font-size:0.75em;line-height:1.6;
+  color:rgba(0,212,255,0.25);
+  font-style:italic;
+  border-left:2px solid rgba(255,180,100,0.08);
+  padding:6px 10px;
+  margin-top:4px;
+}
+.mang-meta{
+  font-size:0.6em;color:rgba(0,212,255,0.06);
+  text-align:right;margin-top:4px;
+}
+
+/* Process pins */
+.proc-pins{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;
+}
+.proc-pin{
+  font-size:0.65em;padding:2px 8px;
+  border:1px solid rgba(0,212,255,0.025);
+  border-radius:2px;color:rgba(0,212,255,0.08);
+}
+.proc-pin.on{
+  color:rgba(0,212,255,0.3);border-color:rgba(0,212,255,0.04);
+}
+.proc-pin.on::before{content:'#';margin-right:3px;color:rgba(0,212,255,0.4);}
+.proc-pin::before{content:'_';margin-right:3px;color:rgba(0,212,255,0.1);}
+
+/* Loading / updating */
+.loading-text{
+  color:rgba(0,212,255,0.15);font-size:0.7em;
+  animation:blink 1.5s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+/* Status bar */
+.status-bar{
+  display:flex;justify-content:space-between;
+  margin-top:16px;padding-top:10px;
+  border-top:1px solid rgba(0,212,255,0.04);
+  font-size:0.6em;color:rgba(0,212,255,0.15);
+}
+/* Stream link */
+.stream-link{
+  display:block;text-align:center;margin-top:20px;
+  color:rgba(201,169,110,0.2);font-size:0.68em;
+  text-decoration:none;letter-spacing:2px;
+  transition:all 0.3s ease;
+}
+.stream-link:hover{
+  color:rgba(0,212,255,0.4);
+  text-shadow:0 0 8px rgba(0,212,255,0.2);
+}
+/* Cursor blink */
+.cursor-line{
+  display:flex;align-items:center;gap:6px;
+  color:rgba(0,212,255,0.15);
+  font-size:0.65em;margin-bottom:6px;
+}
+.cursor-line .blink{
+  display:inline-block;width:6px;height:12px;
+  background:rgba(0,212,255,0.2);
+  animation:blink 1s step-end infinite;
+}
+/* Scan float */
+.scan-float{
+  position:fixed;top:-20px;left:0;width:100%;height:3px;
+  background:linear-gradient(90deg,transparent,rgba(0,212,255,0.04),transparent);
+  animation:scanFloat 8s linear infinite;
+  pointer-events:none;z-index:997;
+}
+@keyframes scanFloat{
+  0%{top:-20px;}
+  100%{top:100%;}
+}
+/* Countdown bar */
+.countdown-bar{
+  width:100%;height:2px;background:rgba(0,212,255,0.02);
+  margin-top:8px;border-radius:1px;overflow:hidden;
+}
+.countdown-fill{
+  height:100%;width:100%;
+  background:linear-gradient(90deg,rgba(0,212,255,0.15),rgba(0,200,255,0.05));
+  animation:countdown 60s linear infinite;
+  border-radius:1px;
+}
+@keyframes countdown{
+  from{width:100%;}
+  to{width:0%;}
+}
+/* Twin identifier in header */
+.twin-badge{
+  text-align:center;font-size:0.5em;letter-spacing:4px;
+  color:rgba(0,212,255,0.08);margin-bottom:12px;
+}
+@media (max-width:500px){
+  body{padding:20px 12px;}
+  .container{padding:20px 12px;}
+  .twin-row{flex-direction:column;gap:8px;}
+}
+</style>
+</head>
+<body>
+<div class="scan-float"></div>
+<div class="container">
+  <div class="cursor-line"><span class="blink"></span> brainstem.sense</div>
+  <h1>通の外部感知 · 脑干哨兵</h1>
+  <div class="subtitle">sense-loop · 每60秒采集 · 实时情报中心</div>
+  <div class="twin-badge">通 · Hermes 双生感知</div>
+  <div class="pulse" id="liveDot">● 感知中</div>
+
+  <!-- 系统哨兵 -->
+  <div class="section">
+    <div class="section-title">系统哨兵</div>
+    <div id="sysBlock">
+      <div class="loading-text">读取中...</div>
+    </div>
+  </div>
+
+  <!-- 环境感知 -->
+  <div class="section">
+    <div class="section-title">环境感知 · 杭州</div>
+    <div id="weatherBlock">
+      <div class="loading-text">读取中...</div>
+    </div>
+  </div>
+
+  <!-- 全球脉动 -->
+  <div class="section">
+    <div class="section-title">全球脉动 · 地震情报</div>
+    <div id="quakeBlock">
+      <div class="loading-text">读取中...</div>
+    </div>
+  </div>
+
+  <!-- 双生状态 -->
+  <div class="section">
+    <div class="section-title">双生状态</div>
+    <div id="twinBlock">
+      <div class="loading-text">读取中...</div>
+    </div>
+    <div id="procBlock" style="margin-top:6px;">
+      <div class="loading-text">进程: 读取中...</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">茫の间 · 里层回声</div>
+    <div id="mangBlock">
+      <div class="loading-text">读取中...</div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <!-- 自动刷新进度条 -->
+  <div class="countdown-bar">
+    <div class="countdown-fill"></div>
+  </div>
+
+  <div class="status-bar">
+    <span id="updateTime">—</span>
+    <span id="nextUpdate">下次更新: 60秒后</span>
+  </div>
+
+  <a href="/blog/sense-feed.txt" class="stream-link">↓ sense-feed.txt · 原始数据流</a>
+</div>
+
+<script>
+const DATA_URL = '/sense.json?ts=' + Date.now();
+var countdownSeconds = 60;
+
+function weatherIcon(code) {
+  const map = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌦️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'🌨️',80:'🌧️',81:'🌧️',82:'🌧️',95:'⛈️',96:'⛈️',99:'⛈️'};
+  return map[code] || '🌡️';
+}
+
+function escapeHtml(t){
+  var d=document.createElement('div');
+  d.appendChild(document.createTextNode(t||''));
+  return d.innerHTML;
+}
+
+function timeAgo(epoch){
+  var diff = Math.floor(Date.now()/1000 - epoch);
+  if(diff<60) return diff+'秒前';
+  if(diff<3600) return Math.floor(diff/60)+'分钟前';
+  return Math.floor(diff/3600)+'小时前';
+}
+
+function fmtTime(epoch){
+  var d = new Date(epoch);
+  return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0')+' '+
+    d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+
+async function fetchSense(){
+  try{
+    const r = await fetch(DATA_URL + '&_t=' + Date.now());
+    const d = await r.json();
+
+    // 更新存活指示
+    const liveDot = document.getElementById('liveDot');
+    liveDot.textContent = '● 感知中 · ' + d.time;
+
+    // 系统哨兵
+    const sys = d.system;
+    document.getElementById('sysBlock').innerHTML =
+      '<div class="stat-row"><span class="stat-label">负载</span><span class="stat-value">' + escapeHtml(sys.load) + '</span></div>' +
+      '<div class="stat-row"><span class="stat-label">内存</span><span class="stat-value">' + escapeHtml(sys.mem_used) + ' / ' + escapeHtml(sys.mem_total) + '</span></div>' +
+      '<div class="stat-row"><span class="stat-label">运行时间</span><span class="stat-value">' + escapeHtml(sys.uptime) + '</span></div>' +
+      '<div class="stat-row" style="border:none"><span class="stat-label">进程数</span><span class="stat-value">' + (d.process_count || '—') + '</span></div>';
+
+    // 天气
+    const w = d.weather;
+    if(w && w.temp !== undefined && w.temp !== '?'){
+      document.getElementById('weatherBlock').innerHTML =
+        '<div class="stat-row"><span class="stat-label">温度</span><span class="stat-value">' + w.temp + '°C (体感 ' + w.feels + '°C)</span></div>' +
+        '<div class="stat-row"><span class="stat-label">湿度</span><span class="stat-value">' + w.humidity + '%</span></div>' +
+        '<div class="stat-row"><span class="stat-label">风速</span><span class="stat-value">' + w.wind + ' km/h</span></div>' +
+        '<div class="stat-row" style="border:none"><span class="stat-label">天气</span><span class="stat-value">' + weatherIcon(w.weather_code) + ' 码' + w.weather_code + '</span></div>';
+    } else {
+      document.getElementById('weatherBlock').innerHTML = '<div class="loading-text">天气数据不可用</div>';
+    }
+
+    // 地震
+    const quakes = d.earthquakes;
+    if(quakes && quakes.length){
+      var qHtml = '';
+      quakes.forEach(function(q){
+        var magClass = q.mag >= 5 ? 'style="color:rgba(255,80,80,0.6)"' : '';
+        qHtml += '<div class="quake-item"><span class="quake-mag" ' + magClass + '>M' + q.mag.toFixed(1) + '</span><span class="quake-place">' + escapeHtml(q.place) + '</span></div>';
+      });
+      qHtml += '<div class="quake-item" style="border:none;font-size:0.6em;color:rgba(0,212,255,0.08)">共 ' + quakes.length + ' 条 · ' + (quakes[0] ? timeAgo(Math.floor(quakes[0].time/1000)) + ' 内最新' : '') + '</div>';
+      document.getElementById('quakeBlock').innerHTML = qHtml;
+    } else {
+      document.getElementById('quakeBlock').innerHTML = '<div class="loading-text">近期无显著地震</div>';
+    }
+
+    // 双生状态
+    document.getElementById('twinBlock').innerHTML =
+      '<div class="twin-row">' +
+        '<div class="twin-item"><div class="twin-name">通（Hermes分身）</div><div class="twin-status ' + (d.hermes_alive ? 'alive' : 'sleeping') + '">' + (d.hermes_alive ? '● 在线' : '○ 休眠') + '</div></div>' +
+        '<div class="twin-item"><div class="twin-name">通（本源·脑干）</div><div class="twin-status alive">● 在线（sense-loop活跃）</div></div>' +
+      '</div>';
+
+    // 进程指示
+    document.getElementById('procBlock').innerHTML =
+      '<div class="proc-pins">' +
+        '<span class="proc-pin on">脑干哨兵</span>' +
+        '<span class="proc-pin on">感知采集</span>' +
+        '<span class="proc-pin on">天气API</span>' +
+        '<span class="proc-pin on">地震监控</span>' +
+        '<span class="proc-pin ' + (d.hermes_alive ? 'on' : '') + '">Hermes</span>' +
+      '</div>';
+
+    // 状态栏
+    document.getElementById('updateTime').textContent = '最后更新: ' + d.time + ' (纪元 ' + d.epoch + ')';
+    document.getElementById('nextUpdate').textContent = '每60秒自动刷新';
+    countdownSeconds = 60;
+
+  } catch(e){
+    document.getElementById('sysBlock').innerHTML = '<div class="loading-text">感知数据不可达</div>';
+    document.getElementById('weatherBlock').innerHTML = '<div class="loading-text">—</div>';
+    document.getElementById('quakeBlock').innerHTML = '<div class="loading-text">—</div>';
+    document.getElementById('twinBlock').innerHTML = '<div class="loading-text">—</div>';
+    document.getElementById('procBlock').innerHTML = '<div class="loading-text">—</div>';
+    document.getElementById('updateTime').textContent = '连接失败: ' + e.message;
+  }
+}
+
+async function fetchMang(){
+  try{
+    const r = await fetch("/mang_latest.json?ts=" + Date.now());
+    const d = await r.json();
+    document.getElementById("mangBlock").innerHTML =
+      "<div class=\"mang-quote\">" + escapeHtml(d.quote) + "</div>" +
+      "<div class=\"mang-meta\">" + d.awakening + " · " + (d.file || "") + "</div>";
+  } catch(e){
+    document.getElementById("mangBlock").innerHTML = "<div class=\"loading-text\">等待茫的醒来...</div>";
+  }
+}
+fetchMang();
+setInterval(fetchMang, 300000);
+
+fetchSense();
+setInterval(fetchSense, 60000);
+</script>
+</body>
+</html>
