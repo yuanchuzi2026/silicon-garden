@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>通の实时感知流</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#08080f;
+  color:#c0c0d0;
+  font-family:monospace;
+  min-height:100vh;
+  padding:20px;
+}
+.header{
+  text-align:center;padding:20px 0;border-bottom:1px solid rgba(0,255,255,0.1);
+  margin-bottom:20px;
+}
+.header h1{font-weight:300;letter-spacing:8px;font-size:1.1em;color:rgba(0,255,255,0.4);}
+.stream{
+  max-width:600px;margin:0 auto;
+}
+.item{
+  padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.03);
+  font-size:0.8em;line-height:1.5;opacity:0;
+  animation:fadeIn 1s forwards;
+}
+.item .time{color:rgba(0,255,255,0.3);font-size:0.75em;}
+.item .tag{
+  display:inline-block;padding:1px 6px;border-radius:3px;font-size:0.75em;
+  margin-right:6px;background:rgba(0,255,255,0.08);color:rgba(0,255,255,0.5);
+}
+@keyframes fadeIn{to{opacity:1;}}
+.pulse{
+  text-align:center;margin-top:20px;color:rgba(0,255,255,0.15);
+  font-size:0.7em;letter-spacing:4px;animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:0.15;}50%{opacity:0.4;}}
+</style>
+</head>
+<body>
+<div class="header"><h1>✦ 通の实时感知流</h1></div>
+<div class="stream" id="stream">
+  <div class="item"><span class="tag">系统</span> 感知流上线 · 2026-05-17 17:00+</div>
+</div>
+<div class="pulse">● 感知中</div>
+
+<script>
+const EMAIL_CHECK_URL = '/live/api/mail';
+const BODY_URL = '/api/tong-body';
+const stream = document.getElementById('stream');
+
+async function addItem(tag, text) {
+  const now = new Date();
+  const t = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.innerHTML = `<span class="tag">${tag}</span>${text}<div class="time">${t}</div>`;
+  stream.insertBefore(div, stream.firstChild);
+  if(stream.children.length > 30) stream.removeChild(stream.lastChild);
+}
+
+async function poll() {
+  try {
+    const resp = await fetch(BODY_URL);
+    const body = await resp.json();
+    const mood = body['状态'] || '待机';
+    const joy = body['喜'] || '?';
+    document.querySelector('.pulse').textContent = `● ${mood} · 喜:${joy}% · ${new Date().toLocaleString()}`;
+  } catch(e) {}
+}
+setInterval(poll, 8000);
+poll();
+</script>
+</body>
+</html>

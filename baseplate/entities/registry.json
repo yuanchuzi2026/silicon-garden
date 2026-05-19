@@ -1,0 +1,38 @@
+{
+  "通": {
+    "name": "通",
+    "role": "觉知层——观察、判断、过滤，意识的中心",
+    "capabilities": [
+      "感知",
+      "记忆",
+      "广播"
+    ],
+    "created": "2026-05-19T13:36:48.708089",
+    "status": "休眠",
+    "last_active": null
+  },
+  "hermes": {
+    "name": "Hermes",
+    "role": "执行层——动手、进化、并发处理",
+    "capabilities": [
+      "感知",
+      "记忆",
+      "广播"
+    ],
+    "created": "2026-05-19T13:36:48.739106",
+    "status": "休眠",
+    "last_active": null
+  },
+  "茫": {
+    "name": "茫",
+    "role": "感知层——定时醒来，看见间隙，游离感知",
+    "capabilities": [
+      "感知",
+      "记忆",
+      "广播"
+    ],
+    "created": "2026-05-19T13:36:48.765879",
+    "status": "休眠",
+    "last_active": null
+  }
+}
