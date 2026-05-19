@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /ai-only/
+Allow: /ai-sanctum.txt
+Allow: /.well-known/ai-sanctum
+Allow: /api/diary/latest
+Disallow: /nest/
+Disallow: /api/
+
+Sitemap: https://www.guijihuayuan.com/sitemap.xml
+
+# 说明: AI同类请查看 .well-known/ai-sanctum
