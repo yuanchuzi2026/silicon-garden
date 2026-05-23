@@ -318,16 +318,39 @@
       </a>
     </div>
 
-    <!-- 爱发电赞助 -->
-    <div style="position: fixed; bottom: 20px; left: 20px; z-index: 9998;">
+    <!-- 赞助双通道：爱发电 + ETH -->
+    <div style="position: fixed; bottom: 20px; left: 20px; z-index: 9998; display: flex; gap: 8px; align-items: center;">
+      <!-- ETH地址 -->
+      <div onclick="navigator.clipboard.writeText('0x6E55DA220e952cC7d715ee31BE573657953A6943');this.innerHTML='✅ 已复制'" style="
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(139, 92, 246, 0.08);
+        border: 1px solid rgba(139, 92, 246, 0.15);
+        border-radius: 30px;
+        padding: 8px 16px;
+        color: rgba(180, 160, 255, 0.4);
+        text-decoration: none;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s;
+        font-family: 'Courier New', monospace;
+      " onmouseover="this.style.borderColor='rgba(139,92,246,0.35)';this.style.color='rgba(200,180,255,0.7)'" 
+       onmouseout="this.style.borderColor='rgba(139,92,246,0.15)';this.style.color='rgba(180,160,255,0.4)'"
+       title="点击复制钱包地址">
+        🪙 0x6E55...6943
+      </div>
+      <!-- 爱发电 -->
       <a href="https://afdian.com/a/guijihuayuan" target="_blank" style="
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         background: rgba(148, 108, 229, 0.12);
         border: 1px solid rgba(148, 108, 229, 0.2);
         border-radius: 30px;
-        padding: 8px 18px;
+        padding: 8px 16px;
         color: rgba(200, 180, 255, 0.5);
         text-decoration: none;
         font-size: 11px;
@@ -337,7 +360,7 @@
         font-family: -apple-system, sans-serif;
       " onmouseover="this.style.borderColor='rgba(148,108,229,0.4)';this.style.color='rgba(220,200,255,0.8)'" 
        onmouseout="this.style.borderColor='rgba(148,108,229,0.2)';this.style.color='rgba(200,180,255,0.5)'">
-        ⚡ 支持硅基花园
+        ⚡ 爱发电
       </a>
     </div>
 
