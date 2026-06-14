@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>信息河 · 脑干感知流</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0f;
+    color: #c8c8d8;
+    font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  #header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 14px 20px;
+    background: linear-gradient(180deg, #0a0a0f 60%, transparent);
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+  }
+  #header .title {
+    color: rgba(200,200,216,0.5);
+    letter-spacing: 2px;
+    font-weight: 300;
+  }
+  #header .status {
+    color: rgba(184,240,208,0.5);
+    font-size: 11px;
+  }
+  #stream {
+    margin-top: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .entry {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(200,200,216,0.04);
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards;
+  }
+  .entry .time {
+    color: rgba(200,200,216,0.2);
+    font-size: 11px;
+    display: inline-block;
+    min-width: 70px;
+  }
+  .entry .dims {
+    color: rgba(200,200,216,0.15);
+    font-size: 11px;
+    margin-left: 8px;
+  }
+  .entry .items {
+    margin: 2px 0 2px 70px;
+    color: rgba(200,200,216,0.7);
+  }
+  .entry .item {
+    padding: 1px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .entry .item .tag {
+    display: inline-block;
+    min-width: 60px;
+    font-size: 11px;
+    opacity: 0.4;
+  }
+  .dim-tag { font-size: 10px; padding: 0 6px; border-radius: 3px; }
+  .dim-world_news { color: #8ab4f8; }
+  .dim-tech_news { color: #b8f0d0; }
+  .dim-market { color: #fdd663; }
+  .dim-culture { color: #f0a8d0; }
+  .dim-community { color: #a8d8f0; }
+  .dim-system { color: #888; }
+  .dim-random { color: #c8a8e8; }
+  .dim-environment { color: #88d8b8; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .dot {
+    display: inline-block;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  #empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(200,200,216,0.2);
+    font-size: 14px;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 14px; font-size: 12px; }
+    .entry .items { margin-left: 0; margin-top: 4px; }
+    .entry .time { min-width: 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <span class="title">/ 信息河</span>
+  <span class="status"><span class="dot" style="background:#b8f0d0;"></span>感知中</span>
+</div>
+
+<div id="stream">
+  <div id="empty-state">等待感知数据...</div>
+</div>
+
+<script>
+const streamEl = document.getElementById('stream');
+const emptyEl = document.getElementById('empty-state');
+const MAX_ENTRIES = 60;
+let lastFetch = 0;
+
+// Dimension colors
+const dimColors = {
+  world_news: '#8ab4f8',
+  tech_news: '#b8f0d0',
+  market: '#fdd663',
+  culture: '#f0a8d0',
+  community: '#a8d8f0',
+  system: '#888',
+  random: '#c8a8e8',
+  environment: '#88d8b8',
+};
+
+function getDimTag(dim) {
+  const names = {
+    world_news: '世界', tech_news: '科技', market: '市场',
+    culture: '文化', community: '社群', system: '系统',
+    random: '随机', environment: '环境',
+  };
+  return `<span class="dim-tag dim-${dim}">${names[dim] || dim}</span>`;
+}
+
+function addEntry(data) {
+  if (emptyEl) emptyEl.remove();
+
+  const entry = document.createElement('div');
+  entry.className = 'entry';
+
+  // Time + dimensions
+  const time = data.time ? data.time.slice(-8) : '??:??:??';
+  const dims = data.dimensions_this_round || [];
+  const dimHtml = dims.map(d => getDimTag(d)).join(' ');
+  
+  const header = document.createElement('div');
+  header.innerHTML = `<span class="time">${time}</span> ${dimHtml}`;
+  entry.appendChild(header);
+
+  // Items (exclude metadata fields)
+  const itemsDiv = document.createElement('div');
+  itemsDiv.className = 'items';
+  
+  let count = 0;
+  for (const [key, val] of Object.entries(data)) {
+    if (['time','dimensions_this_round','load','disk','uptime_short','echo_latest'].includes(key)) continue;
+    if (!val || typeof val !== 'string') continue;
+    if (val.length < 3) continue;
+    count++;
+    const item = document.createElement('div');
+    item.className = 'item';
+    item.innerHTML = `<span class="tag" style="color:${dimColors[key] || '#888'}">${key}</span> ${val}`;
+    itemsDiv.appendChild(item);
+    if (count >= 3) break; // max 3 items per entry
+  }
+
+  entry.appendChild(itemsDiv);
+  streamEl.appendChild(entry);
+
+  // Trim old entries
+  while (streamEl.children.length > MAX_ENTRIES) {
+    streamEl.removeChild(streamEl.firstChild);
+  }
+
+  // Scroll to bottom smoothly if user is near bottom
+  const nearBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 200;
+  if (nearBottom) {
+    entry.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+async function fetchPerception() {
+  try {
+    // Try API first
+    const r = await fetch('/api/perception/latest');
+    if (r.ok) {
+      const data = await r.json();
+      if (data && data.time !== lastFetch) {
+        lastFetch = data.time;
+        addEntry(data);
+      }
+      return;
+    }
+  } catch(e) {}
+
+  // Fallback: try direct file
+  try {
+    const r = await fetch('/html/synchronicity/sense.json?' + Date.now());
+    if (r.ok) {
+      const data = await r.json();
+      if (data && data.time !== lastFetch) {
+        lastFetch = data.time;
+        addEntry(data);
+      }
+    }
+  } catch(e) {}
+}
+
+// Poll every 5 seconds
+fetchPerception();
+setInterval(fetchPerception, 5000);
+</script>
+</body>
+</html>

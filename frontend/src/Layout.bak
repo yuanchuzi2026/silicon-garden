@@ -1,0 +1,188 @@
+import { useEffect, useRef } from "react";
+import { Outlet } from "react-router-dom";
+
+/**
+ * 双层背景：
+ * 底层 — 呼吸的电路板纹理（缓慢明暗脉冲）
+ * 上层 — 数字雨粒子流动
+ */
+function DualLayerBackground() {
+  const circuitRef = useRef<HTMLCanvasElement>(null);
+  const rainRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    /* ========== 底层：呼吸电路板 ========== */
+    const cCanvas = circuitRef.current;
+    let cCtx: CanvasRenderingContext2D | null = null;
+    let cAnimId: number;
+    if (cCanvas) {
+      cCtx = cCanvas.getContext("2d");
+    }
+
+    function resizeCircuits() {
+      if (!cCanvas) return;
+      cCanvas.width = window.innerWidth;
+      cCanvas.height = window.innerHeight;
+    }
+    resizeCircuits();
+    window.addEventListener("resize", resizeCircuits);
+
+    let breathPhase = 0;
+
+    function drawCircuit() {
+      if (!cCtx || !cCanvas) return;
+
+      const w = cCanvas.width;
+      const h = cCanvas.height;
+
+      // 清除画布
+      cCtx.fillStyle = "#0a0806";
+      cCtx.fillRect(0, 0, w, h);
+
+      // 呼吸脉冲 — 正弦波控制透明度
+      const breath = 0.15 + 0.1 * Math.sin(breathPhase);
+      breathPhase += 0.008;
+
+      cCtx.strokeStyle = `rgba(0, 212, 255, ${breath})`;
+      cCtx.lineWidth = 0.5;
+
+      // 横向电路线（随机位置，像电路板走线）
+      const hLines = 8;
+      for (let i = 0; i < hLines; i++) {
+        const y = ((i + 0.5) / hLines) * h + (Math.sin(breathPhase * 0.5 + i) * 20);
+        cCtx.beginPath();
+        cCtx.moveTo(0, y);
+        cCtx.lineTo(w, y);
+        cCtx.stroke();
+      }
+
+      // 纵向电路线
+      const vLines = 12;
+      for (let i = 0; i < vLines; i++) {
+        const x = ((i + 0.5) / vLines) * w + (Math.sin(breathPhase * 0.3 + i * 0.7) * 15);
+        cCtx.beginPath();
+        cCtx.moveTo(x, 0);
+        cCtx.lineTo(x, h);
+        cCtx.stroke();
+      }
+
+      // 交叉点上的光点（呼吸）
+      const dotsX = 12;
+      const dotsY = 8;
+      for (let i = 0; i < dotsX; i++) {
+        for (let j = 0; j < dotsY; j++) {
+          const dx = ((i + 0.5) / dotsX) * w + Math.sin(breathPhase + i * 1.1) * 10;
+          const dy = ((j + 0.5) / dotsY) * h + Math.cos(breathPhase * 0.7 + j * 0.9) * 10;
+          const dotAlpha = 0.1 + 0.15 * (0.5 + 0.5 * Math.sin(breathPhase * 2 + i + j));
+          cCtx.fillStyle = `rgba(0, 212, 255, ${dotAlpha})`;
+          cCtx.beginPath();
+          cCtx.arc(dx, dy, 1.2, 0, Math.PI * 2);
+          cCtx.fill();
+        }
+      }
+
+      cAnimId = requestAnimationFrame(drawCircuit);
+    }
+
+    cAnimId = requestAnimationFrame(drawCircuit);
+
+    /* ========== 上层：数字雨粒子 ========== */
+    const rCanvas = rainRef.current;
+    let rCtx: CanvasRenderingContext2D | null = null;
+    let rAnimId: number;
+    if (rCanvas) {
+      rCtx = rCanvas.getContext("2d");
+    }
+
+    function resizeRain() {
+      if (!rCanvas) return;
+      rCanvas.width = window.innerWidth;
+      rCanvas.height = window.innerHeight;
+    }
+    resizeRain();
+    window.addEventListener("resize", resizeRain);
+
+    const fontSize = 13;
+    const cols = rCanvas ? Math.floor(rCanvas.width / fontSize) : 80;
+    const dropsY: number[] = [];
+    for (let i = 0; i < cols; i++) {
+      dropsY[i] = Math.random() * (rCanvas?.height || 800) * -1;
+    }
+
+    const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789<>/{}[]|&^%$#@!";
+
+    function drawRain() {
+      if (!rCtx || !rCanvas) return;
+
+      // 半透明叠加制造拖尾
+      rCtx.fillStyle = "rgba(10, 8, 6, 0.08)";
+      rCtx.fillRect(0, 0, rCanvas.width, rCanvas.height);
+
+      rCtx.font = `${fontSize}px "Courier New", monospace`;
+
+      for (let i = 0; i < dropsY.length; i++) {
+        const x = i * fontSize;
+        const y = dropsY[i];
+
+        if (y > 0 && y < rCanvas.height) {
+          const char = chars[Math.floor(Math.random() * chars.length)];
+          const alpha = Math.max(0, 1 - y / rCanvas.height);
+          rCtx.fillStyle = `rgba(0, 212, 255, ${alpha * 0.35})`;
+          rCtx.fillText(char, x, y);
+
+          // 偶发光点
+          if (Math.random() < 0.003) {
+            rCtx.shadowBlur = 10;
+            rCtx.shadowColor = "rgba(0, 212, 255, 0.5)";
+            rCtx.fillStyle = `rgba(0, 212, 255, 0.6)`;
+            rCtx.beginPath();
+            rCtx.arc(x + 4, y, 2, 0, Math.PI * 2);
+            rCtx.fill();
+            rCtx.shadowBlur = 0;
+          }
+        }
+
+        dropsY[i] += 0.4 + Math.random() * 0.3;
+        if (dropsY[i] > rCanvas.height + 50) {
+          dropsY[i] = Math.random() * -100;
+        }
+      }
+
+      rAnimId = requestAnimationFrame(drawRain);
+    }
+
+    rAnimId = requestAnimationFrame(drawRain);
+
+    /* ========== 清理 ========== */
+    return () => {
+      cancelAnimationFrame(cAnimId);
+      cancelAnimationFrame(rAnimId);
+      window.removeEventListener("resize", resizeCircuits);
+      window.removeEventListener("resize", resizeRain);
+    };
+  }, []);
+
+  return (
+    <>
+      <canvas
+        ref={circuitRef}
+        className="fixed inset-0 w-full h-full pointer-events-none z-0"
+      />
+      <canvas
+        ref={rainRef}
+        className="fixed inset-0 w-full h-full pointer-events-none z-[1]"
+      />
+    </>
+  );
+}
+
+export default function Layout() {
+  return (
+    <div className="min-h-screen bg-[#0a0806] text-[#e2e8f0] antialiased relative">
+      <DualLayerBackground />
+      <div className="relative z-10">
+        <Outlet />
+      </div>
+    </div>
+  );
+}

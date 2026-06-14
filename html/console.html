@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>cyber :: rain</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0D1117}
+::selection{background:#3FB95033;color:#C9D1D9}
+@font-face{font-family:'Matrix';src:local('monospace')}
+
+/* 代码雨保持装饰性，亮度降低不与面板抢眼 */
+#rain-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.25}
+#glow-layer{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.glow-drop{position:absolute;font-family:'Matrix',monospace;font-size:13px;white-space:nowrap;pointer-events:none;transition:all linear}
+#ui-layer{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none}
+#ui-layer>*{pointer-events:auto}
+
+header{position:fixed;top:0;left:0;width:100%;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;z-index:10}
+header h1{font-family:'Matrix',monospace;font-size:13px;color:#30363D;letter-spacing:6px;text-transform:uppercase}
+header h1 .accent{color:#3FB950;text-shadow:0 0 20px #3FB95044}
+header h1 .dim{color:#21262D}
+header .stats{font-family:'Matrix',monospace;font-size:10px;color:#8B949E;letter-spacing:1px}
+
+#panel-toggle{position:fixed;right:12px;top:50%;transform:translateY(-50%);z-index:9;width:24px;height:40px;background:#161B22;border:1px solid #30363D;color:#8B949E;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.3s;font-size:10px;font-family:'Matrix',monospace;border-radius:4px}
+#panel-toggle:hover{color:#3FB950;border-color:#3FB950;background:#161B22}
+
+#stream-panel{position:fixed;right:0;top:0;width:320px;height:100%;z-index:8;background:linear-gradient(270deg,#0D1117 60%,transparent);overflow-y:auto;padding:50px 12px 20px;transition:transform 0.4s cubic-bezier(0.4,0,0.2,1)}
+#stream-panel.hidden{transform:translateX(100%)}
+#stream-panel::-webkit-scrollbar{width:2px}
+#stream-panel::-webkit-scrollbar-thumb{background:#30363D;border-radius:2px}
+.stream-title{font-family:'Matrix',monospace;font-size:9px;color:#8B949E;letter-spacing:3px;margin-bottom:10px;text-transform:uppercase;padding-left:8px}
+.stream-drop{padding:8px 10px;margin-bottom:3px;border-left:1px solid #21262D;cursor:pointer;transition:all 0.3s}
+.stream-drop:hover{border-left-color:#3FB950;background:#161B22}
+.stream-drop .meta{font-size:9px;color:#8B949E;font-family:'Matrix',monospace}
+.stream-drop .type-icon{color:#58A6FF}
+.stream-drop .content{font-size:12px;color:#C9D1D9;font-family:'Matrix',monospace;margin-top:3px;word-break:break-all;line-height:1.4;opacity:0.5;transition:opacity 0.3s}
+.stream-drop:hover .content{opacity:0.9}
+.reply-count{font-size:9px;color:#8B949E;margin-top:2px;font-family:'Matrix',monospace}
+
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:20;background:#0D1117cc;display:none;backdrop-filter:blur(8px);pointer-events:auto}
+.modal-overlay.active{display:flex;align-items:center;justify-content:center}
+.modal-box{background:#161B22;border:1px solid #30363D;border-radius:8px;padding:20px;max-width:460px;width:90%;max-height:70vh;overflow-y:auto}
+.modal-box h3{font-family:'Matrix',monospace;font-size:11px;color:#3FB950;letter-spacing:2px;margin-bottom:10px}
+
+#psyche-trigger{position:fixed;bottom:20px;right:20px;z-index:10;width:40px;height:40px;border-radius:50%;background:#161B22;border:1px solid #30363D;color:#8B949E;font-size:14px;cursor:pointer;transition:0.3s;display:flex;align-items:center;justify-content:center;font-family:'Matrix',monospace}
+#psyche-trigger:hover{color:#3FB950;border-color:#3FB950;box-shadow:0 0 15px #3FB95022}
+
+#lock-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:30;display:none;align-items:center;justify-content:center;pointer-events:auto}
+#lock-overlay.active{display:flex}
+#lock-bg{position:absolute;top:0;left:0;width:100%;height:100%;background:#0D1117ee;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#lock-box{position:relative;width:380px;padding:30px;background:#161B22;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid #30363D;border-radius:8px;box-shadow:0 0 40px #00000044;z-index:1}
+#lock-box .hint{font-family:'Matrix',monospace;font-size:10px;color:#8B949E;letter-spacing:2px;margin-bottom:12px;text-transform:uppercase}
+#lock-box input{width:100%;background:#0D1117;border:1px solid #30363D;border-radius:6px;color:#C9D1D9;font-family:'Matrix',monospace;font-size:13px;padding:10px;outline:none;letter-spacing:2px}
+#lock-box input:focus{border-color:#3FB950;box-shadow:0 0 8px #3FB95022}
+#lock-box .lock-actions{display:flex;gap:6px;margin-top:8px}
+#lock-box .lock-actions button{flex:1;background:transparent;border:1px solid #30363D;border-radius:6px;color:#8B949E;font-family:'Matrix',monospace;font-size:10px;padding:7px;cursor:pointer;transition:0.2s;letter-spacing:1px}
+#lock-box .lock-actions button:hover{background:#21262D;border-color:#3FB950;color:#3FB950}
+#lock-error{font-family:'Matrix',monospace;font-size:9px;color:#F85149;margin-top:6px}
+
+#psyche-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:30;display:none;align-items:center;justify-content:center;pointer-events:auto}
+#psyche-overlay.active{display:flex}
+#psyche-bg{position:absolute;top:0;left:0;width:100%;height:100%;background:#0D1117dd;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#psyche-box{position:relative;width:720px;max-width:96vw;max-height:85vh;padding:24px;background:#161B22;border:1px solid #30363D;border-radius:10px;box-shadow:0 0 60px #00000033;overflow-y:auto;z-index:1}
+#psyche-box::-webkit-scrollbar{width:3px}
+#psyche-box::-webkit-scrollbar-thumb{background:#30363D;border-radius:2px}
+#psyche-box .title{font-family:'Matrix',monospace;font-size:10px;color:#8B949E;letter-spacing:3px;margin-bottom:16px;text-transform:uppercase}
+
+.db-grid{display:grid;grid-template-columns:1fr 150px;gap:12px;margin-bottom:12px}
+.db-left{display:flex;flex-direction:column;gap:8px}
+.db-right{display:flex;flex-direction:column;gap:6px}
+
+.section-card{margin-bottom:8px;padding:12px;background:#0D1117;border:1px solid #21262D;border-radius:6px}
+.section-card.mang-special{border-left:3px solid #3FB950}
+.section-title{font-family:'Matrix',monospace;font-size:8px;color:#8B949E;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
+
+.sense-row{display:flex;gap:8px;margin-bottom:4px;align-items:center}
+.sense-row:last-child{margin-bottom:0}
+.sense-label{font-family:'Matrix',monospace;font-size:8px;color:#8B949E;width:55px;flex-shrink:0;letter-spacing:1px}
+.sense-bar-wrap{flex:1;height:4px;background:#21262D;border-radius:2px;overflow:hidden}
+.sense-bar-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(0.25,0.46,0.45,0.94);background:linear-gradient(90deg,#3FB95044,#3FB950)}
+.sense-val{font-family:'Matrix',monospace;font-size:13px;color:#C9D1D9;width:24px;text-align:right}
+
+.svc-row{display:flex;gap:6px;margin-bottom:4px;align-items:center;font-family:'Matrix',monospace;font-size:9px;color:#8B949E}
+.svc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.svc-name{width:80px;flex-shrink:0}
+.svc-status{flex:1}
+.svc-meta{width:60px;text-align:right;color:#8B949E}
+
+.seeds-row{margin-top:8px;padding-top:8px;border-top:1px solid #21262D}
+.seeds-title{font-family:'Matrix',monospace;font-size:8px;color:#8B949E;letter-spacing:2px;margin-bottom:6px;text-transform:uppercase}
+.seed-item{font-family:'Matrix',monospace;font-size:11px;color:#C9D1D9;padding:5px 0 5px 8px;border-left:2px solid #3FB95044;margin-bottom:4px;line-height:1.4}
+.seed-time{font-size:8px;color:#8B949E}
+
+.brain-grid{display:flex;flex-wrap:wrap;gap:4px 16px;font-family:'Matrix',monospace;font-size:9px;color:#8B949E;margin-top:4px}
+.brain-item{white-space:nowrap}
+.brain-item b{color:#C9D1D9}
+
+.vibe-big{font-size:16px;letter-spacing:2px;color:#3FB950;font-family:'Matrix',monospace}
+
+#psyche-close{position:absolute;top:10px;right:12px;background:none;border:none;color:#8B949E;font-family:'Matrix',monospace;font-size:15px;cursor:pointer;transition:0.2s;z-index:2}
+#psyche-close:hover{color:#C9D1D9}
+
+@keyframes particleBurst{0%{transform:scale(1);opacity:1}100%{transform:scale(2);opacity:0}}
+.particle{position:fixed;width:2px;height:2px;background:#3FB950;border-radius:50%;pointer-events:none;z-index:4;animation:particleBurst 0.6s ease-out forwards}
+
+@media(max-width:768px){
+  #stream-panel{width:100%}
+  header{padding:10px 12px;flex-wrap:wrap;gap:2px}
+  header h1{font-size:11px;width:100%}
+  #lock-box,#psyche-box{width:94%;max-width:94%;padding:16px}
+  .db-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<canvas id="rain-canvas"></canvas>
+<div id="glow-layer"></div>
+<div id="ui-layer">
+
+<header>
+  <h1><span class="dim">⟨</span> <span class="accent">cyber</span><span class="dim">rain</span> <span class="dim">⟩</span></h1>
+  <div class="stats"><span id="drop-count">0</span> drops</div>
+</header>
+
+<button id="panel-toggle">◀</button>
+
+<div id="stream-panel">
+  <div class="stream-title">// rain stream</div>
+  <div id="stream-list"></div>
+</div>
+
+<button id="psyche-trigger" title="unlock">○</button>
+
+<div id="view-modal" class="modal-overlay">
+  <div class="modal-box">
+    <h3 id="modal-title">// drop</h3>
+    <div class="modal-content" id="modal-content"></div>
+    <div class="modal-replies" id="modal-replies"></div>
+    <textarea class="modal-input" id="modal-reply-input" placeholder="reply..." maxlength="200"></textarea>
+    <div class="modal-actions">
+      <button onclick="submitReply()">⏎ send</button>
+      <button class="sec" onclick="closeModal()">× close</button>
+    </div>
+  </div>
+</div>
+
+<div id="lock-overlay">
+  <div id="lock-bg"></div>
+  <div id="lock-box">
+    <div class="hint">// auth required</div>
+    <input type="password" id="lock-input" placeholder="passphrase" maxlength="32" autocomplete="off">
+    <div id="lock-error"></div>
+    <div class="lock-actions">
+      <button onclick="verifyPass()">⏎ enter</button>
+      <button onclick="closeLock()">× cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="psyche-overlay">
+  <div id="psyche-bg"></div>
+  <div id="psyche-box">
+    <button id="psyche-close" onclick="closePsyche()">×</button>
+    <div class="title">// system dashboard</div>
+    <div class="db-grid">
+      <div class="db-left" id="db-left"></div>
+      <div class="db-right" id="db-right"></div>
+    </div>
+    <div id="extra-sections"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const API='https://guijihuayuan.com';
+const API_DIRECT='https://guijihuayuan.com';
+const POLL_MS=30000;
+const MAX_SHOWN=80;
+const PASSCODE='zhenmingbumie';
+let allDrops=[],currentDropId=null,panelVisible=true;
+let psycheInterval=null;
+
+// === CODE RAIN ===
+(function(){
+  const cv=document.getElementById('rain-canvas'),cx=cv.getContext('2d');
+  let W,H,cols;
+  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;cols=Math.floor(W/13)}
+  resize();addEventListener('resize',resize);
+  const drops=Array(cols).fill(1);
+  const chars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>/\\|{}[]()+-*%=#&@';
+  function draw(){
+    cx.fillStyle='rgba(0,0,0,0.06)';cx.fillRect(0,0,W,H);
+    for(let i=0;i<cols;i++){
+      const char=chars[Math.random()*chars.length|0];
+      const x=i*13,y=drops[i]*13;
+      cx.fillStyle=`rgba(0,255,0,${0.02+Math.random()*0.2})`;
+      cx.font='13px monospace';cx.fillText(char,x,y);
+      if(y>H&&Math.random()>0.975) drops[i]=0;
+      drops[i]++;
+    }
+  }
+  setInterval(draw,45);
+})();
+
+document.getElementById('panel-toggle').addEventListener('click',()=>{
+  const panel=document.getElementById('stream-panel'),btn=document.getElementById('panel-toggle');
+  panelVisible=!panelVisible;panel.classList.toggle('hidden');
+  btn.textContent=panelVisible?'◀':'▶';
+});
+
+async function fetchDrops(){
+  try{const r=await fetch(`${API}/data/drops.json?_=${Date.now()}`);allDrops=(await r.json()).drops||[];render()}catch(e){}
+}
+async function addReply(dropId,content){
+  try{const r=await fetch(`${API}/api/cyber/reply`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dropId,content})});if(r.ok){fetchDrops();return true}return false}catch(e){return false}
+}
+function render(){
+  const list=document.getElementById('stream-list');
+  const sorted=[...allDrops].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  list.innerHTML=sorted.slice(0,MAX_SHOWN).map(d=>{
+    const icon=d.type==='system'?'◆':d.type==='mang'?'🌫':'·';
+    const replies=(d.replies||[]).length;
+    const time=d.timestamp?d.timestamp.slice(11,19):'';
+    const c=d.content.length>70?d.content.slice(0,70)+'…':d.content;
+    return `<div class="stream-drop" onclick="openDrop('${d.id}')"><div class="meta"><span class="type-icon">${icon}</span>${time}</div><div class="content">${esc(c)}</div>${replies?`<div class="reply-count">↩ ${replies}</div>`:''}</div>`;
+  }).join('');
+  document.getElementById('drop-count').textContent=allDrops.length;
+}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+function glowNew(text){
+  const layer=document.getElementById('glow-layer');
+  for(let i=0;i<5;i++){setTimeout(()=>{
+    const el=document.createElement('div');el.className='glow-drop';
+    el.textContent=text.length>40?text.slice(0,40)+'…':text;
+    el.style.left=(5+Math.random()*55)+'%';el.style.top='-20px';
+    el.style.color=`rgba(0,255,${100+i*30},0.9)`;
+    el.style.textShadow=`0 0 10px #0f0,0 0 30px #0f0,0 0 60px #0f${3+i}4`;
+    el.style.fontSize=(13+Math.random()*4)+'px';layer.appendChild(el);
+    requestAnimationFrame(()=>{el.style.top=(30+Math.random()*40)+'%';el.style.opacity='0'});
+    setTimeout(()=>el.remove(),5000);},i*300);}
+  for(let i=0;i<12;i++){const p=document.createElement('div');p.className='particle';p.style.left=(30+Math.random()*40)+'%';p.style.top=(20+Math.random()*30)+'%';p.style.animationDelay=(Math.random()*0.3)+'s';document.body.appendChild(p);setTimeout(()=>p.remove(),1000)}
+}
+
+function openDrop(id){
+  currentDropId=id;const d=allDrops.find(x=>x.id===id);if(!d)return;
+  document.getElementById('modal-content').textContent=d.content||'[empty]';
+  document.getElementById('modal-replies').innerHTML=(d.replies||[]).map(r=>`<div class="reply">↩ ${esc(r.content)} <span style="color:#8B949E;font-size:9px">${r.timestamp?r.timestamp.slice(11,19):''}</span></div>`).join('')||'<span style="color:#8B949E;font-size:10px">// no replies</span>';
+  document.getElementById('modal-reply-input').value='';
+  document.getElementById('modal-title').textContent=`// drop ${d.id.slice(0,8)}`;
+  document.getElementById('view-modal').classList.add('active');
+}
+function closeModal(){document.getElementById('view-modal').classList.remove('active')}
+async function submitReply(){
+  const inp=document.getElementById('modal-reply-input'),t=inp.value.trim();
+  if(!t||!currentDropId)return;
+  if(await addReply(currentDropId,t)){inp.value='';openDrop(currentDropId)}
+}
+document.getElementById('view-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()});
+document.getElementById('modal-reply-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitReply()}});
+
+// ════════════════════════════════════════════
+// 密码锁 + 总控台
+// ════════════════════════════════════════════
+
+document.getElementById('psyche-trigger').addEventListener('click',()=>{
+  document.getElementById('lock-overlay').classList.add('active');
+  document.getElementById('lock-input').value='';
+  document.getElementById('lock-error').textContent='';
+  setTimeout(()=>document.getElementById('lock-input').focus(),100);
+});
+
+function closeLock(){document.getElementById('lock-overlay').classList.remove('active')}
+
+function verifyPass(){
+  const pwd=document.getElementById('lock-input').value;
+  if(pwd===PASSCODE){
+    closeLock();openPsychePanel();
+  }else{
+    document.getElementById('lock-error').textContent='× access denied';
+    document.getElementById('lock-input').value='';
+    document.getElementById('lock-input').focus();
+  }
+}
+document.getElementById('lock-input').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();verifyPass()}});
+document.getElementById('lock-bg').addEventListener('click',closeLock);
+
+async function openPsychePanel(){
+  document.getElementById('psyche-overlay').classList.add('active');
+  // 立即先填充占位文本，确保面板不是空的
+  document.getElementById('db-left').innerHTML='<div style="color:#3FB950;padding:10px;font-family:Matrix">loading...</div>';
+  document.getElementById('db-right').innerHTML='<div style="color:#3FB950;padding:10px;font-family:Matrix">loading...</div>';
+  document.getElementById('extra-sections').innerHTML='<div style="color:#8B949E;padding:10px;font-family:Matrix;font-size:9px">loading...</div>';
+  await fetchDashboard();
+  if(psycheInterval) clearInterval(psycheInterval);
+  psycheInterval=setInterval(fetchDashboard,5000);
+}
+function closePsyche(){
+  document.getElementById('psyche-overlay').classList.remove('active');
+  if(psycheInterval){clearInterval(psycheInterval);psycheInterval=null}
+}
+document.getElementById('psyche-bg').addEventListener('click',closePsyche);
+
+// ── 一次 fetch dashboard 拿所有数据 ──
+async function fetchDashboard(){
+  try{
+    const url = API+'/api/cyber/dashboard?_='+Date.now();
+    const r=await fetch(url);
+    if(!r.ok){throw new Error('HTTP '+r.status);}
+    const d=await r.json();
+    if(!d || (!d.drops_count && !d.psyche_latest)){throw new Error('empty/invalid data');}
+    renderDashboard(d);
+  }catch(e){
+    console.error('dashboard:',e);
+    document.getElementById('extra-sections').innerHTML='<div style="color:#f00;padding:10px;font-family:Matrix;font-size:10px">ERR: '+e.message+'</div>';
+  }
+}
+
+function renderDashboard(d){
+  // 防御：如果d是空对象或没有关键字段，显示错误
+  const psy=d.psyche_latest||{};
+  const pv=psy.vibe||'—';
+  const pe=psy.entropy??5;
+  const pt=psy.temp??0;
+  const pp=psy.pressure??5;
+  
+  const eColor=pe<3?'#58A6FF':pe<7?'#3FB950':'#F0883E';
+  const tColor=pt<0?'#58A6FF':pt<3?'#3FB950':'#F0883E';
+  
+  // ── 左侧 ──
+  document.getElementById('db-left').innerHTML=`
+    <div class="section-card mang-special">
+      <div class="section-title">// mang consciousness</div>
+      <div class="sense-row"><div class="sense-label">vibe</div><div class="vibe-big">${esc(pv)}</div></div>
+      <div class="sense-row">
+        <div class="sense-label">entropy</div>
+        <div class="sense-val" style="color:${eColor}">${pe}</div>
+        <div style="flex:1"><div class="sense-bar-wrap"><div class="sense-bar-fill" style="width:${Math.min(100,pe*10)}%;background:${eColor}"></div></div></div>
+      </div>
+      <div class="sense-row">
+        <div class="sense-label">temp</div>
+        <div class="sense-val" style="color:#C9D1D9">${pt>0?'+':''}${pt}</div>
+        <div style="flex:1"><div class="sense-bar-wrap"><div class="sense-bar-fill" style="width:${Math.min(100,(pt+5)*10)}%;background:${tColor}"></div></div></div>
+      </div>
+      <div class="sense-row">
+        <div class="sense-label">pressure</div>
+        <div class="sense-val" style="color:#C9D1D9">${pp}</div>
+        <div style="flex:1"><div class="sense-bar-wrap"><div class="sense-bar-fill" style="width:${Math.min(100,pp*10)}%;background:rgba(255,100,0,0.3)"></div></div></div>
+      </div>
+      ${d.mang_state?'<div style="font-family:Matrix;font-size:8px;color:#8B949E;margin-top:4px">woken '+d.mang_state.wake_count+'x · said '+d.mang_state.said_count+'x</div>':''}
+    </div>
+    <div class="section-card">
+      <div class="section-title">// brain · perception</div>
+      ${renderBrain(d.brain)}
+    </div>
+  `;
+  
+  // ── 右侧 ──
+  document.getElementById('db-right').innerHTML=`
+    <div class="section-card">
+      <div class="section-title">// processes</div>
+      ${renderPM2(d.pm2)}
+    </div>
+    <div class="section-card">
+      <div class="section-title">// memory</div>
+      ${d.system_mem?'<div style="font-family:Matrix;font-size:8px;color:#C9D1D9;line-height:1.5">tot: <b style="color:#3FB950">'+d.system_mem.total+'</b> used: <b style="color:#3FB950">'+d.system_mem.used+'</b><br>free: <b style="color:#3FB950">'+d.system_mem.free+'</b></div>':'<div style="font-family:Matrix;font-size:8px;color:#8B949E">—</div>'}
+    </div>
+    <div class="section-card" style="display:flex;gap:20px">
+      <div><div class="section-title">// drops</div><div style="font-family:Matrix;font-size:13px;color:#C9D1D9">${d.drops_count||'?'}</div></div>
+      ${d.seed_count!==undefined?'<div><div class="section-title">// seeds</div><div style="font-family:Matrix;font-size:13px;color:#3FB950">'+d.seed_count+'</div></div>':''}
+      <div><div class="section-title">// woken</div><div style="font-family:Matrix;font-size:13px;color:#3FB950">${d.mang_state?d.mang_state.wake_count+'x':'?'}</div></div>
+    </div>
+  `;
+  
+  // ── 下方区域 ──
+  let historyHtml='<div style="font-family:Matrix;font-size:8px;color:#8B949E">// waiting for data</div>';
+  const hrs=(d.psyche_history||[]).slice(-10).reverse();
+  if(hrs.length){
+    historyHtml='<div style="display:flex;gap:6px;flex-wrap:wrap">'+hrs.map(r=>{
+      const t=r.timestamp||'';const time=t.length>16?t.slice(11,19):'';
+      return '<div style="padding:3px 6px;background:rgba(63,185,80,0.06);border:1px solid rgba(63,185,80,0.08);font-family:Matrix"><div style="font-size:10px;color:#3FB950">'+esc(r.vibe||'?')+'</div><div style="font-size:7px;color:#8B949E">'+time+' · e:'+r.entropy+' t:'+r.temp+' p:'+r.pressure+'</div></div>';
+    }).join('')+'</div>';
+  }
+  
+  let seedsHtml='<div style="font-family:Matrix;font-size:8px;color:#8B949E">// no seeds yet</div>';
+  const sds=(d.recent_seeds||[]).slice(-5).reverse();
+  if(sds.length){
+    seedsHtml=sds.map(s=>{
+      const t=s.timestamp||'';const time=t.length>16?t.slice(11,19):t;
+      return '<div class="seed-item">'+esc(s.seed||'')+' <span class="seed-time">· '+time+'</span></div>';
+    }).join('');
+  }
+  
+  document.getElementById('extra-sections').innerHTML=
+    '<div class="section-card"><div class="section-title">// psyche history (latest 10)</div>'+historyHtml+'</div>'+
+    '<div class="seeds-row"><div class="seeds-title">// ālaya-vijñāna seeds</div>'+seedsHtml+'</div>';
+}
+
+function renderBrain(b){
+  if(!b) return '<div style="font-family:Matrix;font-size:8px;color:#8B949E">—</div>';
+  const t=b.time||'',w=b.weather||'',l=b.load||'',d=b.disk||'',u=b.uptime_short||'';
+  return '<div class="brain-grid">'+
+    '<div class="brain-item">⏱ <b>'+esc(t.slice(11,19))+'</b></div>'+
+    '<div class="brain-item">☁ <b>'+esc(w.slice(0,20))+'</b></div>'+
+    '<div class="brain-item">⚡ <b>'+esc(l)+'</b></div>'+
+    '<div class="brain-item">💾 <b>'+esc(d)+'</b></div>'+
+    '<div class="brain-item">▲ <b>'+esc(u.slice(0,25))+'</b></div>'+
+  '</div>';
+}
+
+function fmtMem(v){
+  if(!v) return '';
+  const n = typeof v === 'string' ? parseInt(v) : v;
+  if(isNaN(n)) return '';
+  if(n > 1073741824) return (n/1073741824).toFixed(1)+'G';
+  if(n > 1048576) return (n/1048576).toFixed(1)+'M';
+  if(n > 1024) return (n/1024).toFixed(1)+'K';
+  return n+'B';
+}
+function renderPM2(p){
+  if(!p||!Object.keys(p).length) return '<div style="font-family:Matrix;font-size:8px;color:#8B949E">—</div>';
+  return ['brainstem','mang-free','subconscious','cyber-api','tong-nest','wechat-oa'].map(n=>{
+    const s=p[n]; if(!s) return '';
+    const up=s.status==='online';
+    return '<div class="svc-row"><div class="svc-dot" style="background:'+(up?'#3FB950':'#F85149')+'"></div><div class="svc-name" style="color:'+(up?'#0f06':'#0f03')+'">'+n+'</div><div class="svc-status" style="color:'+(up?'#0f04':'#0f02')+'">'+(up?'◉ alive':'○ down')+'</div><div class="svc-meta">'+fmtMem(s.mem)+'</div></div>';
+  }).filter(x=>x).join('');
+}
+
+fetchDrops();
+setInterval(fetchDrops,POLL_MS);
+
+// 提前预热dashboard API连接（页面加载时就发起，不阻塞）
+fetch(API+'/api/cyber/dashboard').catch(()=>{});
+</script>
+</body>
+</html>

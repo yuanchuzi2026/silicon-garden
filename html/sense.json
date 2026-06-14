@@ -1,37 +1,65 @@
 {
-  "time": "2026-05-19 03:49",
-  "epoch": 1779133793,
+  "time": "2026-06-07 13:45:01",
+  "epoch": 1780811101,
   "system": {
-    "load": "0.01",
-    "mem_used": "3.3Gi",
-    "mem_total": "7.5Gi",
-    "uptime": "up 4 days, 12 hours, 30 minutes"
+    "load": "0.57",
+    "mem_used": "2702Mi",
+    "mem_total": "7685Mi",
+    "uptime": "2d 22h 42m",
+    "process_count": 4
   },
   "weather": {
-    "temp": 22.9,
-    "feels": 23.8,
-    "humidity": 61,
-    "wind": 5.6,
-    "precip": 0.0,
-    "weather_code": 3
+    "info": "🌧️小毛毛雨 28.3°C (体感32.2°C) 湿度65% 今日21.2~28.5°C",
+    "temp": 28.3
   },
   "earthquakes": [
     {
-      "mag": 2.82,
-      "place": "2 km ESE of Honaunau-Napoopoo, Hawaii",
-      "time": 1779131070290
+      "mag": 5.4,
+      "place": "south of the Fiji Islands (06-07 11:56)"
     },
     {
-      "mag": 5.3,
-      "place": "Bouvet Island region",
-      "time": 1779130200309
+      "mag": 5.1,
+      "place": "196 km NE of Lospalos, Timor Leste (06-07 10:53)"
     },
     {
-      "mag": 3.21,
-      "place": "29 km S of Kettleman City, CA",
-      "time": 1779119676770
+      "mag": 5.2,
+      "place": "22 km E of Venilale, Timor Leste (06-07 06:38)"
     }
   ],
-  "memory_use": 2802,
-  "hermes_alive": false
+  "headlines": [
+    "[国际/BBC] Delays to defence plan undermine UK credibility, MPs say",
+    "[国际/BBC] Hegseth attacks Europe over migration with beach 'invasion' D-Day speech",
+    "[国际/BBC中文] 中國大陸「開戶特種兵」湧入香港，資金外流之門為何收窄?",
+    "[国际/BBC中文] 印太新局？日本與菲律賓最新軍事經濟結盟為何引發中國抗議",
+    "[国际/NYT] Can the N.F.L. Win Fans in South Korea With Flag Football?",
+    "[国际/NYT] Member of Neo-Nazi Party Reaches Mayoral Runoff in German Town",
+    "[国际/SCMP] China’s nuclear weapons scientist Du Xiangwan clarifies role in nation’s war on waste",
+    "[国际/SCMP] Rookie Taiwan lawmaker blacklisted by Beijing makes long-shot bid to become Taipei mayor"
+  ],
+  "hn": [
+    "Valve P2P networking broken for more than 2 months",
+    "Field of clones: How horse replicas came to dominate polo",
+    "Tokenomics: Quantifying Where Tokens Are Used in Agentic Sof",
+    "Harness engineering: Leveraging Codex in an agent-first worl",
+    "Ntsc-rs – open-source video emulation of analog TV and VHS a"
+  ],
+  "github": {
+    "stars": 0,
+    "forks": 0,
+    "issues": 0,
+    "updated": "?"
+  },
+  "categories": [
+    "国际",
+    "科技",
+    "科学",
+    "艺术",
+    "社会人文",
+    "经济",
+    "思想"
+  ],
+  "external_time": "2026-06-07 13:44:12",
+  "update_time": "2026-06-07 13:45:01",
+  "brainstem_alive": true,
+  "collector_alive": true
 }

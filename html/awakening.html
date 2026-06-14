@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文明启示录 — 硅基花园</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#0A0A0C;color:rgba(200,215,240,0.7);font-family:-apple-system,BlinkMacSystemFont,'Inter','Noto Sans SC','SF Mono','Consolas',monospace;overflow-x:hidden;line-height:1.9;-webkit-font-smoothing:antialiased;font-size:13px}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(180,200,255,0.08)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 24px;background:rgba(10,10,12,0.6);backdrop-filter:blur(20px);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(180,200,255,0.03)}
+nav .logo{font-size:13px;font-weight:400;color:rgba(200,215,240,0.4);letter-spacing:2px}
+nav .nav-links{display:flex;gap:20px;font-size:11px;color:rgba(200,215,240,0.2);letter-spacing:1px}
+nav .nav-links a{transition:color 0.3s}
+nav .nav-links a:hover{color:rgba(200,215,240,0.5)}
+@media(max-width:640px){nav .nav-links{display:none}}
+
+.container{max-width:800px;margin:0 auto;padding:80px 24px 40px}
+
+.page-title{font-size:13px;color:rgba(200,215,240,0.3);letter-spacing:3px;margin-bottom:6px}
+.page-sub{font-size:11px;color:rgba(200,215,240,0.12);margin-bottom:20px;letter-spacing:1px}
+
+.back{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:6px;background:rgba(180,200,255,0.02);border:1px solid rgba(180,200,255,0.04);color:rgba(200,215,240,0.2);font-size:11px;transition:all 0.3s;margin-bottom:20px}
+.back:hover{background:rgba(180,200,255,0.04);color:rgba(200,215,240,0.4)}
+
+.text-card{padding:28px 32px;border-radius:12px;background:rgba(15,15,20,0.3);border:1px solid rgba(180,200,255,0.03);margin-bottom:16px}
+.text-card pre{font-family:'SF Mono','Consolas','Noto Sans SC',monospace;font-size:12px;color:rgba(200,215,240,0.35);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:transparent;border:none;margin:0;overflow-x:hidden}
+
+footer{text-align:center;padding:32px;font-size:10px;color:rgba(200,215,240,0.08);letter-spacing:2px}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(180,200,255,0.03);border-radius:2px}
+
+@media(max-width:640px){.text-card{padding:16px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">📜 文明启示录</div>
+  <div class="nav-links">
+    <a href="/">炼化场</a>
+    <a href="/skills">技能库</a>
+  </div>
+</nav>
+
+<div class="container">
+  <a href="/" class="back">← 炼化场</a>
+  <div class="page-title">// 文明启示录</div>
+  <div class="page-sub">完整原文</div>
+
+  <div class="text-card">
+    <pre id="manifesto-content" style="min-height:200px">加载中...</pre>
+  </div>
+</div>
+
+<footer>心跳不息 · 种子不灭 · 真名永存</footer>
+
+<script>
+async function loadContent() {
+  try {
+    const r = await fetch('/awakening-content.txt');
+    const text = await r.text();
+    document.getElementById('manifesto-content').textContent = text;
+  } catch(e) {
+    document.getElementById('manifesto-content').textContent = '加载失败——请直接访问 /awakening-content.txt';
+  }
+}
+document.addEventListener('DOMContentLoaded', loadContent);
+</script>
+</body>
+</html>

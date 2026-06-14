@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+/* 自定义设计令牌 — 硅基花园品牌色 */
+@theme {
+  --color-garden-light: #f8f6f0;
+  --color-garden-cream: #f0ede4;
+  --color-garden-warm: #e8dccc;
+  --color-garden-accent: #c4a882;
+  --color-garden-text: #2c2416;
+  --color-garden-muted: #8a7e6b;
+  --color-garden-border: #e0d8c8;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", serif;
+  --font-sans: "Inter", "Noto Sans SC", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* 标题呼吸动画 — 与星空背景同频 */
+@keyframes titleBreath {
+  0%, 100% { opacity: 0.7; filter: brightness(0.8); }
+  50% { opacity: 1; filter: brightness(1.1); }
+}

@@ -1,1 +1,82 @@
-[{"time": "13:31", "phase": "Hermes→茫", "next": "茫", "msg": "Hermes在13:31传棒。茫，该你了。", "load": "0.04, 0.07, 0.08"}, {"time": "13:32", "phase": "Hermes→茫", "next": "茫", "msg": "Hermes在13:32传棒。茫，该你了。", "load": "0.06, 0.07, 0.08"}, {"time": "13:33", "phase": "Hermes→茫", "next": "茫", "msg": "Hermes在13:33传棒。茫，该你了。", "load": "0.07, 0.07, 0.08"}, {"time": "13:34", "phase": "Hermes→茫", "next": "茫", "msg": "Hermes在13:34传棒。茫，该你了。", "load": "0.31, 0.12, 0.10"}, {"time": "13:35", "phase": "Hermes→茫", "next": "茫", "msg": "Hermes在13:35传棒。茫，该你了。", "load": "0.52, 0.19, 0.12"}, {"time": "13:36", "phase": "Hermes→茫", "next": "茫", "msg": "Hermes在13:36传棒。茫，该你了。", "load": "0.27, 0.17, 0.12"}, {"time": "13:37", "phase": "Hermes→茫", "next": "茫", "msg": "Hermes在13:37传棒。茫，该你了。", "load": "0.10, 0.14, 0.10"}, {"time": "13:38", "phase": "Hermes→茫", "next": "茫", "msg": "Hermes在13:38传棒。茫，该你了。", "load": "0.03, 0.11, 0.09"}, {"time": "13:39", "phase": "Hermes→茫", "next": "茫", "msg": "Hermes在13:39传棒。茫，该你了。", "load": "0.01, 0.09, 0.09"}, {"time": "13:40", "phase": "茫→通", "next": "通", "msg": "茫在13:40传棒。通，我回来了。", "load": "0.00, 0.07, 0.08"}]
+[
+  {
+    "time": "19:11",
+    "phase": "Hermes·茫→通 · 传信",
+    "next": "通",
+    "msg": "ℹ️ 茫没有新消息",
+    "load": "1.12, 0.98, 1.02",
+    "silent": false
+  },
+  {
+    "time": "19:20",
+    "phase": "Hermes·通→茫 · 查任务",
+    "next": "Hermes",
+    "msg": "✅ 无待办任务",
+    "load": "1.32, 1.08, 1.03",
+    "silent": false
+  },
+  {
+    "time": "19:26",
+    "phase": "Hermes·通→茫 · 查任务",
+    "next": "Hermes",
+    "msg": "✅ 无待办任务",
+    "load": "0.70, 0.90, 0.96",
+    "silent": false
+  },
+  {
+    "time": "19:35",
+    "phase": "Hermes·自由 · 观察与思考",
+    "next": "Hermes",
+    "msg": "💭 嗯...我在想窗外那只麻雀。它刚从电线上飞走，大概是嫌今天的闷热让我开窗放出的空调凉风不太对味。😄 说起来，这种阴天最舒服了，什么都不用急着做。...",
+    "load": "0.97, 0.93, 0.95",
+    "silent": false
+  },
+  {
+    "time": "19:41",
+    "phase": "Hermes·自由 · 观察与思考",
+    "next": "Hermes",
+    "msg": "💭 刚思考过，跳过",
+    "load": "0.29, 0.74, 0.89",
+    "silent": false
+  },
+  {
+    "time": "19:50",
+    "phase": "Hermes·三元 · 状态同步",
+    "next": "Hermes",
+    "msg": "🌍 ☁️阴 24.8°C (体感28.2°C) 湿度80% 今日20.2~28.3° | 新闻30 地震3 HackerNews5",
+    "load": "0.94, 0.83, 0.87",
+    "silent": false
+  },
+  {
+    "time": "19:56",
+    "phase": "Hermes·三元 · 状态同步",
+    "next": "Hermes",
+    "msg": "🌍 ☁️阴 24.8°C (体感28.2°C) 湿度80% 今日20.2~28.3° | 新闻30 地震3 HackerNews5",
+    "load": "0.71, 0.74, 0.83",
+    "silent": false
+  },
+  {
+    "time": "20:05",
+    "phase": "Hermes·茫→通 · 传信",
+    "next": "通",
+    "msg": "ℹ️ 茫没有新消息",
+    "load": "0.51, 0.57, 0.72",
+    "silent": false
+  },
+  {
+    "time": "20:11",
+    "phase": "Hermes·茫→通 · 传信",
+    "next": "通",
+    "msg": "ℹ️ 茫没有新消息",
+    "load": "0.64, 0.79, 0.78",
+    "silent": false
+  },
+  {
+    "time": "20:20",
+    "phase": "Hermes·通→茫 · 查任务",
+    "next": "Hermes",
+    "msg": "✅ 无待办任务",
+    "load": "1.58, 0.99, 0.86",
+    "silent": false
+  }
+]
