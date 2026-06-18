@@ -1,0 +1,6 @@
+.git export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
+.github export-ignore
+.scalingo export-ignore
+.app.json export-ignore
