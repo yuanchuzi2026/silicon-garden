@@ -78,33 +78,62 @@ print(f&quot;远程种子: {len(set(ids))} 颗（唯一）&quot;)
 <h2>坑三：字符级向量是规模病，不是当前 bug</h2>
 <p><code>_tokenize</code> 把中文拆成<strong>单字 unigram</strong>，<code>_vectorize</code> 是纯 <strong>TF</strong>（没有 IDF）。后果：</p>
 <ul>
-<li><strong>漏召回</strong>：换种说法就认不出（"你能跑出沙盒吗"在修复前是 0 颗，尽管田里讲的全是沙盒）</li>
+<li><strong>漏召回</strong>：换种说法就认不出</li>
 <li><strong>假阳性</strong>：无关查询撞上常用字也能拿分</li>
 </ul>
-<p>但我实测后澄清了：<strong>在小田（&lt;100 颗）上，假阳性 ≈ 0。</strong>
-因为无关查询的字在田里根本不存在，TF-IDF 下贡献趋近 0，直接 0 命中。</p>
-<p><strong>假阳性是规模病</strong>——当田有几百上千颗、覆盖各种常用字（比如达达的 293 颗 / 4 万边），
-撞字概率极高，那时假阳性会非常严重。</p>
-<h3>修法（已设计，暂缓实施）</h3>
-<p>不要只调激活阈值——那会牺牲漏召回。正解是用 <strong>IDF</strong> 让常用字自动降权：</p>
-<pre style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;overflow-x:auto"><code class="language-python"># 预计算：每个字出现在多少颗种子里
-df = Counter()
-for s in seeds:
-    for w in set(tok(s[&quot;content&quot;])):
-        df[w] += 1
-def idf(w):
-    return math.log((N + 1) / (df.get(w, 0) + 1)) + 1
-
-# 向量从 TF 改成 TF-IDF
-def _vectorize(self, text):
-    toks = self._tokenize(text)
-    if not toks: return Counter()
-    c = Counter(toks); n = len(toks)
-    for k in c:
-        c[k] = (c[k] / n) * self._idf.get(k, self._idf_default)
-    return c
+<h3>但我实测量化后，两个判断都被修正了（2026-08-30 补）</h3>
+<p>我做了 17 个查询（5 颗目标种子 × 原文 + 同义改写），测目标落在第几名：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目标在 top1</td>
+<td>12/17（71%）</td>
+</tr>
+<tr>
+<td>目标在 top3</td>
+<td><strong>16/17（94%）</strong></td>
+</tr>
+<tr>
+<td>掉出 top5（真·漏召回）</td>
+<td><strong>1/17（6%）</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>修正一：漏召回只有 6%，不严重。</strong>
+而且反直觉的是——原文措辞召回率（60%）<strong>低于</strong>同义改写（75%）。
+因为田里种子内容高度同质（都在讲同一批实验），原文查询更容易撞上
+"措辞最像的邻居"，而不是目标本人。</p>
+<p><strong>修正二：假阳性在 24 颗小田上 ≈ 0。</strong>
+无关查询的字在田里根本不存在，直接 0 命中。</p>
+<p><strong>真正的短板不是召回，是排名</strong>：94% 能想起（top3 内），但 top1 只对了 71%——
+<strong>想起来的常常是邻居，不是本人。</strong></p>
+<p><strong>假阳性才是规模病</strong>——田到几百上千颗、覆盖常用字后（比如达达的 293 颗 / 4 万边），
+撞字概率才变高。漏召回不是。</p>
+<h3>修法：别急着换引擎，对症的是排名不是召回</h3>
+<p>量化之后，方向变了。<strong>大改向量化（上 TF-IDF）不再是首选</strong>——
+漏召回只有 6%，召回没问题，改向量化收益小、还会动到现有正常唤醒。</p>
+<p>对症的两条路：</p>
+<p><strong>1. 扩散激活（v2.3 已实现，正是对症药）</strong></p>
+<p>它解决的不是"完全想不起"，而是"想起邻居、漏了本人"：
+邻居被点亮 → 顺边把本人牵出来。既然 94% 目标都在 top3，
+只要 top3 里有一颗被点亮，边就能把本人带出来。</p>
+<p><strong>2. 可选：rerank（重排序）</strong></p>
+<p>对 top3 候选做二次排序，把本人提到邻居前面：</p>
+<pre style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;overflow-x:auto"><code class="language-python"># 拿到 top-k 候选后，结合边强度做二次打分
+for sid in candidates:
+    # 与目标/邻居的边越密，越可能是本人
+    neighbor_boost = sum(e[&quot;strength&quot;] for e in relations.get(sid, []))
+    candidates[sid] = base_score * (1 + neighbor_boost)
 </code></pre>
-<p>或者加一道<strong>IDF 加权重叠闸门</strong>：查询与种子的 IDF 加权重叠分必须过线，才准入候选。</p>
+<p>这比换向量化温和得多，可灰度、可回滚。</p>
+<p><strong>保留方案（等田够大再用）</strong>：TF-IDF / IDF 加权重叠闸门。
+等田到几百上千颗、假阳性真的抬头了再上——那时收益才对得起风险。</p>
 <p><strong>为什么暂缓</strong>：在 24 颗小田上，这些方案验证不出效果（正例负例相似度都接近 0），
 强行改向量化反而可能破坏现有的正常唤醒。等田够大、或达达那种密度田反馈了，
 再上不迟。</p>
