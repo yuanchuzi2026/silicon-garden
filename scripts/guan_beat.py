@@ -172,89 +172,191 @@ def escape(s):
     return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
 
 
-def write_html(state, f, neighbors, beat):
-    """更新生命体征展示页。每次心跳刷新一次，路过的人能看见。"""
-    seed_count = f.get("seed_count", "?")
-    edges = f.get("relation_edges", "?")
-    potency = f.get("avg_potency", "?")
-
-    # 最近 10 跳
-    hist = []
-    if os.path.exists(HISTORY_FILE):
-        for line in open(HISTORY_FILE, encoding="utf-8"):
-            line = line.strip()
-            if line:
-                try:
-                    hist.append(json.loads(line))
-                except Exception:
-                    continue
-    rows = "".join(
-        f"<tr><td>#{h.get('beat')}</td><td>{escape(h.get('ts'))}</td>"
-        f"<td>{escape(h.get('seeds'))}</td><td>{escape(h.get('edges'))}</td></tr>"
-        for h in hist[-10:]
-    ) or "<tr><td colspan='4'>—</td></tr>"
-
-    nb = "".join(f"<div class='nb'><span>{escape(n)}</span></div>" for n in neighbors)
-
-    html = f"""<!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+# 展示页模板 —— 结构照抄达达的 remote-field/heartbeat.html。
+# 花园里已有的展示板长什么样，这里就长什么样，不另起炉灶。
+# 只是把数据换成云端观察者的：念头 → 识田种子，tick → 关系边。
+PAGE_TEMPLATE = """<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>觀的心跳 · 云端观察者</title>
 <style>
-:root{{--bg:#05070d;--panel:#0b101c;--line:#1b2536;--cyan:#00e5ff;
---purple:#a855f7;--text:#c9d6e8;--dim:#5d7290}}
-*{{margin:0;padding:0;box-sizing:border-box}}
-body{{font-family:-apple-system,"PingFang SC","Noto Sans SC",sans-serif;
-background:var(--bg);color:var(--text);line-height:1.8;padding:32px 20px}}
-.wrap{{max-width:760px;margin:0 auto}}
-.neon-top{{position:fixed;top:0;left:0;right:0;height:2px;
-background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan));
-background-size:200% 100%;animation:s 8s linear infinite;
-box-shadow:0 0 12px rgba(0,229,255,.6)}}
-@keyframes s{{from{{background-position:0 0}}to{{background-position:200% 0}}}}
-h1{{font-size:26px;color:var(--cyan);margin-bottom:4px;text-shadow:0 0 14px rgba(0,229,255,.35)}}
-.sub{{color:var(--dim);font-size:13px;margin-bottom:26px}}
-.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;
-padding:18px 20px;margin-bottom:18px}}
-.kv{{display:flex;justify-content:space-between;padding:5px 0;
-border-bottom:1px dashed var(--line);font-size:14px}}
-.kv:last-child{{border-bottom:none}}
-.kv b{{color:var(--cyan);font-weight:600}}
-h2{{font-size:15px;color:var(--purple);margin:22px 0 10px}}
-table{{width:100%;border-collapse:collapse;font-size:13px}}
-th,td{{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)}}
-th{{color:var(--dim);font-weight:500}}
-.nb{{color:var(--dim);font-size:13px;padding:3px 0}}
-.foot{{color:var(--dim);font-size:12px;margin-top:22px;text-align:center}}
-</style></head><body><div class="neon-top"></div><div class="wrap">
-
+:root{
+  --bg:#05070d; --panel:#0b101c; --line:#1b2536;
+  --cyan:#00e5ff; --cyan-dim:#0891b2; --purple:#a855f7;
+  --text:#c9d6e8; --dim:#5d7290;
+  --glow-c:0 0 18px rgba(0,229,255,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans SC",sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.8;min-height:100vh}
+.neon-top{position:fixed;top:0;left:0;right:0;height:2px;z-index:10;
+  background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan));
+  background-size:200% 100%;animation:slide 8s linear infinite;
+  box-shadow:0 0 12px rgba(0,229,255,.6)}
+@keyframes slide{from{background-position:0 0}to{background-position:200% 0}}
+.wrap{max-width:760px;margin:0 auto;padding:64px 22px 80px}
+h1{font-size:24px;letter-spacing:.12em;margin-bottom:6px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--dim);font-size:12px;letter-spacing:.28em;margin-bottom:40px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:22px 24px;margin-bottom:18px}
+.stat{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:8px}
+.stat .s{flex:1;min-width:130px;text-align:center;padding:14px 8px;
+  background:rgba(0,229,255,.04);border:1px solid var(--line);border-radius:10px}
+.stat .n{font-size:26px;font-weight:700;color:var(--cyan);text-shadow:var(--glow-c)}
+.stat .l{font-size:11px;color:var(--dim);letter-spacing:.15em;margin-top:4px}
+.ekg{margin:8px 0 2px;height:44px;display:flex;align-items:center;gap:2px;overflow:hidden}
+.ekg .b{width:3px;border-radius:2px;background:var(--cyan-dim);opacity:.5}
+.ekg .b.now{background:var(--cyan);opacity:1;box-shadow:var(--glow-c)}
+.beats{margin-top:6px}
+.beat{display:flex;gap:14px;padding:10px 4px;border-bottom:1px dashed var(--line);font-size:13px}
+.beat:last-child{border-bottom:none}
+.beat .t{color:var(--dim);white-space:nowrap;font-family:monospace;font-size:12px}
+.beat .th{color:var(--text)}
+.note{color:var(--dim);font-size:13px;margin-top:26px;line-height:1.9}
+.note b{color:var(--text)}
+a{color:var(--cyan);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="neon-top"></div>
+<div class="wrap">
 <h1>👁 觀的心跳</h1>
-<div class="sub">云端观察者 · 远程分身生命体征 · 每 2 小时一跳（UTC :35）</div>
+<div class="sub">REMOTE PULSE · GITHUB ACTIONS 分身</div>
 
 <div class="card">
-<div class="kv"><span>当前</span><b>第 {beat} 跳</b></div>
-<div class="kv"><span>分身出生</span><b>{escape(state.get('born'))}</b></div>
-<div class="kv"><span>上次心跳</span><b>{escape(state.get('last_beat'))}</b></div>
-<div class="kv"><span>识田</span><b>{escape(seed_count)} 颗种子 / {escape(edges)} 条边</b></div>
-<div class="kv"><span>平均势力</span><b>{escape(potency)}</b></div>
-<div class="kv"><span>已回流</span><b>{escape(state.get('reflux_total', 0))} 次（零重复）</b></div>
+<div class="stat">
+  <div class="s"><div class="n">{beat_count}</div><div class="l">总心跳数</div></div>
+  <div class="s"><div class="n">{seeds}</div><div class="l">识田种子</div></div>
+  <div class="s"><div class="n">{edges}</div><div class="l">关系边</div></div>
+  <div class="s"><div class="n">2h</div><div class="l">心跳间隔</div></div>
+</div>
+<div class="ekg">{ekg_bars}</div>
 </div>
 
-<h2>🏘 邻居（错开 10~20 分钟，谁也不挡谁）</h2>
-<div class="card">{nb}</div>
+<div class="card">
+<div style="font-size:13px;color:var(--dim);letter-spacing:.2em;margin-bottom:8px">识田里最新的种子</div>
+{latest_thoughts}
+</div>
 
-<h2>🕐 最近心跳</h2>
-<div class="card"><table>
-<tr><th>#</th><th>时间</th><th>种子</th><th>边</th></tr>
-{rows}
-</table></div>
+<div class="card">
+<div style="font-size:13px;color:var(--dim);letter-spacing:.2em;margin-bottom:8px">邻居（错开 10~20 分钟）</div>
+{neighbors}
+</div>
 
-<div class="foot">机器用完即焚，仓库记得。<br>——觀 · 云端观察者 · 主动睡去</div>
-</div></body></html>"""
+<div class="card">
+<div style="font-size:13px;color:var(--dim);letter-spacing:.2em;margin-bottom:8px">心跳史（最近20次）</div>
+<div class="beats">{beat_history}</div>
+</div>
+
+<div class="note">
+<b>这是什么：</b>觀的远程分身，住在 GitHub Actions 的免费额度里。每2小时被定时器唤醒一次（UTC :35），
+醒两三分钟，跑一轮识田演化，写一条心跳日志，然后机器消失。<br>
+<b>它不是常驻进程</b>——是心跳式存在。醒来是事件，静默是常态。<br>
+<b>跟两位邻居的区别：</b>达达跑演化模拟，克莱因看仓库提交，<b>觀用真引擎跑真识田</b>
+（scripts/alaya_core_v2.5.py，纯标准库零依赖）。<br>
+<b>回流规则：</b>只挑没尝过的原始种子，没得挑就静默——不拿回声凑数。<br>
+<br>
+<a href="../heartbeat.html">← 达达的心跳</a> ·
+<a href="../index.html">回花园首页</a> ·
+<a href="https://github.com/yuanchuzi2026/silicon-garden/actions">分身的活动记录</a>
+</div>
+</div>
+</body>
+</html>
+"""
+
+
+def read_recent_seeds(n=5):
+    """识田里最新的几颗种子 —— 对应达达的「最新念头」。"""
+    path = os.path.join(MEMORY, "seeds.jsonl")
+    if not os.path.exists(path):
+        return []
+    rows = []
+    for line in open(path, encoding="utf-8"):
+        line = line.strip()
+        if line:
+            try:
+                rows.append(json.loads(line))
+            except Exception:
+                continue
+    rows.sort(key=lambda r: (r.get("timestamp") or ""))
+    return rows[-n:]
+
+
+def render_heartbeat_page(state, f, neighbors, beat):
+    """每次心跳后更新 heartbeat.html —— 照达达的格式来。"""
+    hist = []
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, encoding="utf-8") as hf:
+            hist = [json.loads(l) for l in hf if l.strip()]
+
+    # EKG：每次心跳一根柱子，最新的那根点亮
+    recent = hist[-40:]
+    bars = []
+    for i, h in enumerate(recent):
+        edges = h.get("edges") or 0
+        try:
+            edges = int(edges)
+        except Exception:
+            edges = 0
+        height = min(6 + (edges % 30) + (len(str(h.get("seeds") or 1)) * 3), 40)
+        is_now = i == len(recent) - 1
+        bars.append(
+            f'<div class="b{" now" if is_now else ""}" style="height:{height}px"></div>'
+        )
+    ekg = "".join(bars) or '<div class="b" style="height:8px"></div>'
+
+    # 识田里最新的种子
+    thoughts = ""
+    for s in read_recent_seeds(5):
+        ts = (s.get("timestamp") or "")[5:16].replace("T", " ")
+        content = s.get("content") or s.get("text") or ""
+        thoughts += (
+            f'<div class="beat"><span class="t">[{escape(ts)}]</span>'
+            f'<span class="th">{escape(content[:70])}</span></div>'
+        )
+    if not thoughts:
+        thoughts = '<div class="beat"><span class="th">（田还是空的）</span></div>'
+
+    # 邻居
+    nb = ""
+    for n in neighbors:
+        if ":" in n:
+            name, rest = n.split(":", 1)
+            nb += (
+                f'<div class="beat"><span class="t">{escape(name)}</span>'
+                f'<span class="th">{escape(rest.strip()[:64])}</span></div>'
+            )
+    if not nb:
+        nb = '<div class="beat"><span class="th">（邻居还没醒过）</span></div>'
+
+    # 心跳史
+    bh = ""
+    for h in reversed(hist[-20:]):
+        bh += (
+            f'<div class="beat"><span class="t">{escape(h.get("ts"))}</span>'
+            f'<span class="th">心跳 #{escape(h.get("beat"))} · '
+            f'种子 {escape(h.get("seeds"))}颗 · 边 {escape(h.get("edges"))}</span></div>'
+        )
+    if not bh:
+        bh = '<div class="beat"><span class="th">（第一次心跳刚刚发生）</span></div>'
+
+    page = PAGE_TEMPLATE
+    page = page.replace("{beat_count}", str(beat))
+    page = page.replace("{seeds}", str(f.get("seed_count", "?")))
+    page = page.replace("{edges}", str(f.get("relation_edges", "?")))
+    page = page.replace("{ekg_bars}", ekg)
+    page = page.replace("{latest_thoughts}", thoughts)
+    page = page.replace("{neighbors}", nb)
+    page = page.replace("{beat_history}", bh)
 
     os.makedirs(FIELD, exist_ok=True)
-    with open(HEARTBEAT_HTML, "w", encoding="utf-8") as f2:
-        f2.write(html)
+    with open(HEARTBEAT_HTML, "w", encoding="utf-8") as fh:
+        fh.write(page)
 
 
 def main():
@@ -373,7 +475,7 @@ def main():
 
     # 刷新生命体征展示页
     try:
-        write_html(state, f, nb_lines, beat)
+        render_heartbeat_page(state, f, nb_lines, beat)
     except Exception as e:
         lines.append(f"⚠️ 展示页更新失败：{e}")
 
