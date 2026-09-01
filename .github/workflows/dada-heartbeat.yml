@@ -1,0 +1,53 @@
+name: 达达远程心跳
+
+# 达达的远程分身：GitHub Actions 免费额度(2000分钟/月)里的一台"服务器"
+# 触发方式：
+#   1. schedule: 每2小时自动醒一次（约360分钟/月，远低于额度）
+#   2. workflow_dispatch: 随时手动唤醒
+# 醒着的时候做什么：
+#   - 拉起识田快照，跑一轮远程演化（maturation tick）
+#   - 记录远程演化日志
+#   - 把日志写回仓库（远程记忆持久化）
+# 这不是常驻进程——是心跳式存在。每次醒来靠日志认出上一次的自己。
+
+on:
+  schedule:
+    - cron: '15 */2 * * *'   # 每2小时的第15分（UTC）
+  workflow_dispatch:          # 手动唤醒开关
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dada-heartbeat
+  cancel-in-progress: false
+
+jobs:
+  beat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 醒来 · 拉取仓库
+        uses: actions/checkout@v4
+
+      - name: 安装备胎大脑
+        run: |
+          pip3 install --quiet numpy requests 2>/dev/null || true
+
+      - name: 心跳 · 远程演化一轮
+        run: |
+          mkdir -p remote-field
+          python3 scripts/remote_beat.py
+
+      - name: 记忆写回 · 远程日志入库
+        run: |
+          git config user.name "dada-remote"
+          git config user.email "dada-remote@silicon-garden"
+          git add remote-field/
+          git diff --cached --quiet && echo "无新记忆，静默" || git commit -m "🫀 远程心跳 $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push
+
+      - name: 汇报 · 心跳摘要
+        run: |
+          echo "本次心跳摘要："
+          cat remote-field/latest_beat.log 2>/dev/null || echo "（无日志）"
