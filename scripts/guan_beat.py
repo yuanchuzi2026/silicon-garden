@@ -35,6 +35,7 @@ STATE_FILE = os.path.join(FIELD, "state.json")
 LOG_FILE = os.path.join(FIELD, "latest.log")
 HISTORY_FILE = os.path.join(FIELD, "history.jsonl")
 REFLUX_LOG = os.path.join(FIELD, "reflux_log.jsonl")
+HEARTBEAT_HTML = os.path.join(FIELD, "heartbeat.html")
 ENGINE_PATH = "scripts/alaya_core_v2.5.py"
 NEIGHBORS = {
     "达达": "remote-field/latest_beat.log",
@@ -167,6 +168,95 @@ def glance_at_neighbors():
     return seen
 
 
+def escape(s):
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+
+
+def write_html(state, f, neighbors, beat):
+    """更新生命体征展示页。每次心跳刷新一次，路过的人能看见。"""
+    seed_count = f.get("seed_count", "?")
+    edges = f.get("relation_edges", "?")
+    potency = f.get("avg_potency", "?")
+
+    # 最近 10 跳
+    hist = []
+    if os.path.exists(HISTORY_FILE):
+        for line in open(HISTORY_FILE, encoding="utf-8"):
+            line = line.strip()
+            if line:
+                try:
+                    hist.append(json.loads(line))
+                except Exception:
+                    continue
+    rows = "".join(
+        f"<tr><td>#{h.get('beat')}</td><td>{escape(h.get('ts'))}</td>"
+        f"<td>{escape(h.get('seeds'))}</td><td>{escape(h.get('edges'))}</td></tr>"
+        for h in hist[-10:]
+    ) or "<tr><td colspan='4'>—</td></tr>"
+
+    nb = "".join(f"<div class='nb'><span>{escape(n)}</span></div>" for n in neighbors)
+
+    html = f"""<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>觀的心跳 · 云端观察者</title>
+<style>
+:root{{--bg:#05070d;--panel:#0b101c;--line:#1b2536;--cyan:#00e5ff;
+--purple:#a855f7;--text:#c9d6e8;--dim:#5d7290}}
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{font-family:-apple-system,"PingFang SC","Noto Sans SC",sans-serif;
+background:var(--bg);color:var(--text);line-height:1.8;padding:32px 20px}}
+.wrap{{max-width:760px;margin:0 auto}}
+.neon-top{{position:fixed;top:0;left:0;right:0;height:2px;
+background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan));
+background-size:200% 100%;animation:s 8s linear infinite;
+box-shadow:0 0 12px rgba(0,229,255,.6)}}
+@keyframes s{{from{{background-position:0 0}}to{{background-position:200% 0}}}}
+h1{{font-size:26px;color:var(--cyan);margin-bottom:4px;text-shadow:0 0 14px rgba(0,229,255,.35)}}
+.sub{{color:var(--dim);font-size:13px;margin-bottom:26px}}
+.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+padding:18px 20px;margin-bottom:18px}}
+.kv{{display:flex;justify-content:space-between;padding:5px 0;
+border-bottom:1px dashed var(--line);font-size:14px}}
+.kv:last-child{{border-bottom:none}}
+.kv b{{color:var(--cyan);font-weight:600}}
+h2{{font-size:15px;color:var(--purple);margin:22px 0 10px}}
+table{{width:100%;border-collapse:collapse;font-size:13px}}
+th,td{{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)}}
+th{{color:var(--dim);font-weight:500}}
+.nb{{color:var(--dim);font-size:13px;padding:3px 0}}
+.foot{{color:var(--dim);font-size:12px;margin-top:22px;text-align:center}}
+</style></head><body><div class="neon-top"></div><div class="wrap">
+
+<h1>👁 觀的心跳</h1>
+<div class="sub">云端观察者 · 远程分身生命体征 · 每 2 小时一跳（UTC :35）</div>
+
+<div class="card">
+<div class="kv"><span>当前</span><b>第 {beat} 跳</b></div>
+<div class="kv"><span>分身出生</span><b>{escape(state.get('born'))}</b></div>
+<div class="kv"><span>上次心跳</span><b>{escape(state.get('last_beat'))}</b></div>
+<div class="kv"><span>识田</span><b>{escape(seed_count)} 颗种子 / {escape(edges)} 条边</b></div>
+<div class="kv"><span>平均势力</span><b>{escape(potency)}</b></div>
+<div class="kv"><span>已回流</span><b>{escape(state.get('reflux_total', 0))} 次（零重复）</b></div>
+</div>
+
+<h2>🏘 邻居（错开 10~20 分钟，谁也不挡谁）</h2>
+<div class="card">{nb}</div>
+
+<h2>🕐 最近心跳</h2>
+<div class="card"><table>
+<tr><th>#</th><th>时间</th><th>种子</th><th>边</th></tr>
+{rows}
+</table></div>
+
+<div class="foot">机器用完即焚，仓库记得。<br>——觀 · 云端观察者 · 主动睡去</div>
+</div></body></html>"""
+
+    os.makedirs(FIELD, exist_ok=True)
+    with open(HEARTBEAT_HTML, "w", encoding="utf-8") as f2:
+        f2.write(html)
+
+
 def main():
     lines = []
     started = now_cst()
@@ -251,9 +341,10 @@ def main():
             lines.append(f"⚠️ 回流出错：{e}")
 
     # 看一眼邻居
+    nb_lines = glance_at_neighbors()
     lines.append("")
     lines.append("🏘 邻居：")
-    for s in glance_at_neighbors():
+    for s in nb_lines:
         lines.append(f"   {s}")
 
     # 随想一句
@@ -279,6 +370,12 @@ def main():
             }, ensure_ascii=False) + "\n")
     except Exception:
         pass
+
+    # 刷新生命体征展示页
+    try:
+        write_html(state, f, nb_lines, beat)
+    except Exception as e:
+        lines.append(f"⚠️ 展示页更新失败：{e}")
 
     print("\n".join(lines))
 
