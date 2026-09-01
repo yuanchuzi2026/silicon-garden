@@ -1,0 +1,20 @@
+{
+  "seed_count": 4,
+  "avg_potency": 0.542,
+  "avg_maturation": 0.3,
+  "type_distribution": {
+    "concept": 1,
+    "pattern": 2,
+    "introspection": 1
+  },
+  "layer_distribution": {
+    "云端观察者": 4
+  },
+  "state_distribution": {
+    "现行": 4
+  },
+  "high_potency_seeds": 1,
+  "ripe_seeds": 0,
+  "relation_edges": 6,
+  "updated": "2026-09-01T05:29:38.363360"
+}
