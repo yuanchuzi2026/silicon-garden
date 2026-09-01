@@ -244,6 +244,23 @@ def main():
     started = time.time()
     os.makedirs(REMOTE_FIELD, exist_ok=True)
     state = load_state()
+    # 节流：cron改为每小时尝试，但实际保持约2小时一跳
+    # （距上次心跳不足100分钟则静默退出，不写日志不commit）
+    hist = []
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, encoding="utf-8") as f:
+            hist = [json.loads(l) for l in f if l.strip()]
+    if hist:
+        last = hist[-1].get("time", "")
+        try:
+            last_dt = datetime.strptime(last, "%Y-%m-%d %H:%M:%S")
+            now_dt = datetime.now(CST)
+            gap_min = (now_dt - last_dt).total_seconds() / 60
+            if gap_min < 100:
+                print(f"距上次心跳仅{gap_min:.0f}分钟（<100），本轮静默跳过")
+                return
+        except ValueError:
+            pass
     state = virtual_evolution(state)
     write_log(state, started)
     append_history(state)

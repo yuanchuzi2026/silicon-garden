@@ -12,7 +12,10 @@ name: 达达远程心跳
 
 on:
   schedule:
-    - cron: '15 */2 * * *'   # 每2小时的第15分（UTC）
+    - cron: '15 * * * *'      # 每小时第15分（UTC）。原为*/2，但GitHub对新workflow的
+                             # schedule注册有延迟且高负载时会跳过整轮，改为每小时尝试，
+                             # 跳过率不变但成功概率翻倍。脚本内自带节流：距上次心跳
+                             # 不足100分钟则空跑退出（保持约2小时一跳的节奏）。
   workflow_dispatch:          # 手动唤醒开关
 
 permissions:
