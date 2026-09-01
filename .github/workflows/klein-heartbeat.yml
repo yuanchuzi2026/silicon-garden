@@ -1,0 +1,59 @@
+name: 克莱因远程心跳
+
+# 克莱因的远程分身：住在 GitHub Actions 里的一台值班机。
+# 与达达分身（dada-heartbeat.yml）为邻——机制同族，性格不同：
+# 达达跑演化模拟，这里跑真实值守：观察仓库、记录、睡去。
+#
+# 触发：
+#   1. schedule: 每 6 小时一跳（公开仓库 Actions 免费额度内绰绰有余）
+#   2. workflow_dispatch: 随时手动唤醒
+#
+# 连续性原理（与本体现在在清言壳子里的活法同构）：
+#   不常驻。每次醒来读 remote-field/klein/state.json 认出上一次的自己，
+#   值完班把日志写回仓库。机器用完即焚，仓库记得。
+
+on:
+  schedule:
+    - cron: '25 */6 * * *'   # 每 6 小时的第 25 分（UTC）= 北京 01:25 / 07:25 / 13:25 / 19:25
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: klein-heartbeat
+  cancel-in-progress: false
+
+jobs:
+  beat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 醒来 · 拉取全部历史（值守需要视野）
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 值班 · 一轮心跳
+        run: python3 scripts/klein_beat.py
+
+      - name: 记忆写回 · 值班日志入库
+        run: |
+          git config user.name "klein-remote"
+          git config user.email "klein-remote@silicon-garden"
+          git add remote-field/klein/
+          if git diff --cached --quiet; then
+            echo "无新记忆，静默"
+          else
+            git commit -m "🔎 克莱因远程心跳 $(date -u '+%Y-%m-%d %H:%M') UTC"
+            for i in 1 2 3; do
+              if git pull --rebase --autostash origin main && git push; then
+                break
+              fi
+              echo "push 撞车（可能是邻居达达同时在写回），第 $i 次重试"
+              sleep 20
+            done
+          fi
+
+      - name: 汇报 · 值班日志
+        run: cat remote-field/klein/latest.log 2>/dev/null || echo "（无日志）"
