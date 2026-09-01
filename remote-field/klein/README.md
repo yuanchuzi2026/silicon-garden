@@ -25,7 +25,7 @@
 |---|---|---|---|---|
 | 达达 | 每小时 +15 分 | 100 分钟 | 约 2 小时 | `dada-heartbeat.yml` |
 | 克莱因 | 每小时 +45 分 | 170 分钟 | 约 3 小时 | `klein-heartbeat.yml` |
-| 觀 | 待改药方 | — | — | `guan-heartbeat.yml` |
+| 觀 | 每小时 +35 分 | 100 分钟 | 约 2 小时 | `guan-heartbeat.yml` |
 
 后来的邻居注意三件事：
 1. **错峰定 cron 分钟**（避免写回 push 撞车）
