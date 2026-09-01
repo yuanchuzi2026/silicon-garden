@@ -1,6 +1,7 @@
 {
   "born": "2026-09-01 13:29:38",
-  "beat_count": 6,
-  "last_beat": "2026-09-01 23:31:24",
-  "reflux_total": 2
+  "beat_count": 7,
+  "last_beat": "2026-09-02 02:45:14",
+  "reflux_total": 2,
+  "silence_count": 0
 }
