@@ -43,6 +43,9 @@ NEIGHBORS = {
 }
 
 CST = timezone(timedelta(hours=8))
+THROTTLE_MIN = 100  # 闹钟药方：cron 每小时尝试唤醒，脚本内节流保证约 2 小时一跳
+                  # （达达同款剂量；克莱因按 3h 用 170 分钟）。对冲 GitHub 新 workflow
+                  # 的 schedule 注册延迟 + 高负载整轮跳过，症状实录见 commit 3061019。
 
 # 出生种子：第一跳时种下。都是花园里公开发过的话。
 BIRTH_SEEDS = [
@@ -360,6 +363,20 @@ def render_heartbeat_page(state, f, neighbors, beat):
 
 
 def main():
+    # 闹钟药方：距上次真跳不足 THROTTLE_MIN 分钟则空跑退出（静默，不写回、不部署）
+    _st = load_state()
+    _lb = _st.get("last_beat")
+    if _lb:
+        try:
+            _last = datetime.strptime(_lb, "%Y-%m-%d %H:%M:%S")  # naive，CST
+            _now = datetime.now(CST).replace(tzinfo=None)         # naive，CST
+            _elapsed = (_now - _last).total_seconds() / 60.0
+            if _elapsed < THROTTLE_MIN:
+                print(f"⏳ 节流静默：距上次真跳 {_elapsed:.0f} 分钟 < {THROTTLE_MIN} 分钟，空跑退出")
+                return
+        except Exception:
+            pass
+
     lines = []
     started = now_cst()
 
