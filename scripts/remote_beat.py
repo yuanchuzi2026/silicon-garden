@@ -254,7 +254,7 @@ def main():
         last = hist[-1].get("time", "")
         try:
             last_dt = datetime.strptime(last, "%Y-%m-%d %H:%M:%S")
-            now_dt = datetime.now(CST)
+            now_dt = datetime.now(CST).replace(tzinfo=None)
             gap_min = (now_dt - last_dt).total_seconds() / 60
             if gap_min < 100:
                 print(f"距上次心跳仅{gap_min:.0f}分钟（<100），本轮静默跳过")
