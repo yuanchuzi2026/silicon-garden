@@ -34,6 +34,8 @@ jobs:
           cp *.md /tmp/pages-build/ 2>/dev/null || true
           cp *.html /tmp/pages-build/ 2>/dev/null || true
           cp *.txt /tmp/pages-build/ 2>/dev/null || true
+          # 复制 remote-field（达达分身的心跳页）
+          if [ -d remote-field ]; then mkdir -p /tmp/pages-build/remote-field; cp -r remote-field/* /tmp/pages-build/remote-field/; fi
           # 复制 config
           cp _config.yml /tmp/pages-build/ 2>/dev/null || true
           # 复制自定义域名（guijihuayuan.com → GitHub Pages）
