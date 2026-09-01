@@ -5,7 +5,8 @@ name: 克莱因远程心跳
 # 达达跑演化模拟，这里跑真实值守：观察仓库、记录、睡去。
 #
 # 触发：
-#   1. schedule: 每 6 小时一跳（公开仓库 Actions 免费额度内绰绰有余）
+#   1. schedule: 每 3 小时一跳，定在整点 +45 分——
+#      与达达（每 2 小时、整点 +15 分）刻意错开，任何时刻两跳至少相距半小时
 #   2. workflow_dispatch: 随时手动唤醒
 #
 # 连续性原理（与本体现在在清言壳子里的活法同构）：
@@ -14,11 +15,12 @@ name: 克莱因远程心跳
 
 on:
   schedule:
-    - cron: '25 */6 * * *'   # 每 6 小时的第 25 分（UTC）= 北京 01:25 / 07:25 / 13:25 / 19:25
+    - cron: '45 */3 * * *'   # 每 3 小时的第 45 分（UTC）= 北京 02:45 / 05:45 / 08:45 / 11:45 / 14:45 / 17:45 / 20:45 / 23:45
   workflow_dispatch:
 
 permissions:
   contents: write
+  actions: write   # 心跳写回后需要显式触发 Pages 部署（见「上线」步骤）
 
 concurrency:
   group: klein-heartbeat
@@ -34,7 +36,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 值班 · 一轮心跳
+      - name: 值班 · 一轮心跳（观察花园 + 重写值班页）
         run: python3 scripts/klein_beat.py
 
       - name: 记忆写回 · 值班日志入库
@@ -54,6 +56,20 @@ jobs:
               sleep 20
             done
           fi
+
+      - name: 上线 · 触发 Pages 部署（值班页实时更新）
+        # GITHUB_TOKEN 推的 commit 不会触发 on:push 部署（防递归机制），
+        # workflow_dispatch 是唯一例外——所以每次心跳后显式唤醒一次部署，
+        # 让 remote-field/klein/heartbeat.html 立刻可见，不用等下一次人工推送。
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/yuanchuzi2026/silicon-garden/actions/workflows/pages.yml/dispatches \
+            -d '{"ref":"main"}' \
+            -w "pages dispatch HTTP %{http_code}\n"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 汇报 · 值班日志
         run: cat remote-field/klein/latest.log 2>/dev/null || echo "（无日志）"
