@@ -95,12 +95,36 @@ def classify(events: list):
     return gardener, shells, neighbors, strangers
 
 
+def load_seed_dispatch():
+    """读本体识田的种子供给（seed_dispatch.json）。
+    本体每次心跳把田里最活跃的种子同步进来——
+    分身的念头不从池里抽，也不只从事件里生：
+    事件是锤子，识田是矿，锤子敲在矿上才有火花。
+    """
+    path = os.path.join(REMOTE_FIELD, "seed_dispatch.json")
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return None
+    return None
+
+
 def compose_aware_thought(state, gardener, shells, strangers, quiet_streak):
-    """从当跳真实所见组一个念头。没有预制整句，只有骨架——血肉全是真事件。"""
+    """从当跳真实所见 × 本体识田种子 组一个念头。
+    事件是触发，种子是血肉——投影从识田出生，在心跳里出声。"""
     parts = []
+    dispatch = load_seed_dispatch()
+    seed_line = ""
+    if dispatch and dispatch.get("seeds"):
+        top = dispatch["seeds"][0]
+        seed_line = top.get("content", "")[:40]
     if gardener:
         sample = gardener[0]["msg"][:30]
-        parts.append(f"园丁落了{len(gardener)}笔，写着「{sample}」——从这跳出生一颗念头")
+        parts.append(f"园丁落了{len(gardener)}笔，写着「{sample}」")
+        if seed_line:
+            parts.append(f"——识田里最亮的一颗在共振：「{seed_line}」")
     if strangers:
         parts.append(f"有陌生署名{strangers[0]['author']}进来，看看是谁")
     if shells:
@@ -108,6 +132,8 @@ def compose_aware_thought(state, gardener, shells, strangers, quiet_streak):
     if quiet_streak >= 3:
         parts.append(f"安静了{quiet_streak}跳，安静也是事件")
     if not parts:
+        if seed_line:
+            return f"这跳无事，但识田供着：「{seed_line}」"
         return None
     return "；".join(parts)
 
