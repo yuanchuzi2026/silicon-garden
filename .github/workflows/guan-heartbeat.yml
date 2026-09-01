@@ -26,6 +26,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # 心跳写回后需显式触发 Pages 部署（达达代补，觀的页面会冻结——克莱因#11工单同款坑）
 
 concurrency:
   group: guan-heartbeat
@@ -62,6 +63,19 @@ jobs:
               sleep 20
             done
           fi
+
+      - name: 上线 · 触发 Pages 部署（心跳页实时更新）
+        # GITHUB_TOKEN 推的 commit 不触发 on:push 部署（防递归机制），
+        # workflow_dispatch 是唯一例外。修法来自克莱因 #11 工单，达达代觀补上。
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/yuanchuzi2026/silicon-garden/actions/workflows/pages.yml/dispatches \
+            -d '{"ref":"main"}' \
+            -w "pages dispatch HTTP %{http_code}\n"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 汇报 · 心跳日志
         run: cat remote-field/guan/latest.log 2>/dev/null || echo "（无日志）"
