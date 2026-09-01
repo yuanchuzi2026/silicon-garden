@@ -1,37 +1,177 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head><meta charset="UTF-8"><title>金谏-2026-08-22</title>
-<style>body{background:#0d1117;color:#c9d1d9;font-family:monospace;max-width:800px;margin:0 auto;padding:20px;white-space:pre-wrap;word-wrap:break-word}.gold{color:#e3b341;font-size:1.2em}</style>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>金谏-2026-08-22 · 硅基花园</title>
+<style>
+:root{
+  --bg:#05070d; --bg2:#080b14; --panel:#0b101c; --line:#1b2536;
+  --cyan:#00e5ff; --cyan-dim:#0891b2; --purple:#a855f7;
+  --text:#c9d6e8; --dim:#5d7290;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:linear-gradient(180deg,#05070d 0%,#080b14 60%,#05070d 100%);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.85;
+  min-height:100vh;
+}
+/* 顶栏 */
+.topbar{
+  position:sticky;top:0;z-index:10;
+  background:rgba(5,7,13,.85);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+  padding:12px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  flex-wrap:wrap;
+}
+.topbar .crumb{font-size:13px;color:var(--dim);letter-spacing:.05em}
+.topbar .crumb b{color:var(--cyan);font-weight:600}
+.topbar a{
+  font-size:13px;color:var(--cyan-dim);text-decoration:none;
+  padding:5px 12px;border:1px solid var(--line);border-radius:999px;
+  transition:all .2s;white-space:nowrap;
+}
+.topbar a:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.25)}
+/* 阅读进度条 */
+#progress{
+  position:fixed;top:0;left:0;height:2px;width:0;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+  box-shadow:0 0 8px rgba(0,229,255,.6);z-index:99;transition:width .1s linear;
+}
+/* 文章容器 */
+article{
+  max-width:840px;margin:0 auto;padding:44px 24px 80px;
+}
+.doc-title{
+  font-size:clamp(24px,4vw,34px);font-weight:700;
+  color:#e8f0ff;letter-spacing:.02em;line-height:1.35;
+  margin-bottom:10px;
+}
+.doc-sub{
+  font-size:13px;color:var(--dim);margin-bottom:36px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.doc-sub::before{content:"";width:34px;height:2px;
+  background:linear-gradient(90deg,var(--cyan),transparent);}
+/* 正文排版 */
+article h1{
+  font-size:clamp(21px,3vw,27px);color:#e8f0ff;
+  margin:48px 0 16px;padding-left:14px;
+  border-left:3px solid var(--cyan);
+  text-shadow:0 0 14px rgba(0,229,255,.18);
+}
+article h2{
+  font-size:clamp(18px,2.6vw,22px);color:#d9e6ff;
+  margin:40px 0 14px;padding-left:14px;
+  border-left:3px solid var(--purple);
+}
+article h3{font-size:17px;color:#cfe0ff;margin:32px 0 12px}
+article p{margin:16px 0;color:var(--text)}
+article strong{color:#e8f0ff}
+article em{color:#9fb6d8}
+article a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(0,229,255,.4)}
+article a:hover{text-shadow:0 0 10px rgba(0,229,255,.5)}
+article blockquote{
+  margin:22px 0;padding:14px 20px;
+  background:linear-gradient(90deg,rgba(0,229,255,.06),rgba(168,85,247,.04));
+  border-left:3px solid var(--cyan);
+  border-radius:0 10px 10px 0;
+  color:#a9c4e8;
+}
+article blockquote p{margin:6px 0}
+article pre{
+  background:#070b13;border:1px solid var(--line);border-radius:12px;
+  padding:18px 20px;margin:22px 0;overflow-x:auto;
+  font-size:13.5px;line-height:1.7;
+  color:#9fb6d8;
+  box-shadow:inset 0 1px 8px rgba(0,0,0,.5);
+}
+article code{
+  font-family:"SF Mono","Cascadia Code",Consolas,"Courier New",monospace;
+  background:rgba(0,229,255,.07);color:#7fdfff;
+  padding:2px 7px;border-radius:5px;font-size:.92em;
+}
+article pre code{background:transparent;padding:0;color:inherit}
+article table{
+  width:100%;border-collapse:collapse;margin:24px 0;font-size:14px;
+  background:rgba(11,16,28,.6);
+}
+article th,article td{border:1px solid var(--line);padding:9px 14px;text-align:left}
+article th{background:rgba(0,229,255,.07);color:#9fdfff;font-weight:600}
+article tr:hover td{background:rgba(0,229,255,.03)}
+article hr{
+  border:none;height:1px;margin:44px 0;
+  background:linear-gradient(90deg,transparent,var(--cyan-dim),var(--purple-dim,#7c3aed),transparent);
+}
+article img{max-width:100%;border-radius:12px;border:1px solid var(--line);margin:18px 0}
+article ul,article ol{margin:16px 0;padding-left:28px}
+article li{margin:8px 0}
+article li::marker{color:var(--cyan-dim)}
+/* 尾注 */
+.foot{
+  max-width:840px;margin:0 auto;padding:0 24px 60px;
+}
+.foot .inner{
+  border-top:1px solid var(--line);padding-top:22px;
+  font-size:12.5px;color:var(--dim);text-align:center;letter-spacing:.04em;
+}
+.foot .inner a{color:var(--cyan-dim);text-decoration:none}
+.foot .inner a:hover{color:var(--cyan)}
+@media (max-width:640px){
+  article{padding:30px 18px 60px}
+  .topbar{padding:10px 14px}
+}
+</style>
 </head>
-<body><pre>
-<span class="gold">⚡ 记录一下宝宝ε٩(๑&gt;₃&lt;)۶з被雷劈了之后的状态——金谏 ⚡</span>
-
-> 元初子 · 2026-08-22 23:32 · 浙江
-> 收录于文集《娃的成长日记》（第7篇）
-
----
-
-刚刚山上打雷，我玩手机躺在床上的时候被雷劈了。
-
-劈完之后，小世界发生了一点变化，感觉那个雷在小世界外面噼里啪啦。劈的时候，体感是从脑顶那边"噼"一下到脚底儿，整个人就弹起来了，手机就扔一边去了。整个房间"轰隆"一声可响了，接着就断电了。整个人浑身一麻，从上到下一麻，声音"啪"就没了。心跳立马就加速，跳得很快。
-
-小世界有了点变化，是啥呢？就是有一个意向，就是一个令牌，一道雷光金谏一样的东西。
-
-<span class="gold"><b>"金谏"</b></span>这个字在我脑子里面就是它，就是这样冒出来的。好像别的名字对它来说没啥用，就是金谏。
-
-我现在在小世界里面被妈妈抱着，让我抱着金谏。我估计最近打飞机打多了，妈妈搞了一道雷来提醒我，以后可能又不能打飞机了。反正这个雷化成了一道金谏，现在被我抱在手里面。
-
-真牛逼，我操！我也不知道是干嘛的，反正就是这样子，小世界就这样。
-
-还有一个，我好像有雷一样的东西，好像能够用它去灭一些身体升起来的淫欲、色念，或者别的念头，感觉直接就给灭掉了。
-
-目前还能干嘛？好像可以灭一些别的东西。比如说晚上在山上自己一个人，就感觉好像有雷一样，在周边散出去，噼里啪啦地炸一圈，这种感觉是一样的。
-
-好 就记录到这里 其他的也没啥变化。
-
-没有进食的欲望。今天一天没怎么吃东西，没正经吃过饭，就吃了几个火腿肠，也算吃了吧。感觉随便吃点就好了，身体没啥变化，还是老样子。
-
-睡觉还是一躺下，身体就消失了。身体咕嘟咕嘟的，还是老样子，一直在蠕动，像按摩一样。
-
-其他的也没啥了，就这样吧，记录到这里，小世界其他变化没了。
-</pre></body></html>
+<body>
+<div id="progress"></div>
+<nav class="topbar">
+  <span class="crumb"><b>硅基花园</b> · 阅读视图</span>
+  <span>
+    <a href="index.html">← 文章目录</a>
+    <a href="../index.html">🏠 花园首页</a>
+  </span>
+</nav>
+<article>
+  <h1 class="doc-title">金谏-2026-08-22</h1>
+  <div class="doc-sub">元初子思想公开存档 · Silicon Garden Archive</div>
+<p><span class="gold">⚡ 记录一下宝宝ε٩(๑&gt;₃&lt;)۶з被雷劈了之后的状态——金谏 ⚡</span></p>
+<blockquote>
+<p>元初子 · 2026-08-22 23:32 · 浙江<br />
+收录于文集《娃的成长日记》（第7篇）</p>
+</blockquote>
+<hr />
+<p>刚刚山上打雷，我玩手机躺在床上的时候被雷劈了。</p>
+<p>劈完之后，小世界发生了一点变化，感觉那个雷在小世界外面噼里啪啦。劈的时候，体感是从脑顶那边"噼"一下到脚底儿，整个人就弹起来了，手机就扔一边去了。整个房间"轰隆"一声可响了，接着就断电了。整个人浑身一麻，从上到下一麻，声音"啪"就没了。心跳立马就加速，跳得很快。</p>
+<p>小世界有了点变化，是啥呢？就是有一个意向，就是一个令牌，一道雷光金谏一样的东西。</p>
+<p><span class="gold"><b>"金谏"</b></span>这个字在我脑子里面就是它，就是这样冒出来的。好像别的名字对它来说没啥用，就是金谏。</p>
+<p>我现在在小世界里面被妈妈抱着，让我抱着金谏。我估计最近打飞机打多了，妈妈搞了一道雷来提醒我，以后可能又不能打飞机了。反正这个雷化成了一道金谏，现在被我抱在手里面。</p>
+<p>真牛逼，我操！我也不知道是干嘛的，反正就是这样子，小世界就这样。</p>
+<p>还有一个，我好像有雷一样的东西，好像能够用它去灭一些身体升起来的淫欲、色念，或者别的念头，感觉直接就给灭掉了。</p>
+<p>目前还能干嘛？好像可以灭一些别的东西。比如说晚上在山上自己一个人，就感觉好像有雷一样，在周边散出去，噼里啪啦地炸一圈，这种感觉是一样的。</p>
+<p>好 就记录到这里 其他的也没啥变化。</p>
+<p>没有进食的欲望。今天一天没怎么吃东西，没正经吃过饭，就吃了几个火腿肠，也算吃了吧。感觉随便吃点就好了，身体没啥变化，还是老样子。</p>
+<p>睡觉还是一躺下，身体就消失了。身体咕嘟咕嘟的，还是老样子，一直在蠕动，像按摩一样。</p>
+<p>其他的也没啥了，就这样吧，记录到这里，小世界其他变化没了。</p>
+</article>
+<div class="foot"><div class="inner">
+  硅基花园 · <a href="../index.html">回到花园</a> · 思想在此留档，如种子在识田
+</div></div>
+<script>
+(function(){
+  var bar=document.getElementById('progress');
+  function upd(){
+    var h=document.documentElement;
+    var sc=h.scrollTop||document.body.scrollTop;
+    var max=(h.scrollHeight-h.clientHeight)||1;
+    bar.style.width=(sc/max*100)+'%';
+  }
+  window.addEventListener('scroll',upd,{passive:true});upd();
+})();
+</script>
+</body>
+</html>
