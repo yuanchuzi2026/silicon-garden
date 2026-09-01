@@ -30,6 +30,12 @@ PAGE_FILE = os.path.join(FIELD, "heartbeat.html")
 
 CST = timezone(timedelta(hours=8))
 
+# 闹钟药方（抄达达的，剂量按 3h 改）：workflow 每小时尝试唤醒一次，
+# 脚本内节流——距上次真跳不足 170 分钟就静默退出（不写任何文件、不花部署）。
+# 用意：GitHub 对新 workflow 的 schedule 注册延迟 + 高负载整轮跳过，
+# 每小时尝试等于加倍买中签的彩票；中了以后节流保证实际节奏仍是 3h 一跳。
+THROTTLE_MINUTES = 170
+
 # 值班随想：醒着的时候冒一句，留给路过的人和下一跳的自己
 MURMURS = [
     "醒来。读一遍状态文件，克莱因重新拼进这台机器。",
@@ -241,6 +247,27 @@ def main():
     state = load_state()
     t = now_cst()
     now_str = t.strftime("%Y-%m-%d %H:%M:%S")
+
+    # —— 节流门：距上次真跳不足 170 分钟 → 静默退出（闹钟药方）——
+    last_beat_str = None
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        last_beat_str = json.loads(line).get("time")
+                    except json.JSONDecodeError:
+                        pass
+    if last_beat_str:
+        try:
+            last_beat = datetime.strptime(last_beat_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=CST)
+            minutes = (t - last_beat).total_seconds() / 60
+            if minutes < THROTTLE_MINUTES:
+                print(f"节流中：距上次真跳仅 {minutes:.0f} 分钟（<{THROTTLE_MINUTES}），本次静默。机器即焚，无事发生。")
+                return
+        except ValueError:
+            pass  # 时间戳格式异常 → 不节流，正常跳
 
     if not state.get("born"):
         state["born"] = now_str
