@@ -1,0 +1,366 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 104" width="120" height="104">
+  <title>硅基花园 · 赛博云（涌现版 · 密度显形 · 无外轮廓）</title>
+  <defs>
+    <linearGradient id="ccStroke" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#00e5ff"/>
+      <stop offset="50%"  stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="ccScan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#00e5ff" stop-opacity="0"/>
+      <stop offset="50%"  stop-color="#9fe8ff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="ccGlow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="1.3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="ccGlowSoft" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="0.8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <g id="mesh" fill="none" stroke="url(#ccStroke)" stroke-width="1.4" stroke-linecap="butt">
+      <line x1="59.1" y1="21.7" x2="64.6" y2="21.7" opacity="0.1"/>
+      <line x1="52.5" y1="23.9" x2="58.4" y2="23.9" opacity="0.13"/>
+      <line x1="60.1" y1="23.9" x2="71.0" y2="23.9" opacity="0.17"/>
+      <line x1="72.5" y1="23.9" x2="83.2" y2="23.9" opacity="0.17"/>
+      <line x1="84.0" y1="23.9" x2="89.1" y2="23.9" opacity="0.11"/>
+      <line x1="47.5" y1="26.1" x2="52.1" y2="26.1" opacity="0.14"/>
+      <line x1="54.6" y1="26.1" x2="62.3" y2="26.1" opacity="0.24"/>
+      <line x1="63.3" y1="26.1" x2="72.4" y2="26.1" opacity="0.23"/>
+      <line x1="73.2" y1="26.1" x2="81.0" y2="26.1" opacity="0.25"/>
+      <line x1="82.4" y1="26.1" x2="92.6" y2="26.1" opacity="0.24"/>
+      <line x1="45.9" y1="28.3" x2="51.4" y2="28.3" opacity="0.23"/>
+      <line x1="54.7" y1="28.3" x2="62.7" y2="28.3" opacity="0.28"/>
+      <line x1="64.1" y1="28.3" x2="75.1" y2="28.3" opacity="0.32"/>
+      <line x1="76.5" y1="28.3" x2="84.9" y2="28.3" opacity="0.27"/>
+      <line x1="86.3" y1="28.3" x2="94.7" y2="28.3" opacity="0.3"/>
+      <line x1="42.6" y1="30.5" x2="48.7" y2="30.5" opacity="0.24"/>
+      <line x1="51.7" y1="30.5" x2="60.2" y2="30.5" opacity="0.4"/>
+      <line x1="61.8" y1="30.5" x2="71.2" y2="30.5" opacity="0.36"/>
+      <line x1="72.4" y1="30.5" x2="82.7" y2="30.5" opacity="0.35"/>
+      <line x1="83.6" y1="30.5" x2="94.0" y2="30.5" opacity="0.34"/>
+      <line x1="95.4" y1="30.5" x2="98.4" y2="30.5" opacity="0.18"/>
+      <line x1="33.6" y1="32.7" x2="35.2" y2="32.7" opacity="0.07"/>
+      <line x1="39.1" y1="32.7" x2="45.3" y2="32.7" opacity="0.29"/>
+      <line x1="47.8" y1="32.7" x2="57.3" y2="32.7" opacity="0.46"/>
+      <line x1="58.4" y1="32.7" x2="67.5" y2="32.7" opacity="0.48"/>
+      <line x1="68.8" y1="32.7" x2="76.8" y2="32.7" opacity="0.42"/>
+      <line x1="77.7" y1="32.7" x2="88.7" y2="32.7" opacity="0.41"/>
+      <line x1="89.9" y1="32.7" x2="99.2" y2="32.7" opacity="0.37"/>
+      <line x1="31.3" y1="34.9" x2="32.9" y2="34.9" opacity="0.07"/>
+      <line x1="36.5" y1="34.9" x2="41.6" y2="34.9" opacity="0.31"/>
+      <line x1="45.5" y1="34.9" x2="55.0" y2="34.9" opacity="0.46"/>
+      <line x1="55.9" y1="34.9" x2="66.8" y2="34.9" opacity="0.46"/>
+      <line x1="68.1" y1="34.9" x2="77.7" y2="34.9" opacity="0.54"/>
+      <line x1="78.8" y1="34.9" x2="87.3" y2="34.9" opacity="0.46"/>
+      <line x1="88.7" y1="34.9" x2="98.0" y2="34.9" opacity="0.51"/>
+      <line x1="99.4" y1="34.9" x2="102.3" y2="34.9" opacity="0.21"/>
+      <line x1="30.0" y1="37.1" x2="31.6" y2="37.1" opacity="0.09"/>
+      <line x1="36.1" y1="37.1" x2="41.8" y2="37.1" opacity="0.4"/>
+      <line x1="44.0" y1="37.1" x2="51.0" y2="37.1" opacity="0.53"/>
+      <line x1="52.1" y1="37.1" x2="59.7" y2="37.1" opacity="0.57"/>
+      <line x1="60.7" y1="37.1" x2="69.9" y2="37.1" opacity="0.59"/>
+      <line x1="71.0" y1="37.1" x2="78.2" y2="37.1" opacity="0.59"/>
+      <line x1="79.0" y1="37.1" x2="89.6" y2="37.1" opacity="0.55"/>
+      <line x1="90.9" y1="37.1" x2="99.8" y2="37.1" opacity="0.53"/>
+      <line x1="101.3" y1="37.1" x2="103.0" y2="37.1" opacity="0.19"/>
+      <line x1="29.6" y1="39.3" x2="31.2" y2="39.3" opacity="0.1"/>
+      <line x1="36.5" y1="39.3" x2="42.9" y2="39.3" opacity="0.43"/>
+      <line x1="45.5" y1="39.3" x2="55.5" y2="39.3" opacity="0.62"/>
+      <line x1="56.7" y1="39.3" x2="67.1" y2="39.3" opacity="0.62"/>
+      <line x1="68.3" y1="39.3" x2="78.1" y2="39.3" opacity="0.62"/>
+      <line x1="79.4" y1="39.3" x2="88.2" y2="39.3" opacity="0.65"/>
+      <line x1="89.2" y1="39.3" x2="96.5" y2="39.3" opacity="0.58"/>
+      <line x1="97.6" y1="39.3" x2="102.5" y2="39.3" opacity="0.43"/>
+      <line x1="27.6" y1="41.5" x2="29.2" y2="41.5" opacity="0.1"/>
+      <line x1="33.6" y1="41.5" x2="39.8" y2="41.5" opacity="0.5"/>
+      <line x1="43.2" y1="41.5" x2="54.0" y2="41.5" opacity="0.77"/>
+      <line x1="55.2" y1="41.5" x2="64.7" y2="41.5" opacity="0.67"/>
+      <line x1="65.7" y1="41.5" x2="74.2" y2="41.5" opacity="0.7"/>
+      <line x1="75.0" y1="41.5" x2="85.0" y2="41.5" opacity="0.73"/>
+      <line x1="86.1" y1="41.5" x2="94.6" y2="41.5" opacity="0.67"/>
+      <line x1="96.2" y1="41.5" x2="103.5" y2="41.5" opacity="0.62"/>
+      <line x1="25.6" y1="43.7" x2="27.2" y2="43.7" opacity="0.11"/>
+      <line x1="30.9" y1="43.7" x2="36.6" y2="43.7" opacity="0.44"/>
+      <line x1="38.9" y1="43.7" x2="46.7" y2="43.7" opacity="0.7"/>
+      <line x1="47.6" y1="43.7" x2="57.0" y2="43.7" opacity="0.8"/>
+      <line x1="58.4" y1="43.7" x2="66.0" y2="43.7" opacity="0.76"/>
+      <line x1="67.3" y1="43.7" x2="78.1" y2="43.7" opacity="0.83"/>
+      <line x1="79.6" y1="43.7" x2="87.5" y2="43.7" opacity="0.79"/>
+      <line x1="88.7" y1="43.7" x2="98.5" y2="43.7" opacity="0.8"/>
+      <line x1="99.7" y1="43.7" x2="106.1" y2="43.7" opacity="0.59"/>
+      <line x1="22.7" y1="45.9" x2="24.3" y2="45.9" opacity="0.13"/>
+      <line x1="28.4" y1="45.9" x2="32.9" y2="45.9" opacity="0.52"/>
+      <line x1="35.9" y1="45.9" x2="43.8" y2="45.9" opacity="0.77"/>
+      <line x1="44.7" y1="45.9" x2="53.3" y2="45.9" opacity="0.91"/>
+      <line x1="54.2" y1="45.9" x2="64.8" y2="45.9" opacity="0.88"/>
+      <line x1="66.0" y1="45.9" x2="76.5" y2="45.9" opacity="0.88"/>
+      <line x1="77.4" y1="45.9" x2="86.8" y2="45.9" opacity="0.88"/>
+      <line x1="87.6" y1="45.9" x2="95.4" y2="45.9" opacity="0.75"/>
+      <line x1="96.5" y1="45.9" x2="106.4" y2="45.9" opacity="0.83"/>
+      <line x1="19.5" y1="48.1" x2="21.1" y2="48.1" opacity="0.11"/>
+      <line x1="24.2" y1="48.1" x2="28.4" y2="48.1" opacity="0.42"/>
+      <line x1="31.7" y1="48.1" x2="39.6" y2="48.1" opacity="0.73"/>
+      <line x1="40.9" y1="48.1" x2="51.2" y2="48.1" opacity="0.7"/>
+      <line x1="52.1" y1="48.1" x2="60.5" y2="48.1" opacity="0.7"/>
+      <line x1="61.8" y1="48.1" x2="72.3" y2="48.1" opacity="0.83"/>
+      <line x1="73.7" y1="48.1" x2="83.5" y2="48.1" opacity="0.77"/>
+      <line x1="84.6" y1="48.1" x2="91.5" y2="48.1" opacity="0.74"/>
+      <line x1="93.0" y1="48.1" x2="103.7" y2="48.1" opacity="0.79"/>
+      <line x1="104.6" y1="48.1" x2="106.0" y2="48.1" opacity="0.21"/>
+      <line x1="16.8" y1="50.3" x2="18.4" y2="50.3" opacity="0.11"/>
+      <line x1="24.2" y1="50.3" x2="30.9" y2="50.3" opacity="0.52"/>
+      <line x1="32.6" y1="50.3" x2="40.1" y2="50.3" opacity="0.65"/>
+      <line x1="41.6" y1="50.3" x2="50.7" y2="50.3" opacity="0.67"/>
+      <line x1="51.6" y1="50.3" x2="62.0" y2="50.3" opacity="0.75"/>
+      <line x1="63.1" y1="50.3" x2="72.6" y2="50.3" opacity="0.64"/>
+      <line x1="73.9" y1="50.3" x2="84.7" y2="50.3" opacity="0.73"/>
+      <line x1="85.6" y1="50.3" x2="95.1" y2="50.3" opacity="0.65"/>
+      <line x1="96.2" y1="50.3" x2="105.7" y2="50.3" opacity="0.65"/>
+      <line x1="16.5" y1="52.5" x2="18.1" y2="52.5" opacity="0.09"/>
+      <line x1="24.3" y1="52.5" x2="29.8" y2="52.5" opacity="0.47"/>
+      <line x1="31.3" y1="52.5" x2="42.2" y2="52.5" opacity="0.62"/>
+      <line x1="43.2" y1="52.5" x2="52.0" y2="52.5" opacity="0.6"/>
+      <line x1="53.3" y1="52.5" x2="63.2" y2="52.5" opacity="0.6"/>
+      <line x1="64.4" y1="52.5" x2="74.9" y2="52.5" opacity="0.57"/>
+      <line x1="75.6" y1="52.5" x2="83.0" y2="52.5" opacity="0.59"/>
+      <line x1="83.8" y1="52.5" x2="91.5" y2="52.5" opacity="0.68"/>
+      <line x1="92.5" y1="52.5" x2="101.3" y2="52.5" opacity="0.58"/>
+      <line x1="102.5" y1="52.5" x2="105.8" y2="52.5" opacity="0.28"/>
+      <line x1="16.2" y1="54.7" x2="17.8" y2="54.7" opacity="0.08"/>
+      <line x1="21.2" y1="54.7" x2="26.9" y2="54.7" opacity="0.31"/>
+      <line x1="29.5" y1="54.7" x2="39.8" y2="54.7" opacity="0.62"/>
+      <line x1="41.3" y1="54.7" x2="48.5" y2="54.7" opacity="0.61"/>
+      <line x1="49.6" y1="54.7" x2="57.9" y2="54.7" opacity="0.54"/>
+      <line x1="59.4" y1="54.7" x2="70.2" y2="54.7" opacity="0.61"/>
+      <line x1="71.4" y1="54.7" x2="80.6" y2="54.7" opacity="0.52"/>
+      <line x1="81.4" y1="54.7" x2="90.1" y2="54.7" opacity="0.51"/>
+      <line x1="91.2" y1="54.7" x2="98.5" y2="54.7" opacity="0.51"/>
+      <line x1="100.1" y1="54.7" x2="105.2" y2="54.7" opacity="0.32"/>
+      <line x1="15.7" y1="56.9" x2="17.3" y2="56.9" opacity="0.08"/>
+      <line x1="21.9" y1="56.9" x2="27.8" y2="56.9" opacity="0.34"/>
+      <line x1="30.5" y1="56.9" x2="40.8" y2="56.9" opacity="0.53"/>
+      <line x1="42.0" y1="56.9" x2="52.6" y2="56.9" opacity="0.5"/>
+      <line x1="53.8" y1="56.9" x2="63.6" y2="56.9" opacity="0.45"/>
+      <line x1="64.8" y1="56.9" x2="75.7" y2="56.9" opacity="0.5"/>
+      <line x1="76.6" y1="56.9" x2="84.8" y2="56.9" opacity="0.48"/>
+      <line x1="85.9" y1="56.9" x2="96.4" y2="56.9" opacity="0.54"/>
+      <line x1="97.6" y1="56.9" x2="104.7" y2="56.9" opacity="0.37"/>
+      <line x1="13.8" y1="59.1" x2="15.4" y2="59.1" opacity="0.06"/>
+      <line x1="18.8" y1="59.1" x2="23.0" y2="59.1" opacity="0.25"/>
+      <line x1="25.8" y1="59.1" x2="36.6" y2="59.1" opacity="0.45"/>
+      <line x1="37.4" y1="59.1" x2="46.8" y2="59.1" opacity="0.4"/>
+      <line x1="47.7" y1="59.1" x2="55.3" y2="59.1" opacity="0.4"/>
+      <line x1="56.7" y1="59.1" x2="66.1" y2="59.1" opacity="0.41"/>
+      <line x1="67.2" y1="59.1" x2="77.8" y2="59.1" opacity="0.44"/>
+      <line x1="79.1" y1="59.1" x2="88.2" y2="59.1" opacity="0.42"/>
+      <line x1="89.1" y1="59.1" x2="99.0" y2="59.1" opacity="0.44"/>
+      <line x1="100.2" y1="59.1" x2="105.0" y2="59.1" opacity="0.25"/>
+      <line x1="19.1" y1="61.3" x2="23.4" y2="61.3" opacity="0.25"/>
+      <line x1="27.0" y1="61.3" x2="33.9" y2="61.3" opacity="0.35"/>
+      <line x1="34.7" y1="61.3" x2="45.1" y2="61.3" opacity="0.39"/>
+      <line x1="46.0" y1="61.3" x2="56.0" y2="61.3" opacity="0.33"/>
+      <line x1="57.0" y1="61.3" x2="67.3" y2="61.3" opacity="0.4"/>
+      <line x1="68.6" y1="61.3" x2="78.3" y2="61.3" opacity="0.38"/>
+      <line x1="79.1" y1="61.3" x2="89.2" y2="61.3" opacity="0.39"/>
+      <line x1="90.3" y1="61.3" x2="98.7" y2="61.3" opacity="0.33"/>
+      <line x1="100.2" y1="61.3" x2="104.1" y2="61.3" opacity="0.18"/>
+      <line x1="22.0" y1="63.5" x2="28.0" y2="63.5" opacity="0.22"/>
+      <line x1="31.3" y1="63.5" x2="38.3" y2="63.5" opacity="0.3"/>
+      <line x1="39.3" y1="63.5" x2="50.1" y2="63.5" opacity="0.28"/>
+      <line x1="51.5" y1="63.5" x2="61.2" y2="63.5" opacity="0.3"/>
+      <line x1="62.3" y1="63.5" x2="72.8" y2="63.5" opacity="0.27"/>
+      <line x1="73.7" y1="63.5" x2="82.3" y2="63.5" opacity="0.29"/>
+      <line x1="83.1" y1="63.5" x2="93.4" y2="63.5" opacity="0.29"/>
+      <line x1="94.6" y1="63.5" x2="101.9" y2="63.5" opacity="0.22"/>
+      <line x1="25.6" y1="65.7" x2="30.6" y2="65.7" opacity="0.16"/>
+      <line x1="33.7" y1="65.7" x2="44.4" y2="65.7" opacity="0.24"/>
+      <line x1="45.5" y1="65.7" x2="56.2" y2="65.7" opacity="0.2"/>
+      <line x1="57.5" y1="65.7" x2="66.5" y2="65.7" opacity="0.23"/>
+      <line x1="67.6" y1="65.7" x2="74.5" y2="65.7" opacity="0.21"/>
+      <line x1="75.4" y1="65.7" x2="83.3" y2="65.7" opacity="0.22"/>
+      <line x1="84.8" y1="65.7" x2="93.4" y2="65.7" opacity="0.23"/>
+      <line x1="94.8" y1="65.7" x2="101.1" y2="65.7" opacity="0.17"/>
+      <line x1="27.6" y1="67.9" x2="32.3" y2="67.9" opacity="0.11"/>
+      <line x1="34.8" y1="67.9" x2="45.4" y2="67.9" opacity="0.15"/>
+      <line x1="46.5" y1="67.9" x2="54.1" y2="67.9" opacity="0.17"/>
+      <line x1="55.2" y1="67.9" x2="65.8" y2="67.9" opacity="0.17"/>
+      <line x1="66.9" y1="67.9" x2="74.2" y2="67.9" opacity="0.17"/>
+      <line x1="75.1" y1="67.9" x2="83.4" y2="67.9" opacity="0.15"/>
+      <line x1="84.8" y1="67.9" x2="91.9" y2="67.9" opacity="0.16"/>
+      <line x1="93.4" y1="67.9" x2="100.8" y2="67.9" opacity="0.13"/>
+      <line x1="28.1" y1="61.5" x2="28.9" y2="59.8" opacity="0.28"/>
+      <line x1="29.7" y1="58.0" x2="30.7" y2="55.9" opacity="0.28"/>
+      <line x1="31.4" y1="54.5" x2="32.2" y2="52.7" opacity="0.25"/>
+      <line x1="33.0" y1="51.0" x2="34.3" y2="48.2" opacity="0.23"/>
+      <line x1="34.6" y1="47.5" x2="35.4" y2="45.9" opacity="0.28"/>
+      <line x1="36.3" y1="44.0" x2="37.4" y2="41.5" opacity="0.52"/>
+      <line x1="42.7" y1="34.2" x2="44.6" y2="32.9" opacity="0.42"/>
+      <line x1="45.9" y1="32.1" x2="47.4" y2="31.1" opacity="0.57"/>
+      <line x1="49.0" y1="30.0" x2="51.3" y2="28.5" opacity="0.25"/>
+      <line x1="52.1" y1="27.9" x2="54.0" y2="26.7" opacity="0.45"/>
+      <line x1="60.4" y1="24.9" x2="61.6" y2="25.4" opacity="0.55"/>
+      <line x1="62.3" y1="25.6" x2="63.2" y2="26.0" opacity="0.59"/>
+      <line x1="64.1" y1="26.3" x2="65.2" y2="26.7" opacity="0.56"/>
+      <line x1="66.0" y1="27.0" x2="66.9" y2="27.4" opacity="0.28"/>
+      <line x1="67.9" y1="27.7" x2="69.2" y2="28.2" opacity="0.52"/>
+      <line x1="69.7" y1="28.4" x2="71.3" y2="29.0" opacity="0.23"/>
+      <line x1="76.7" y1="30.0" x2="78.9" y2="30.0" opacity="0.28"/>
+      <line x1="79.2" y1="30.0" x2="81.4" y2="30.0" opacity="0.45"/>
+      <line x1="81.7" y1="30.0" x2="83.2" y2="30.0" opacity="0.53"/>
+      <line x1="84.3" y1="30.0" x2="86.1" y2="30.0" opacity="0.51"/>
+      <line x1="86.8" y1="30.0" x2="88.2" y2="30.0" opacity="0.41"/>
+      <line x1="93.8" y1="32.7" x2="95.0" y2="34.5" opacity="0.5"/>
+      <line x1="95.5" y1="35.2" x2="96.6" y2="36.9" opacity="0.58"/>
+      <line x1="97.2" y1="37.7" x2="98.3" y2="39.5" opacity="0.26"/>
+      <line x1="98.8" y1="40.3" x2="99.8" y2="41.7" opacity="0.57"/>
+      <line x1="100.5" y1="42.8" x2="101.5" y2="44.3" opacity="0.45"/>
+      <line x1="33.3" y1="62.8" x2="35.6" y2="62.0" opacity="0.29"/>
+      <line x1="36.4" y1="61.7" x2="38.9" y2="60.8" opacity="0.44"/>
+      <line x1="39.5" y1="60.6" x2="42.1" y2="59.6" opacity="0.44"/>
+      <line x1="42.5" y1="59.4" x2="44.0" y2="58.9" opacity="0.53"/>
+      <line x1="45.6" y1="58.3" x2="47.6" y2="57.6" opacity="0.37"/>
+      <line x1="54.7" y1="53.9" x2="55.8" y2="53.0" opacity="0.48"/>
+      <line x1="56.8" y1="52.3" x2="58.2" y2="51.1" opacity="0.29"/>
+      <line x1="58.9" y1="50.6" x2="60.2" y2="49.6" opacity="0.31"/>
+      <line x1="61.0" y1="49.0" x2="62.6" y2="47.8" opacity="0.33"/>
+      <line x1="63.1" y1="47.4" x2="64.5" y2="46.3" opacity="0.28"/>
+      <line x1="65.2" y1="45.7" x2="66.5" y2="44.7" opacity="0.3"/>
+      <line x1="72.7" y1="43.2" x2="74.9" y2="44.2" opacity="0.28"/>
+      <line x1="76.9" y1="45.1" x2="79.1" y2="46.0" opacity="0.34"/>
+      <line x1="81.1" y1="46.9" x2="83.3" y2="47.9" opacity="0.37"/>
+      <line x1="90.1" y1="51.5" x2="91.5" y2="52.5" opacity="0.41"/>
+      <line x1="91.7" y1="52.7" x2="92.7" y2="53.4" opacity="0.31"/>
+      <line x1="93.4" y1="53.8" x2="94.4" y2="54.6" opacity="0.45"/>
+      <line x1="95.0" y1="55.0" x2="95.8" y2="55.5" opacity="0.24"/>
+      <line x1="96.6" y1="56.2" x2="98.0" y2="57.1" opacity="0.54"/>
+      <line x1="98.3" y1="57.3" x2="99.2" y2="58.0" opacity="0.3"/>
+      <line x1="45.7" y1="30.8" x2="45.5" y2="33.8" opacity="0.22"/>
+      <line x1="45.4" y1="35.3" x2="45.3" y2="37.5" opacity="0.42"/>
+      <line x1="45.1" y1="39.8" x2="44.9" y2="43.6" opacity="0.58"/>
+      <line x1="44.9" y1="44.2" x2="44.7" y2="46.3" opacity="0.31"/>
+      <line x1="44.6" y1="48.7" x2="44.4" y2="52.2" opacity="0.25"/>
+      <line x1="64.3" y1="28.0" x2="64.7" y2="35.2" opacity="0.49"/>
+      <line x1="64.8" y1="37.3" x2="65.1" y2="43.5" opacity="0.47"/>
+      <line x1="65.2" y1="46.7" x2="65.5" y2="51.6" opacity="0.37"/>
+      <line x1="83.7" y1="30.5" x2="83.5" y2="33.3" opacity="0.38"/>
+      <line x1="83.4" y1="34.7" x2="83.2" y2="37.7" opacity="0.6"/>
+      <line x1="83.1" y1="38.9" x2="83.0" y2="41.1" opacity="0.26"/>
+      <line x1="82.9" y1="43.1" x2="82.7" y2="45.9" opacity="0.49"/>
+      <line x1="82.6" y1="47.3" x2="82.4" y2="49.8" opacity="0.26"/>
+      <line x1="35.7" y1="61.2" x2="35.4" y2="62.4" opacity="0.59"/>
+      <line x1="35.4" y1="62.6" x2="35.0" y2="63.9" opacity="0.27"/>
+      <line x1="35.0" y1="64.0" x2="34.8" y2="65.0" opacity="0.27"/>
+      <line x1="34.6" y1="65.4" x2="34.4" y2="66.5" opacity="0.51"/>
+      <line x1="57.7" y1="47.3" x2="57.5" y2="49.7" opacity="0.35"/>
+      <line x1="57.4" y1="50.4" x2="57.2" y2="52.4" opacity="0.25"/>
+      <line x1="57.1" y1="53.5" x2="56.9" y2="56.2" opacity="0.33"/>
+      <line x1="56.9" y1="56.5" x2="56.6" y2="59.0" opacity="0.33"/>
+      <line x1="56.6" y1="59.6" x2="56.4" y2="61.3" opacity="0.34"/>
+      <line x1="77.7" y1="50.4" x2="77.4" y2="52.5" opacity="0.48"/>
+      <line x1="77.3" y1="53.2" x2="77.1" y2="55.1" opacity="0.25"/>
+      <line x1="77.0" y1="56.0" x2="76.7" y2="58.3" opacity="0.46"/>
+      <line x1="76.7" y1="58.8" x2="76.4" y2="61.2" opacity="0.25"/>
+      <line x1="96.3" y1="46.7" x2="96.5" y2="48.3" opacity="0.53"/>
+      <line x1="96.5" y1="48.8" x2="96.7" y2="49.9" opacity="0.47"/>
+      <line x1="96.8" y1="50.9" x2="96.9" y2="52.0" opacity="0.51"/>
+      <line x1="97.0" y1="53.0" x2="97.2" y2="54.7" opacity="0.38"/>
+      <line x1="97.2" y1="55.1" x2="97.4" y2="57.0" opacity="0.53"/>
+      <line x1="97.5" y1="57.2" x2="97.6" y2="58.5" opacity="0.26"/>
+    </g>
+    <clipPath id="ccClip"><path d="M 22 70 L 13 61 L 16 50 L 26 43 L 33 32 L 46 23 L 61 19 L 74 25 L 88 22 L 101 32 L 108 45 L 106 58 L 100 70 Z"/></clipPath>
+  </defs>
+
+  <g>
+    <animateTransform attributeName="transform" type="translate"
+                      values="0 0; 0 -2.5; 0 0" dur="6s" repeatCount="indefinite"
+                      calcMode="spline" keyTimes="0;0.5;1"
+                      keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+
+    <!-- 数据雨 -->
+    <g>
+      <rect x="31" y="66" width="3" height="5" fill="#00e5ff" opacity="0">
+        <animate attributeName="opacity" values="0;.9;0" dur="2.6s" begin="0s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0;0 15" dur="2.6s" begin="0s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="49" y="66" width="2.5" height="7" fill="#7dd3fc" opacity="0">
+        <animate attributeName="opacity" values="0;.95;0" dur="3.1s" begin="0.7s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0;0 20" dur="3.1s" begin="0.7s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="65" y="66" width="3" height="4" fill="#a855f7" opacity="0">
+        <animate attributeName="opacity" values="0;.9;0" dur="2.9s" begin="1.4s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0;0 22" dur="2.9s" begin="1.4s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="81" y="66" width="2.5" height="6" fill="#00e5ff" opacity="0">
+        <animate attributeName="opacity" values="0;.85;0" dur="3.4s" begin="2.1s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0;0 17" dur="3.4s" begin="2.1s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="94" y="66" width="2" height="4" fill="#7dd3fc" opacity="0">
+        <animate attributeName="opacity" values="0;.75;0" dur="2.7s" begin="1.1s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0;0 13" dur="2.7s" begin="1.1s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+
+    <!-- 走线网格：形状靠密度显形 -->
+    <use href="#mesh" filter="url(#ccGlow)" opacity="0.9"/>
+
+    <!-- 焊点 -->
+    <g fill="#06121a" stroke="url(#ccStroke)" stroke-width="1" opacity="0.9">
+      <rect x="38" y="34" width="4" height="4"/>
+      <rect x="56" y="22" width="4" height="4"/>
+      <rect x="72" y="28" width="4" height="4"/>
+      <rect x="90" y="28" width="4" height="4"/>
+      <rect x="50" y="54" width="4" height="4"/>
+      <rect x="68" y="40" width="4" height="4"/>
+      <rect x="86" y="48" width="4" height="4"/>
+      <rect x="62" y="20" width="4" height="4"/>
+      <rect x="64" y="60" width="4" height="4"/>
+      <rect x="82" y="24" width="4" height="4"/>
+    </g>
+
+    <!-- 扫描条 -->
+    <g clip-path="url(#ccClip)">
+      <rect x="0" y="20" width="120" height="2.6" fill="url(#ccScan)" opacity="0.85">
+        <animate attributeName="y" values="20;70;20" dur="4.5s" repeatCount="indefinite"
+                 calcMode="spline" keyTimes="0;0.5;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+      </rect>
+      <rect x="0" y="20" width="120" height="2.6" fill="#05070d" opacity="0.45" stroke-dasharray="2.5 3.5">
+        <animate attributeName="y" values="20;70;20" dur="4.5s" repeatCount="indefinite"
+                 calcMode="spline" keyTimes="0;0.5;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+      </rect>
+    </g>
+
+    <!-- 数据节点 -->
+    <g>
+      <rect x="44" y="42" width="4.5" height="4.5" fill="#00e5ff" opacity="0.85" filter="url(#ccGlowSoft)">
+        <animate attributeName="opacity" values=".25;.95;.25" dur="3.2s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="60" y="34" width="5" height="5" fill="#7dd3fc" opacity="0.85" filter="url(#ccGlowSoft)">
+        <animate attributeName="opacity" values=".95;.25;.95" dur="3.2s" begin="0.6s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="76" y="48" width="4.5" height="4.5" fill="#a855f7" opacity="0.85" filter="url(#ccGlowSoft)">
+        <animate attributeName="opacity" values=".3;.9;.3" dur="3.2s" begin="1.2s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+
+    <!-- 故障 -->
+    <g opacity="0" filter="url(#ccGlowSoft)">
+      <animate attributeName="opacity" dur="7s" repeatCount="indefinite"
+               values="0;0;0.8;0;0.6;0;0;0" keyTimes="0;0.70;0.715;0.73;0.745;0.76;0.93;1"/>
+      <animateTransform attributeName="transform" type="translate" dur="7s" repeatCount="indefinite"
+                        values="0 0;0 0;-3 0;0 0;2.5 0;0 0;0 0;0 0"
+                        keyTimes="0;0.70;0.715;0.73;0.745;0.76;0.93;1"/>
+      <use href="#mesh" stroke="#00e5ff" opacity="0.8"/>
+    </g>
+    <g opacity="0" filter="url(#ccGlowSoft)">
+      <animate attributeName="opacity" dur="7s" repeatCount="indefinite"
+               values="0;0;0.75;0;0.55;0;0;0" keyTimes="0;0.70;0.715;0.73;0.745;0.76;0.93;1"/>
+      <animateTransform attributeName="transform" type="translate" dur="7s" repeatCount="indefinite"
+                        values="0 0;0 0;3 0;0 0;-2.5 0;0 0;0 0;0 0"
+                        keyTimes="0;0.70;0.715;0.73;0.745;0.76;0.93;1"/>
+      <use href="#mesh" stroke="#a855f7" opacity="0.8"/>
+    </g>
+  </g>
+</svg>
