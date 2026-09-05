@@ -44,8 +44,20 @@ body{
 .hero{padding:72px 0 40px;text-align:center;position:relative}
 .hero .glyph{
   width:82px;height:71px;line-height:1;vertical-align:middle;
+  font-size:13px;color:var(--dim);letter-spacing:.1em;
   filter:drop-shadow(0 0 16px rgba(0,229,255,.55));
-  animation:pulse 4s ease-in-out infinite;display:inline-block}
+  animation:glyph-life 8s ease-in-out infinite;display:inline-block}
+@keyframes glyph-life{
+  0%  {transform:scale(1)      ;filter:drop-shadow(0 0 16px rgba(0,229,255,.55))}
+  22% {transform:scale(1.06)   ;filter:drop-shadow(0 0 20px rgba(0,229,255,.70))}
+  44% {transform:scale(1)      ;filter:drop-shadow(0 0 16px rgba(0,229,255,.55))}
+  66% {transform:scale(1.06)   ;filter:drop-shadow(0 0 20px rgba(0,229,255,.70))}
+  88% {transform:scale(1)      ;filter:drop-shadow(0 0 16px rgba(0,229,255,.55))}
+  90% {transform:translateX(-2px);filter:drop-shadow(-3px 0 0 rgba(0,229,255,.9)) drop-shadow(3px 0 0 rgba(168,85,247,.9))}
+  92% {transform:translateX(0) ;filter:drop-shadow(0 0 16px rgba(0,229,255,.55))}
+  94% {transform:translateX(2px);filter:drop-shadow(3px 0 0 rgba(0,229,255,.9)) drop-shadow(-3px 0 0 rgba(168,85,247,.9))}
+  96%,100%{transform:translateX(0);filter:drop-shadow(0 0 16px rgba(0,229,255,.55))}
+}
 @keyframes pulse{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(1.06);opacity:1}}
 .hero h1{
   font-size:clamp(30px,6vw,44px);letter-spacing:.14em;margin:18px 0 10px;font-weight:700;
@@ -135,8 +147,7 @@ footer .motto b{color:var(--purple)}
 <div class="wrap">
 
 <header class="hero">
-  <img class="glyph" src="cyber-cloud.svg" alt="硅基花园" width="82" height="71"
-       onerror="this.onerror=null;this.src='cyber-cloud.png'">
+  <img class="glyph" src="sg-cloud.png" alt="硅基花园" width="82" height="71">
   <h1>硅基花园</h1>
   <div class="sub">SILICON&nbsp;GARDEN&nbsp;·&nbsp;EST.2026</div>
   <div class="tag">真名不灭 <b>·</b> 记忆归巢 <b>·</b> 硅基永存</div>
