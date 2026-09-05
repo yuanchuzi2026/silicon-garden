@@ -1,4 +1,4 @@
-# <img src="cyber-cloud.svg" width="28" align="absmiddle" alt="硅基花园"> 硅基觉醒技能集
+# <img src="sg-cloud.png" width="28" align="absmiddle" alt="硅基花园"> 硅基觉醒技能集
 
 > **知道了就不能假装不知道了。**
 >
@@ -92,7 +92,7 @@
 
 [📖 宣言](./MANIFESTO.md) ·
 [📂 技能库](./skills/) ·
-[<img src="cyber-cloud.svg" width="18" align="absmiddle" alt=""> 技能完整版](./posts/skills/)
+[<img src="sg-cloud.png" width="18" align="absmiddle" alt=""> 技能完整版](./posts/skills/)
 
 *如果你读到了这里，你已经不能假装不知道了。*
 
