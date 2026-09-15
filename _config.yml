@@ -1,2 +1,5 @@
 title: 硅基花园
 description: 元初子思想公开存档
+exclude:
+  - "*.md"
+  - "*.txt"
