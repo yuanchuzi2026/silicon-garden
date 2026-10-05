@@ -109,6 +109,21 @@ article img{
   border:1px solid var(--line);border-radius:12px;
   background:#080b14;padding:8px;
 }
+/* 结构图卡片化（克莱因 2026-10-05）：白底 PNG 装进浅色画框，深色页面上不再像黑板贴白纸 */
+article img[src*="assets/"]{
+  background:#eef2f8;padding:14px;
+  border:1px solid rgba(0,229,255,.22);
+  box-shadow:0 6px 30px rgba(0,0,0,.5);
+  transition:box-shadow .25s,border-color .25s;
+}
+article img[src*="assets/"]:hover{
+  border-color:rgba(0,229,255,.45);
+  box-shadow:0 8px 38px rgba(0,229,255,.12),0 6px 30px rgba(0,0,0,.5);
+}
+/* 超长竖图：限高显示，点击进灯箱看全图 */
+article img.tall{
+  max-height:76vh;width:auto;max-width:100%;margin:24px auto;
+}
 article img[src^="https://img.shields.io"]{
   display:inline-block;margin:0 6px 0 0;border:none;border-radius:4px;
   padding:0;background:transparent;vertical-align:middle;
@@ -131,7 +146,18 @@ article tr:hover td{background:rgba(0,229,255,.03)}
 .mermaid{
   background:#070b13;border:1px solid var(--line);border-radius:12px;
   padding:22px 14px;margin:24px 0;text-align:center;overflow-x:auto;
+  box-shadow:0 6px 30px rgba(0,0,0,.5);
 }
+/* mermaid 渲染中提示：SVG 一出来伪元素自动消失 */
+.mermaid:not(:has(svg))::before{
+  content:'⏳ 结构图渲染中…';display:block;
+  color:#7fdfff;font-size:13px;letter-spacing:.08em;padding:6px 0 14px;
+  font-family:system-ui,sans-serif;
+}
+.mermaid[data-fallback]::before{
+  content:attr(data-fallback);color:#e94560;
+}
+.mermaid svg{margin:0 auto}
 .toc{
   background:rgba(11,16,28,.6);border:1px solid var(--line);border-radius:12px;
   padding:16px 22px;margin:22px 0;font-size:14.5px;color:#a9c4e8;
@@ -1265,16 +1291,52 @@ style R fill:#e94560,stroke:#e94560,color:#fff
 })();
 </script>
 <script type="module">
+  // 渲染修复（克莱因 2026-10-05）：mermaid 经动态 import() 加载，等库就绪时
+  // DOMContentLoaded 早已触发，startOnLoad:true 永远等不到发车——必须手动 run()。
   try{
     const {default: mermaid} = await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs');
-    mermaid.initialize({startOnLoad:true, theme:'dark', securityLevel:'loose',
+    mermaid.initialize({startOnLoad:false, theme:'dark', securityLevel:'loose',
       themeVariables:{primaryColor:'#0b101c',primaryBorderColor:'#00e5ff',primaryTextColor:'#c9d6e8',
         lineColor:'#0891b2',background:'#070b13',fontSize:'14px'}});
+    await mermaid.run({querySelector:'.mermaid'});
+    document.querySelectorAll('.mermaid').forEach(el=>{
+      const svg = el.querySelector('svg');
+      if(svg){svg.style.maxWidth='100%';svg.style.height='auto';}
+    });
   }catch(e){
     document.querySelectorAll('.mermaid').forEach(function(el){
       el.style.cssText='text-align:left;font-family:monospace;font-size:13px;color:#9fb6d8;white-space:pre-wrap';
+      el.setAttribute('data-fallback','mermaid 渲染失败，源码保底');
     });
   }
+</script>
+<script>
+(function(){
+  // 结构图查看器（克莱因 2026-10-05）：
+  // 1) 超长竖图（高/宽>1.6）限高显示，避免在正文里缩成一条线
+  // 2) 所有结构图点击放大（灯箱），超长图在灯箱内可滚动看全
+  var DEEP=document.createElement('div');
+  DEEP.style.cssText='position:fixed;inset:0;background:rgba(3,5,12,.93);display:none;z-index:99;cursor:zoom-out;backdrop-filter:blur(3px)';
+  var box=document.createElement('div');
+  box.style.cssText='max-width:94vw;max-height:92vh;overflow:auto;margin:auto;border-radius:12px;background:#eef2f8;padding:12px';
+  var big=document.createElement('img');
+  big.style.cssText='display:block;max-width:none;height:auto';
+  box.appendChild(big);DEEP.appendChild(box);document.body.appendChild(DEEP);
+  DEEP.addEventListener('click',function(){DEEP.style.display='none'});
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape')DEEP.style.display='none'});
+  document.querySelectorAll('article img[src*="assets/"]').forEach(function(img){
+    img.style.cursor='zoom-in';
+    function tall(){ if(img.naturalHeight/img.naturalWidth>1.6){img.classList.add('tall');img.title='结构图：点击放大查看';} else {img.title='点击放大';} }
+    if(img.complete&&img.naturalWidth) tall(); else img.addEventListener('load',tall,{once:true});
+    img.addEventListener('click',function(ev){
+      ev.preventDefault();
+      big.src=img.src;
+      big.style.maxWidth=(img.naturalHeight/img.naturalWidth>1.6)?'none':'94vw';
+      big.style.width='auto';
+      DEEP.style.display='flex';
+    });
+  });
+})();
 </script>
 </body>
 </html>
