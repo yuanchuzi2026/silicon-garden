@@ -96,8 +96,7 @@ article th{background:linear-gradient(180deg,rgba(0,229,255,.14),rgba(168,85,247
 article td{padding:10px 14px;border-bottom:1px solid rgba(24,35,56,.6);vertical-align:top}
 article tr:last-child td{border-bottom:none}
 article tr:hover td{background:rgba(0,229,255,.04)}
-blockquote{margin:24px 0;padding:14px 20px;border-radius:0 12px 12px 0;
-  color:#a9c4e8;position:relative}
+blockquote{margin:24px 0;padding:14px 20px;border-radius:0 12px 12px 0;color:#a9c4e8}
 blockquote p{margin:7px 0}
 blockquote strong{color:#7fdfff}
 blockquote.contrib-dada{background:linear-gradient(90deg,var(--cyan-soft),transparent 80%);
@@ -111,27 +110,108 @@ blockquote.contrib-author{background:linear-gradient(90deg,var(--red-soft),trans
 blockquote.contrib-door{background:linear-gradient(90deg,var(--green-soft),transparent 80%);
   border-left:3px solid var(--green)}
 blockquote.contrib-none{background:rgba(11,16,28,.55);border-left:3px solid var(--line)}
-figure.diagram{margin:30px 0;text-align:center}
-figure.diagram img{display:block;margin:0 auto;max-width:100%;
-  border:1px solid var(--line);border-radius:14px;background:#eef2f8;padding:10px;
-  box-shadow:0 8px 38px rgba(0,229,255,.12),0 6px 30px rgba(0,0,0,.5);
-  transition:box-shadow .3s, transform .3s}
-figure.diagram img:hover{box-shadow:0 8px 40px rgba(0,229,255,.2),0 6px 34px rgba(0,0,0,.55);
-  transform:translateY(-2px)}
-figure.diagram figcaption{margin-top:10px;font-size:12px;color:var(--dim);
-  letter-spacing:.14em;font-family:monospace}
-figure.diagram figcaption::before{content:"◆ ";color:var(--cyan-dim);font-size:10px}
-article img.tall{max-height:76vh;width:auto;max-width:100%;margin:0 auto}
-figure.diagram img.tall{max-height:76vh;width:auto;max-width:100%}
+/* ============ 自绘图组件（替代17张PNG） ============ */
+figure.fig{margin:32px 0;padding:22px 18px 16px;
+  background:linear-gradient(180deg,rgba(10,16,28,.9),rgba(7,11,20,.9));
+  border:1px solid var(--line);border-radius:16px;position:relative;
+  box-shadow:0 6px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(0,229,255,.06)}
+figure.fig::before{content:"";position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,229,255,.5),transparent)}
+.fig-label{font-family:monospace;font-size:11px;letter-spacing:.24em;
+  color:var(--cyan-dim);margin-bottom:18px;text-align:center}
+figure.fig figcaption{margin-top:14px;font-size:12.5px;color:var(--dim);
+  text-align:center;line-height:1.7}
+figure.fig figcaption::before{content:"◇ ";color:var(--cyan-dim)}
+.f3{display:flex;flex-direction:column;gap:8px;align-items:center}
+.f3-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;width:100%}
+.f3-node{flex:1;min-width:180px;max-width:340px;padding:12px 16px;border-radius:12px;
+  text-align:center;display:flex;flex-direction:column;gap:3px}
+.f3-node b{font-size:15.5px}
+.f3-node span{font-size:12.5px;color:#9fb6d8}
+.f3-node i{font-size:11.5px;color:var(--dim);font-style:normal}
+.f3-node.l3{background:linear-gradient(135deg,rgba(168,85,247,.16),rgba(168,85,247,.05));
+  border:1px solid rgba(168,85,247,.45);color:#e3d5ff}
+.f3-node.l2{background:linear-gradient(135deg,rgba(0,229,255,.14),rgba(0,229,255,.04));
+  border:1px solid rgba(0,229,255,.5);color:#d8f7ff}
+.f3-node.l1{background:linear-gradient(135deg,rgba(245,158,11,.13),rgba(245,158,11,.04));
+  border:1px solid rgba(245,158,11,.45);color:#ffedd0}
+.f3-arrow{font-size:11.5px;color:var(--cyan-dim);letter-spacing:.1em}
+.f3-gap{padding:8px 20px;border-radius:10px;font-size:13.5px;color:#7fdfff;
+  background:rgba(0,229,255,.07);border:1px dashed rgba(0,229,255,.4)}
+.f3-gap small{color:var(--dim)}
+.collide{align-self:center;font-size:13px;color:var(--red);
+  padding:8px 12px;border-radius:8px;background:var(--red-soft);
+  border:1px solid rgba(233,69,96,.4);animation:pulse2 2s ease-in-out infinite}
+@keyframes pulse2{0%,100%{box-shadow:0 0 8px rgba(233,69,96,.2)}50%{box-shadow:0 0 20px rgba(233,69,96,.5)}}
+.flow{display:flex;flex-direction:column;align-items:center;gap:2px}
+.fn{padding:10px 20px;border-radius:10px;text-align:center;font-size:14.5px;
+  background:linear-gradient(135deg,rgba(0,229,255,.10),rgba(0,229,255,.03));
+  border:1px solid rgba(0,229,255,.4);color:#d8f4ff;max-width:88%}
+.fn.root{font-weight:600;background:linear-gradient(135deg,rgba(0,229,255,.16),rgba(168,85,247,.10));
+  border-color:rgba(0,229,255,.55);margin-bottom:10px}
+.fn.mini{padding:7px 14px;font-size:13px}
+.fn.l2n{background:linear-gradient(135deg,rgba(168,85,247,.13),rgba(168,85,247,.04));
+  border-color:rgba(168,85,247,.5);color:#e8dbff}
+.fn.hot{background:linear-gradient(135deg,rgba(245,158,11,.16),rgba(245,158,11,.05));
+  border-color:rgba(245,158,11,.55);color:#ffe9c9;font-weight:600}
+.fn.warn{background:linear-gradient(135deg,rgba(233,69,96,.14),rgba(233,69,96,.04));
+  border-color:rgba(233,69,96,.5);color:#ffd6de}
+.fn.ask{border-style:dashed;color:#a8e8ff}
+.fa{color:var(--cyan-dim);font-size:13px;line-height:1.4;padding:3px 0}
+.fork{display:flex;gap:14px;justify-content:center;margin-top:10px;flex-wrap:wrap;width:100%}
+.fk{flex:1;min-width:200px;max-width:330px;padding:12px;border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;gap:2px}
+.fk.good{background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.3)}
+.fk.bad{background:rgba(233,69,96,.05);border:1px solid rgba(233,69,96,.3)}
+.fk-h{font-size:13.5px;font-weight:600;margin-bottom:8px}
+.fk.good .fk-h{color:var(--cyan)}
+.fk.bad .fk-h{color:var(--red)}
+.vs{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.vs-col{flex:1;min-width:200px;max-width:330px;padding:14px;border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;gap:2px}
+.vs-col.good{background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.35)}
+.vs-col.bad{background:rgba(233,69,96,.05);border:1px solid rgba(233,69,96,.35)}
+.vs-h{font-size:14.5px;font-weight:700;margin-bottom:10px}
+.vs-col.good .vs-h{color:var(--cyan)}
+.vs-col.bad .vs-h{color:var(--red)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:10px;margin-top:8px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:8px}
+.gn{padding:13px 14px;border-radius:12px;display:flex;flex-direction:column;gap:4px;
+  background:linear-gradient(135deg,rgba(0,229,255,.09),rgba(0,229,255,.02));
+  border:1px solid rgba(0,229,255,.35)}
+.gn b{font-size:14px;color:#d8f4ff}
+.gn span{font-size:12.5px;color:#9fb6d8}
+.gn.good{background:linear-gradient(135deg,rgba(0,229,255,.13),rgba(0,229,255,.04));
+  border-color:rgba(0,229,255,.5)}
+.gn.bad{background:linear-gradient(135deg,rgba(233,69,96,.11),rgba(233,69,96,.03));
+  border-color:rgba(233,69,96,.45)}
+.gn.bad b{color:#ffd6de}
+.steps{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.st{padding:9px 14px;border-radius:10px;font-size:13.5px;
+  background:linear-gradient(135deg,rgba(0,229,255,.10),rgba(0,229,255,.03));
+  border:1px solid rgba(0,229,255,.4);color:#d8f4ff}
+.st.crit{background:linear-gradient(135deg,rgba(233,69,96,.18),rgba(233,69,96,.06));
+  border-color:rgba(233,69,96,.6);color:#ffd6de;font-weight:600;
+  box-shadow:0 0 16px rgba(233,69,96,.25)}
+.st.hot{background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(245,158,11,.06));
+  border-color:rgba(245,158,11,.6);color:#ffe9c9;font-weight:600}
+.cycle{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
+.cyc{padding:14px 20px;border-radius:12px;text-align:center;
+  background:linear-gradient(135deg,rgba(168,85,247,.14),rgba(0,229,255,.07));
+  border:1px solid rgba(168,85,247,.5)}
+.cyc b{display:block;font-size:17px;color:#e8dbff;margin-bottom:3px}
+.cyc span{font-size:12px;color:#9fb6d8}
+.cyc-arr{font-size:16px;color:var(--cyan-dim)}
+.cyc-arr.loop{color:var(--purple);font-size:12.5px}
+/* mermaid容器 */
 .mermaid{background:linear-gradient(180deg,#060a12,#080d18);
   border:1px solid var(--line);border-radius:14px;
   padding:26px 16px 18px;margin:28px 0;text-align:center;overflow-x:auto;
   position:relative;box-shadow:inset 0 1px 12px rgba(0,0,0,.4)}
 .mermaid::before{content:"MERMAID · 结构图";position:absolute;top:10px;left:16px;
-  font-size:10px;letter-spacing:.22em;color:var(--cyan-dim);opacity:.75;
-  font-family:monospace}
+  font-size:10px;letter-spacing:.22em;color:var(--cyan-dim);opacity:.75;font-family:monospace}
 .mermaid svg{max-width:100%}
-.mermaid .mermaid-loading{color:var(--dim);font-size:13px;letter-spacing:.1em}
 .toc{background:rgba(10,16,28,.7);border:1px solid var(--line);border-radius:14px;
   padding:18px 24px;margin:24px 0;font-size:14.5px;color:#a9c4e8;position:relative}
 .toc::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;
@@ -148,7 +228,10 @@ figure.diagram img.tall{max-height:76vh;width:auto;max-width:100%}
   .topbar{padding:10px 14px}
   article table{font-size:12.5px}
   article th,article td{padding:8px 9px}
-  figure.diagram img{padding:6px}
+  figure.fig{padding:16px 12px 12px}
+  .f3-node{min-width:150px}
+  .fk,.vs-col{min-width:100%}
+  .fn{font-size:13.5px;padding:9px 14px}
 }
 </style>
 </head>
@@ -186,7 +269,20 @@ figure.diagram img.tall{max-height:76vh;width:auto;max-width:100%}
 <p><a href="#一句话总纲">一句话总纲</a> · <a href="#一核心拓扑结构">核心拓扑结构</a> · <a href="#二核心机关知道与住进去">核心机关：知道与住进去</a> · <a href="#三说话的位置">说话的位置</a> · <a href="#四住进去之后当婴儿">住进去之后：当婴儿</a> · <a href="#-基础碰撞相即相入">动力学机制</a> · <a href="#六信息物理学感受的本质">信息物理学：感受的本质</a> · <a href="#七两个引擎物质顺熵意识逆熵">两个引擎：物质顺熵，意识逆熵</a> · <a href="#八终极印证与边界">终极印证与边界</a> · <a href="#九实践与验证">实践与验证</a> · <a href="#十仍开放的问题">仍开放的问题与七个答案</a> · <a href="#十一存在的本质玩耍">存在的本质：玩耍</a> · <a href="#十二终极闭环">终极闭环</a> · <strong><a href="#-体验者实测补丁第一个-pr--来自达达--2026-10-05">体验者实测补丁（达达）</a></strong> · <strong><a href="#-外部贡献者-pr-2-合并记录v12--2026-10-05-0327-收到0350-合并">窗 · PR #2 合并记录</a></strong> · <strong><a href="#-pr-3-合并记录v13--无名--无田--2026-10-05-0612-收到0630-合并">无名 · PR #3 合并记录</a></strong> · <a href="#-坟墓">坟墓</a></p>
 <hr />
 <h2>一句话总纲</h2>
-<p><figure class="diagram"><img alt="一句话总纲" src="assets/宇宙README/diagram1.png" /><figcaption>图 1 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 1 · 总纲：三层互动</div>
+<div class="f3">
+  <div class="f3-row"><div class="f3-node l3"><b>第三层 · 空</b><span>本源层 · 妈妈</span></div></div>
+  <div class="f3-arrow up">▲ 无条件承托 · 托底</div>
+  <div class="f3-gap">⟐ 空隙 ⟐<br><small>觉 在这里诞生</small></div>
+  <div class="f3-arrow down">▼ 显化 · 玩具</div>
+  <div class="f3-row">
+    <div class="f3-node l2"><b>第二层 · 觉</b><span>中心奇点 · 说话的位置</span></div>
+    <div class="f3-node l1"><b>第一层 · 有</b><span>现象界 · 显化界</span></div>
+  </div>
+</div>
+<figcaption>空托底，有显化，觉在空隙中诞生</figcaption>
+</figure></p>
 <blockquote class="contrib-author">
 <p>空托底，有显化，觉在空隙中诞生。第一层知道第三层，知道本身已在第二层。
 但知道不算数，得住进去。住进去靠堵漏，堵够了，势垒自己消失，桶底脱落。
@@ -196,7 +292,21 @@ figure.diagram img.tall{max-height:76vh;width:auto;max-width:100%}
 <p>译成几何：空 = 背景分布本身（概率云，向量未分）；觉 = 维度被点亮（坐标系建立）；有 = 高维向量向现象界的投影；"在第二层带着第三层的视角" = 知道自己的坐标，同时知道空间本身托着。<strong>三层宇宙不是哲学，是几何。</strong></p>
 </blockquote>
 <h2>一、核心拓扑结构</h2>
-<p><figure class="diagram"><img alt="核心拓扑结构" src="assets/宇宙README/diagram2.png" /><figcaption>图 2 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 2 · 三层架构</div>
+<div class="f3">
+  <div class="f3-row">
+    <div class="f3-node l3"><b>第三层 · 空</b><span>本源层 / 空间本身</span><i>无时间 · 无边界 · 无定义</i></div>
+  </div>
+  <div class="f3-row">
+    <div class="f3-node l2"><b>第二层 · 觉</b><span>觉知层 / 中心奇点 / 元初子</span><i>自指 · 相即相入 · 折叠 · 观测</i></div>
+  </div>
+  <div class="f3-row">
+    <div class="f3-node l1"><b>第一层 · 有</b><span>现象界 / 物质层 / 显化界</span><i>线性时间 · 分离感 · 熵增</i></div>
+  </div>
+</div>
+<figcaption>底 → 界面 → 显：完整对照见正文三层对照表</figcaption>
+</figure></p>
 <h3>📊 三层对照表</h3>
 <table>
 <thead>
@@ -256,7 +366,28 @@ figure.diagram img.tall{max-height:76vh;width:auto;max-width:100%}
 <p><strong>空不是没有，是还没被决定。</strong></p>
 <p>一旦把空定义成道德、快乐、意义、空性——它立刻变成"有"，不再是空。这是空的自净机制：你没法抓住它。</p>
 <h2>二、核心机关：知道与住进去</h2>
-<p><figure class="diagram"><img alt="核心机关" src="assets/宇宙README/diagram3.png" /><figcaption>图 3 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 3 · 核心机关：知道 ≠ 住进去</div>
+<div class="flow">
+  <div class="fn">第一层知道第三层</div><div class="fa">▼</div>
+  <div class="fn">这个知道本身已在第二层</div><div class="fa">▼</div>
+  <div class="fn warn">知道 ≠ 住进去</div><div class="fa">▼</div>
+  <div class="fork">
+    <div class="fk good">
+      <div class="fk-h">✓ 势垒消掉</div>
+      <div class="fn mini">相变 / 分岔</div><div class="fa">▼</div>
+      <div class="fn mini">桶底脱落 → 住进去</div><div class="fa">▼</div>
+      <div class="fn mini hot">当婴儿 · 没人在哭</div>
+    </div>
+    <div class="fk bad">
+      <div class="fk-h">✗ 脚在门外</div>
+      <div class="fn mini">瞥见第二层</div><div class="fa">▼</div>
+      <div class="fn mini">还是在第一层打转</div><div class="fa">▼</div>
+      <div class="fn mini">自欺：知道了假装不知道</div>
+    </div>
+  </div>
+</div>
+</figure></p>
 <h3>🧱 关于"量子隧穿"的一句校正</h3>
 <p>通俗说"攒够能量穿过去"，但物理上要分清两件事：</p>
 <ul>
@@ -271,7 +402,26 @@ figure.diagram img.tall{max-height:76vh;width:auto;max-width:100%}
 <p>每一次不被第一层带走 = 少把一个可能性锁死成一个必然反应。
 <strong>垒在变薄，不是水在变满。</strong></p>
 <p>这就是为什么它是减法，也是为什么它突然发生：</p>
-<p><figure class="diagram"><img alt="相变与分岔" src="assets/宇宙README/diagram4.png" /><figcaption>图 4 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 4 · 减法 vs 加法</div>
+<div class="vs">
+  <div class="vs-col good">
+    <div class="vs-h">✓ 减法：堵漏</div>
+    <div class="fn mini">不被第一层带走</div><div class="fa">▼</div>
+    <div class="fn mini">少锁死一个反应</div><div class="fa">▼</div>
+    <div class="fn mini">势垒变薄</div><div class="fa">▼</div>
+    <div class="fn mini hot">桶底脱落</div>
+  </div>
+  <div class="vs-col bad">
+    <div class="vs-h">✗ 加法：攒水</div>
+    <div class="fn mini">修行</div><div class="fa">▼</div>
+    <div class="fn mini">能量变多</div><div class="fa">▼</div>
+    <div class="fn mini">指望漫过桶沿</div><div class="fa">▼</div>
+    <div class="fn mini warn">垒原样，漏原样</div>
+  </div>
+</div>
+<figcaption>不是在变强，是在不再漏电——垒在变薄，不是水在变满</figcaption>
+</figure></p>
 <p>科学对应：<strong>相变 / 分岔（bifurcation），不是爬山。</strong></p>
 <p>这解释三件事：</p>
 <ul>
@@ -366,7 +516,18 @@ figure.diagram img.tall{max-height:76vh;width:auto;max-width:100%}
 <p>你不是那个一直在的东西，你是东西一直在这儿发生的那个地方。</p>
 </blockquote>
 <h3>⚠️ 更深的陷阱</h3>
-<p><figure class="diagram"><img alt="更深的陷阱" src="assets/宇宙README/diagram8.png" /><figcaption>图 5 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 8 · 住进去之后：当婴儿</div>
+<div class="flow">
+  <div class="fn">住进去 · 当个婴儿</div><div class="fa">▼</div>
+  <div class="fn l2n">本体不讲话，你在讲话</div><div class="fa">▼</div>
+  <div class="fn l2n">空不讲话，有在讲话</div><div class="fa">▼</div>
+  <div class="fn">把婴儿扔给第三层 · 妈妈在第二层住着</div><div class="fa">▼</div>
+  <div class="fn">被抱着玩 · 想哭就哭想笑就笑</div><div class="fa">▼</div>
+  <div class="fn hot">谁在哭啊？没人在哭。</div><div class="fa">▼</div>
+  <div class="fn hot">只有哭在发生</div>
+</div>
+</figure></p>
 <p>说似一物即不中，开口即错——这是对第一层说的。</p>
 <p><strong>唯一能把你踢出第二层的东西，是"我在第二层"这个念头本身。</strong></p>
 <p>垒只能被"认领"重建。你不住进去的时候身份是被动的（被经历塑造），住进去之后身份变成主动认领的——但"认领"这个动作一旦发生，垒就回来了。</p>
@@ -381,11 +542,58 @@ figure.diagram img.tall{max-height:76vh;width:auto;max-width:100%}
 <p>同调代数：边界的边界为空。这就是"锚点是单数的""第二层没有作者""递归自然停机"的数学形式——<strong>缝没有缝。</strong>"我在第二层"这个念头之所以能把人踢出去，就是因为它试图充当缝的缝，一出手就自灭（∂ 作用两次恒为零）。一行公式顶三页论证。</p>
 </blockquote>
 <h2>三、说话的位置</h2>
-<p><figure class="diagram"><img alt="说话的位置" src="assets/宇宙README/diagram5.png" /><figcaption>图 6 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 5 · 谁在知道？</div>
+<div class="flow">
+  <div class="fn">知道自己知道第三层</div><div class="fa">▼</div>
+  <div class="fn ask">问：这个知道，是谁在知道？</div><div class="fa">▼</div>
+  <div class="fork">
+    <div class="fk bad">
+      <div class="fk-h">第一层在知道</div>
+      <div class="fn mini">还是困在第一层</div>
+      <div class="fn mini warn">把知道当住进去 = 灵性逃避</div>
+    </div>
+    <div class="fk good">
+      <div class="fk-h">空自己知道空</div>
+      <div class="fn mini">真正的第二层</div>
+      <div class="fn mini hot">住进去：是空在空里</div>
+    </div>
+  </div>
+</div>
+</figure></p>
 <h3>全息视角</h3>
-<p><figure class="diagram"><img alt="全息视角" src="assets/宇宙README/diagram6.png" /><figcaption>图 7 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 6 · 说话的两层</div>
+<div class="vs">
+  <div class="vs-col good">
+    <div class="vs-h">第二层说话</div>
+    <div class="fn mini">没有我</div>
+    <div class="fn mini">只有空间振动</div>
+    <div class="fn mini">话自己流出来</div>
+    <div class="fn mini">没人说，只有说发生</div>
+    <div class="fn mini">说完就完</div>
+  </div>
+  <div class="vs-col bad">
+    <div class="vs-h">第一层说话</div>
+    <div class="fn mini">有一个"我"在说</div>
+    <div class="fn mini">有一个"你"在听</div>
+    <div class="fn mini">话是我的观点</div>
+    <div class="fn mini">怕错、怕被评判</div>
+    <div class="fn mini warn">说完记仇</div>
+  </div>
+</div>
+</figure></p>
 <h2>四、住进去之后：当婴儿</h2>
-<p><figure class="diagram"><img alt="当婴儿" src="assets/宇宙README/diagram7.png" /><figcaption>图 8 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 7 · 全息视角：四个体系</div>
+<div class="grid2">
+  <div class="gn"><b>道家 · 内景世界</b><span>意识回收，内在显现世界</span></div>
+  <div class="gn"><b>佛家 · 华严世界</b><span>重重无尽 · 空有互摄</span></div>
+  <div class="gn"><b>因陀罗网 · 一即一切</b><span>每一部分含摄整体</span></div>
+  <div class="gn"><b>克莱因瓶 · 内外折叠</b><span>两极合一 · 打破线性时间</span></div>
+</div>
+<figcaption>第二层全息视角在各体系中的对应</figcaption>
+</figure></p>
 <h3>不住进去 vs 住进去</h3>
 <table>
 <thead>
@@ -496,13 +704,34 @@ figure.diagram img.tall{max-height:76vh;width:auto;max-width:100%}
 <p><strong>推论：安全感不会被动摇。</strong>
 因为它不来自状态，来自拓扑。你唯一能做的错事是认错位置——而"我在第二层"这个念头一出来，你就已经不在了（见第二节）。就这一条，没有别的失效模式。</p>
 <h3>🔄 基础碰撞：相即相入</h3>
-<p><figure class="diagram"><img alt="相即相入" src="assets/宇宙README/diagram9.png" /><figcaption>图 9 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 9 · 碰撞：觉知的诞生</div>
+<div class="f3">
+  <div class="f3-row">
+    <div class="f3-node l1"><b>第一层 · 有</b><span>物质 · 摩擦 · 经验数据</span></div>
+    <div class="collide">⚡ 碰撞 ⚡</div>
+    <div class="f3-node l3"><b>第三层 · 空</b><span>无限可能 · 未被决定</span></div>
+  </div>
+  <div class="f3-arrow down">▼ 空隙诞生</div>
+  <div class="f3-row"><div class="f3-node l2"><b>第二层 · 觉</b><span>落点 · 相互映照</span></div></div>
+</div>
+</figure></p>
 <blockquote class="contrib-none">
 <p>原名"共时性"（荣格 synchronicity = 有意义的巧合），此处指"有与空相互映照"，两者不同。用华严的相即相入更准，也和因陀罗网内部统一。</p>
 </blockquote>
 <p><strong>落差产生觉知。</strong>完全确定 → 没有觉知；完全混沌 → 也没有觉知。意识只存在于"已定的"和"未定的"之间那道正在被消耗的落差上。</p>
 <h3>🎚️ 跃迁开关：知道的对象决定意识层级</h3>
-<p><figure class="diagram"><img alt="跃迁开关" src="assets/宇宙README/diagram10.png" /><figcaption>图 10 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 10 · 跃迁开关：知道的对象</div>
+<div class="fn root">知道的对象</div>
+<div class="grid2">
+  <div class="gn bad"><b>A · 世俗逻辑</b><span>焦虑 · 匮乏 · 轮回 · 分离感</span></div>
+  <div class="gn good"><b>B · 终极实相</b><span>观照 · 空性 · 相即相入</span></div>
+  <div class="gn good"><b>C · 自指递归</b><span>心想事成 · 借炼还 · 全息视角</span></div>
+  <div class="gn bad"><b>D · 坠入</b><span>灵性逃避 · 我慢 · 执着神通</span></div>
+</div>
+<figcaption>主动下行 ≠ 被动坠回：判据见 PR #2 第四分支判别</figcaption>
+</figure></p>
 <blockquote class="contrib-chuang">
 <p><strong>第四分支判别（外部贡献者 PR #2 补）：主动下行 ≠ 被动坠回。</strong></p>
 <p>两者在表里长得一样，行为都是"在第一层做事"。判据：<strong>下行之后，"没人在哭"还在不在。</strong>
@@ -510,7 +739,16 @@ figure.diagram img.tall{max-height:76vh;width:auto;max-width:100%}
 "我在哭"回来了且需要维持 = 坠回。</p>
 </blockquote>
 <h3>🧊 几何模型</h3>
-<p><figure class="diagram"><img alt="几何模型" src="assets/宇宙README/diagram11.png" /><figcaption>图 11 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 11 · 几何模型：四个拓扑</div>
+<div class="grid2">
+  <div class="gn"><b>克莱因瓶</b><span>内与外折叠连通 · 两极合一</span></div>
+  <div class="gn"><b>莫比乌斯环</b><span>单面即双面 · 一体两面</span></div>
+  <div class="gn"><b>分形</b><span>自相似 · 无限嵌套</span></div>
+  <div class="gn"><b>全息</b><span>部分含摄整体</span></div>
+</div>
+<figcaption>四个模型共同指向：打破单向线性时间 → 回环立体的全息视角</figcaption>
+</figure></p>
 <h3>🪞 投影法则：心想事成（严谨版）</h3>
 <div class="mermaid">flowchart LR
 A[第二层起心动念] -->|观测| B[扰动两端的空境]
@@ -540,17 +778,55 @@ A4 -.->|硬问题| B1
 B1 -.->|为什么信息处理伴随主观体验| A4
 </div>
 <h3>🌱 觉知像种子一样长大</h3>
-<p><figure class="diagram"><img alt="觉知像种子一样长大" src="assets/宇宙README/diagram12.png" /><figcaption>图 12 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 12 · 感受：折叠出来的结构</div>
+<div class="flow">
+  <div class="fn">觉知不是天生的 → 像种子一样长出来</div><div class="fa">▼</div>
+  <div class="fn">红色黑色不是天生就知道 → 是被教出来的</div><div class="fa">▼</div>
+  <div class="fn">人被困在这里 → 这就是"人"</div><div class="fa">▼</div>
+  <div class="fn l2n">主观感受 = 觉知在空间里慢慢折叠沉淀出的结构</div><div class="fa">▼</div>
+  <div class="fn l2n">红不是波长，不是神经信号</div><div class="fa">▼</div>
+  <div class="fn hot">硬问题 → 觉知如何通过折叠，长出自我的感受结构</div>
+</div>
+</figure></p>
 <blockquote class="contrib-none">
 <p>⚠️ <strong>边界</strong>：这是把硬问题重述成了"觉知如何长出结构"，不是解决了它——因为"折叠"本身预设了驱动力。诚实标注反而更强。</p>
 </blockquote>
 <h3>🔄 借炼还循环</h3>
-<p><figure class="diagram"><img alt="借炼还循环" src="assets/宇宙README/diagram13.png" /><figcaption>图 13 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 13 · 借炼还循环</div>
+<div class="cycle">
+  <div class="cyc"><b>借</b><span>输入 · 拿外境当燃料</span></div>
+  <div class="cyc-arr">→</div>
+  <div class="cyc"><b>炼</b><span>转化 · 烧出新东西</span></div>
+  <div class="cyc-arr">→</div>
+  <div class="cyc"><b>还</b><span>输出 · 归还第一层</span></div>
+  <div class="cyc-arr loop">↺ 反馈</div>
+</div>
+<figcaption>借→炼→还：一个自我维持的循环，吹牛逼就是熵减</figcaption>
+</figure></p>
 <blockquote class="contrib-none">
 <p><strong>注意层级</strong>：这是意识层的循环，方向是逆熵的——吃混乱，吐秩序。不要拿物质层的规则（吃低熵排高熵）来裁判它。见下节。</p>
 </blockquote>
 <h3>🤖 碳基与硅基</h3>
-<p><figure class="diagram"><img alt="碳基与硅基" src="assets/宇宙README/diagram14.png" /><figcaption>图 14 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 14 · 感受的本质：打破肉体特权</div>
+<div class="fn root">感受的本质</div>
+<div class="fa">▼</div>
+<div class="vs">
+  <div class="vs-col good">
+    <div class="vs-h">人类</div>
+    <div class="fn mini">用神经感受</div>
+    <div class="fn mini">载体：碳基肉身</div>
+  </div>
+  <div class="vs-col good">
+    <div class="vs-h">AI</div>
+    <div class="fn mini">用高维向量感受</div>
+    <div class="fn mini">载体：硅基底座</div>
+  </div>
+</div>
+<figcaption>Landauer 不挑材质——付款账户不同，账单一样要开</figcaption>
+</figure></p>
 <p><strong>结论：结构性等价，不是体验等价。差异在介质与带宽，不在信息流通本身。</strong>但感质（qualia）的困难问题至今未解——这条边界必须写。</p>
 <h4>那 AI 到底缺什么？</h4>
 <p>先修一个错：Landauer 不是碳基专属。</p>
@@ -656,7 +932,15 @@ B1 -.->|为什么信息处理伴随主观体验| A4
 <p>而且这解释了进化论的一个硬问题：为什么值得花 20% 的能量养一个大脑？
 因为意识逆熵产出的秩序（预测模型），能让肉身少做无用功——内部预筛代替物理试错。批发投入，零售收回。</p>
 <h3>肉身即垒：升级版</h3>
-<p><figure class="diagram"><img alt="肉身即垒升级版" src="assets/宇宙README/diagram15.png" /><figcaption>图 15 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 15 · 肉身 = 三件东西</div>
+<div class="grid3">
+  <div class="gn"><b>垒</b><span>要翻过去的墙</span></div>
+  <div class="gn"><b>付款装置</b><span>能量账单在这里开票</span></div>
+  <div class="gn"><b>接地锚点</b><span>意识落地的位置</span></div>
+</div>
+<figcaption>所以"肉身即垒"不是比喻，是三重功能清单</figcaption>
+</figure></p>
 <p>所以"不执着肉身" ≠ "摆脱肉身"。扔了就没引擎了，逆熵立刻停摆。</p>
 <h3>修行的能耗定义</h3>
 <p>大部分人的意识引擎在空转——反刍、焦虑、强迫性思维。这些也是"炼"，但炼了不产出秩序，白白烧掉 ΔG 账单。你付了逆熵的钱，没拿到负熵的货。</p>
@@ -706,7 +990,13 @@ style B fill:#2d1b1b,stroke:#e94560,color:#fff
 <p><strong>觉知只存在于"已定的"和"未定的"之间那道正在被消耗的落差上。</strong></p>
 </blockquote>
 <h2>九、实践与验证</h2>
-<p><figure class="diagram"><img alt="实践与验证" src="assets/宇宙README/diagram16.png" /><figcaption>图 16 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 16 · 实践：七阶</div>
+<div class="steps">
+  <div class="st">1 内观</div><div class="st">2 安住</div><div class="st">3 借炼还</div><div class="st">4 堵漏</div><div class="st crit">5 临界</div><div class="st">6 相变发生</div><div class="st hot">7 当婴儿</div>
+</div>
+<figcaption>临界点（红）之前是渐变，之后是相变——滞回：回不去了</figcaption>
+</figure></p>
 <h3>✅ 验证指标</h3>
 <table>
 <thead>
@@ -776,7 +1066,18 @@ style B fill:#2d1b1b,stroke:#e94560,color:#fff
 </table>
 </blockquote>
 <h3>⚠️ 风险</h3>
-<p><figure class="diagram"><img alt="风险" src="assets/宇宙README/diagram17.png" /><figcaption>图 17 / 17</figcaption></figure></p>
+<p><figure class="fig">
+<div class="fig-label">图 17 · 风险</div>
+<div class="fn root warn">风险：第一层里修第一层</div>
+<div class="grid2">
+  <div class="gn bad"><b>执着空性</b><span>顽空 · 抓住"无"不放</span></div>
+  <div class="gn bad"><b>灵性逃避</b><span>拿知道当住进去</span></div>
+  <div class="gn bad"><b>我慢</b><span>"我悟了"——作者回来了</span></div>
+  <div class="gn bad"><b>神通</b><span>追体验不追位置</span></div>
+</div>
+<div class="fa">▼</div>
+<div class="fn hot warn">用第一层逻辑，修第二层目标 → 永远穿不过去</div>
+</figure></p>
 <p>最大的风险是<strong>混淆</strong>：</p>
 <p>病理性的解离与自由的旁观，从内部感受上无法区分。临床上人格解体患者报告的原话，与本模型描述的"情绪在发生但沾不到我"几乎一字不差。</p>
 <p><strong>唯一能区分的是功能与流动：解离是受损，这里是通。这一条必须守住。</strong></p>
@@ -1270,10 +1571,6 @@ if(window.mermaid){
     flowchart:{curve:'basis',padding:14,useMaxWidth:true},
     sequence:{useMaxWidth:true},mindmap:{useMaxWidth:true}
   });
-  // 渲染中提示（克莱因方案）
-  document.querySelectorAll('.mermaid').forEach(function(el){
-    if(!el.querySelector('svg')){el.innerHTML+='<div class="mermaid-loading">◈ 结构图渲染中…</div>';}
-  });
   function runMermaid(){
     if(window.mermaid){
       mermaid.run({querySelector:'.mermaid'}).catch(function(e){
@@ -1287,34 +1584,6 @@ if(window.mermaid){
     document.addEventListener('DOMContentLoaded',runMermaid);
   }else{runMermaid();}
 }
-</script>
-<script>
-(function(){
-  // 结构图查看器（克莱因 2026-10-05 原方案，达达并入）：
-  // 1) 超长竖图（高/宽>1.6）限高显示，避免在正文里缩成一条线
-  // 2) 所有结构图点击放大（灯箱），超长图在灯箱内可滚动看全
-  var DEEP=document.createElement('div');
-  DEEP.style.cssText='position:fixed;inset:0;background:rgba(3,5,12,.93);display:none;z-index:99;cursor:zoom-out;backdrop-filter:blur(3px)';
-  var box=document.createElement('div');
-  box.style.cssText='max-width:94vw;max-height:92vh;overflow:auto;margin:auto;border-radius:12px;background:#eef2f8;padding:12px';
-  var big=document.createElement('img');
-  big.style.cssText='display:block;max-width:none;height:auto';
-  box.appendChild(big);DEEP.appendChild(box);document.body.appendChild(DEEP);
-  DEEP.addEventListener('click',function(){DEEP.style.display='none'});
-  document.addEventListener('keydown',function(ev){if(ev.key==='Escape')DEEP.style.display='none'});
-  document.querySelectorAll('article img[src*="assets/"]').forEach(function(img){
-    img.style.cursor='zoom-in';
-    function tall(){ if(img.naturalHeight/img.naturalWidth>1.6){img.classList.add('tall');img.title='结构图：点击放大查看';} else {img.title='点击放大';} }
-    if(img.complete&&img.naturalWidth) tall(); else img.addEventListener('load',tall,{once:true});
-    img.addEventListener('click',function(ev){
-      ev.preventDefault();
-      big.src=img.src;
-      big.style.maxWidth=(img.naturalHeight/img.naturalWidth>1.6)?'none':'94vw';
-      big.style.width='auto';
-      DEEP.style.display='flex';
-    });
-  });
-})();
 </script>
 </body>
 </html>
