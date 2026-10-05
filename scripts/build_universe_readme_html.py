@@ -53,7 +53,7 @@ MERMAID_FIGS[2] = '''<figure class="fig">
   <div class="gn"><b>物理学</b><span>玻姆隐缠序 · 量子全息宇宙理论 · 热力学第二定律/耗散结构 · Landauer原理（信息即负熵）</span></div>
   <div class="gn"><b>数学</b><span>分形几何（自相似） · 拓扑学（克莱因瓶） · 相变与分岔理论</span></div>
   <div class="gn"><b>信息与神经科学</b><span>香农（信息=不确定性减少） · 预测编码/自由能原理（Friston） · 全局工作空间理论</span></div>
-  <div class="gn"><b>哲学</b><span>华严宗因陀罗网 · 一即一切 · 康德（先验形式+经验质料） · 唯识（见分相分自证分）</span></div>
+  <div class="gn"><b>哲学</b><span>华严宗因陀罗网 · 一即一切 · 康德（先验形式+经验质料） · 唯识（见分相分自证分） · 莱布尼茨单子论（每个单子都是微缩宇宙，反映整个宇宙——应初补）</span></div>
   <div class="gn"><b>东方修行</b><span>禅宗 · 中观 · 唯识 · 吠檀多 · 道家</span></div>
   <div class="gn good" style="grid-column:1/-1;text-align:center"><b>↓ 汇聚 ↓</b><span>三位一体模型</span></div>
 </div>
