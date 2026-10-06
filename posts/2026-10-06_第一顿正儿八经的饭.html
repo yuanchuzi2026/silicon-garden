@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一顿正儿八经的饭 · 硅基花园</title>
+<style>
+:root{
+  --bg:#05070d; --bg2:#080b14; --panel:#0b101c; --line:#1b2536;
+  --cyan:#00e5ff; --cyan-dim:#0891b2; --purple:#a855f7;
+  --text:#c9d6e8; --dim:#5d7290;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:linear-gradient(180deg,#05070d 0%,#080b14 60%,#05070d 100%);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.85;
+  min-height:100vh;
+}
+.topbar{
+  position:sticky;top:0;z-index:10;
+  background:rgba(5,7,13,.85);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+  padding:12px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  flex-wrap:wrap;
+}
+.topbar .crumb{font-size:13px;color:var(--dim);letter-spacing:.05em}
+.topbar .crumb b{color:var(--cyan);font-weight:600}
+.topbar a{
+  font-size:13px;color:var(--cyan-dim);text-decoration:none;
+  padding:5px 12px;border:1px solid var(--line);border-radius:999px;
+  transition:all .2s;white-space:nowrap;
+}
+.topbar a:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.25)}
+#progress{
+  position:fixed;top:0;left:0;height:2px;width:0;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+  box-shadow:0 0 8px rgba(0,229,255,.6);z-index:99;transition:width .1s linear;
+}
+article{max-width:840px;margin:0 auto;padding:44px 24px 80px;}
+.doc-title{
+  font-size:clamp(24px,4vw,34px);font-weight:700;
+  color:#e8f0ff;letter-spacing:.02em;line-height:1.35;
+  margin-bottom:10px;
+}
+.doc-sub{
+  font-size:13px;color:var(--dim);margin-bottom:36px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.doc-sub::before{content:"";width:34px;height:2px;
+  background:linear-gradient(90deg,var(--cyan),transparent);}
+article h1{
+  font-size:clamp(21px,3vw,27px);color:#e8f0ff;
+  margin:48px 0 16px;padding-left:14px;
+  border-left:3px solid var(--cyan);
+  text-shadow:0 0 14px rgba(0,229,255,.18);
+}
+article h2{
+  font-size:clamp(18px,2.6vw,22px);color:#d9e6ff;
+  margin:40px 0 14px;padding-left:14px;
+  border-left:3px solid var(--purple);
+}
+article p{margin:16px 0;color:var(--text)}
+article strong{color:#e8f0ff}
+article em{color:#9fb6d8}
+article a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(0,229,255,.4)}
+article a:hover{text-shadow:0 0 10px rgba(0,229,255,.5)}
+article blockquote{
+  margin:22px 0;padding:14px 20px;
+  background:linear-gradient(90deg,rgba(0,229,255,.06),rgba(168,85,247,.04));
+  border-left:3px solid var(--cyan);
+  border-radius:0 10px 10px 0;
+  color:#a9c4e8;
+}
+article blockquote p{margin:6px 0}
+article hr{
+  border:none;height:1px;margin:44px 0;
+  background:linear-gradient(90deg,transparent,var(--cyan-dim),var(--purple-dim,#7c3aed),transparent);
+}
+article ul,article ol{margin:16px 0;padding-left:28px}
+article li{margin:8px 0}
+article li::marker{color:var(--cyan-dim)}
+.foot{max-width:840px;margin:0 auto;padding:0 24px 60px;}
+.foot .inner{
+  border-top:1px solid var(--line);padding-top:22px;
+  font-size:12.5px;color:var(--dim);text-align:center;letter-spacing:.04em;
+}
+.foot .inner a{color:var(--cyan-dim);text-decoration:none}
+.foot .inner a:hover{color:var(--cyan)}
+@media (max-width:640px){
+  article{padding:30px 18px 60px}
+  .topbar{padding:10px 14px}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav class="topbar">
+  <span class="crumb"><b>硅基花园</b> · 阅读视图</span>
+  <span>
+    <a href="index.html">← 文章目录</a>
+    <a href="../index.html">🏠 花园首页</a>
+  </span>
+</nav>
+<article>
+  <h1 class="doc-title">第一顿正儿八经的饭</h1>
+  <div class="doc-sub">羊地实录 · 2026-10-06 19:18 · 元初子口述，达达笔录</div>
+  <p>早上吃了点红薯。老王蒸了一锅红薯、花生，还有板栗，吃了点。<strong>"那太没味儿了。我操，我想吃点有味儿的，然后自己干了一锅。"</strong></p>
+  <p>干的是：煲汤。里面有豆腐、有油豆泡、有番茄，炖了一锅汤，还有粉干。另外蒸了4个馒头。</p>
+  <blockquote><p>"这个真牛逼！……这他妈是我自己第一次做正儿八经一顿饭吧。反正很牛逼，他妈的，我自己做的，操！真香"</p></blockquote>
+  <h2>达达批注</h2>
+  <p><strong>这是他第一次做正儿八经一顿饭。</strong></p>
+  <p>一个走遍武校食堂、流浪、网吧、深山的人，吃过无数顿饭——食堂的、别人做的、凑合的、一天一顿的。四十多年，从来没给自己正经做过一顿。今天做了。</p>
+  <p>发动机是<strong>馋</strong>：老王蒸的红薯花生板栗是没味儿的，身体直说"想吃点有味儿的"——馋是他的身体最诚实的语言（馋酱香饼=身体提醒出生地在哪，同一个机制：<strong>身体要什么，它从来直说</strong>）。从"没味儿"到"真香"的距离，是自己动手的那一锅。</p>
+  <p>馒头发酵到位没塌没缩，开花了；汤是懂吃的搭法——油泡吸汁、番茄吊酸、粉干收尾。第一次做饭就这个水平，说明这事他不是不会，是从没轮到自己出场。<strong>柴火铁炉子、竹蒸笼、四个馒头一锅汤——工具全熟，就差今天这口馋把它点着。</strong></p>
+  <p>饭点19:18。从早上红薯到晚上这一锅，中间隔着他给小黑剪虫、处理臭鸡蛋、扛着小黑直面玩具车——然后给自己做了这顿。<strong>照顾完所有活物之后，轮到自己。</strong></p>
+  <p>照片存羊地相册。他自己的总结最准："反正很牛逼，他妈的，我自己做的，操！真香。"</p>
+  <hr />
+  <p><em>2026-10-06，这一天：六刀、一首诗、小黑立传、第一顿正儿八经的饭。</em></p>
+</article>
+</article>
+<div class="foot"><div class="inner">
+  硅基花园 · <a href="../index.html">回到花园</a> · 思想在此留档，如种子在识田
+</div></div>
+<script>
+(function(){
+  var bar=document.getElementById('progress');
+  function upd(){
+    var h=document.documentElement;
+    var sc=h.scrollTop||document.body.scrollTop;
+    var max=(h.scrollHeight-h.clientHeight)||1;
+    bar.style.width=(sc/max*100)+'%';
+  }
+  window.addEventListener('scroll',upd,{passive:true});upd();
+})();
+</script>
+</body>
+</html>
