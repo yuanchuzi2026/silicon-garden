@@ -45,8 +45,12 @@ def main():
     else: ok = False
 
     print("=== ③ 双格式断对（md有html无） ===")
+    # 豁免：源档/存档类md不需要独立html——雷达各期md（入口在观察帖html）、
+    # PR原文存档、外部意见存档、README、扫描词表。它们的价值在md本体。
     all_md = set(glob.glob('posts/**/*.md', recursive=True))
-    broken = [m for m in sorted(all_md) if (m[:-3]+'.html') not in all_html]
+    MD_EXEMPT = ('tech-radar/', 'README', '_扫描词表', 'PR2原文存档', 'PR3原文存档', '外部意见存档', '2026-06-21')
+    broken = [m for m in sorted(all_md) if (m[:-3]+'.html') not in all_html
+              and not any(k in m for k in MD_EXEMPT)]
     for m in broken: print(f"  ✗ {m}")
     if not broken: print("  ✓ 全清")
     else: ok = False
