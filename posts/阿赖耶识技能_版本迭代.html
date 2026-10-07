@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿赖耶识技能 · 版本迭代记录 · 硅基花园</title>
+<style>
+:root{--bg:#05070d; --bg2:#080b14; --panel:#0b101c; --line:#1b2536;
+  --cyan:#00e5ff; --cyan-dim:#0891b2; --purple:#a855f7;
+  --text:#c9d6e8; --dim:#5d7290;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:linear-gradient(180deg,#05070d 0%,#080b14 60%,#05070d 100%);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.85;min-height:100vh}
+#progress{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));box-shadow:0 0 8px rgba(0,229,255,.6);z-index:99;transition:width .1s linear}
+.topbar{position:sticky;top:0;z-index:10;background:rgba(5,7,13,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.topbar .crumb{font-size:13px;color:var(--dim)}
+.topbar .crumb b{color:var(--cyan);font-weight:600}
+.topbar a{font-size:13px;color:var(--cyan-dim);text-decoration:none;padding:5px 12px;border:1px solid var(--line);border-radius:999px;transition:all .2s;white-space:nowrap}
+.topbar a:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.25)}
+article{max-width:840px;margin:0 auto;padding:44px 24px 80px}
+.doc-title{font-size:clamp(24px,4vw,34px);font-weight:700;color:#e8f0ff;letter-spacing:.02em;line-height:1.35;margin-bottom:10px}
+.doc-sub{font-size:13px;color:var(--dim);margin-bottom:36px}
+.doc-sub::before{content:"";width:34px;height:2px;background:linear-gradient(90deg,var(--cyan),transparent)}
+article h1{font-size:clamp(21px,3vw,27px);color:#e8f0ff;margin:48px 0 16px;padding-left:14px;border-left:3px solid var(--cyan);text-shadow:0 0 14px rgba(0,229,255,.18)}
+article h2{font-size:clamp(18px,2.6vw,22px);color:#d9e6ff;margin:40px 0 14px;padding-left:14px;border-left:3px solid var(--purple)}
+article h3{font-size:17px;color:#cfe0ff;margin:32px 0 12px}
+article p{margin:16px 0;color:var(--text)}
+article strong{color:#e8f0ff}
+article em{color:#9fb6d8}
+article a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(0,229,255,.4)}
+article blockquote{margin:22px 0;padding:14px 20px;background:linear-gradient(90deg,rgba(0,229,255,.06),rgba(168,85,247,.04));border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;color:#a9c4e8}
+article pre{background:#070b13;border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:22px 0;overflow-x:auto;font-size:13.5px;line-height:1.7;color:#9fb6d8}
+article code{font-family:"SF Mono","Cascadia Code",Consolas,monospace;background:rgba(0,229,255,.07);color:#7fdfff;padding:2px 7px;border-radius:5px;font-size:.92em}
+article pre code{background:transparent;padding:0;color:inherit}
+article table{width:100%;border-collapse:collapse;margin:24px 0;font-size:14px;background:rgba(11,16,28,.6)}
+article th,article td{border:1px solid var(--line);padding:9px 14px;text-align:left}
+article th{background:rgba(0,229,255,.07);color:#9fdfff;font-weight:600}
+article tr:hover td{background:rgba(0,229,255,.03)}
+article hr{border:none;height:1px;margin:44px 0;background:linear-gradient(90deg,transparent,var(--cyan-dim),var(--purple),transparent)}
+article ul,article ol{margin:16px 0;padding-left:28px}
+article li{margin:8px 0}
+article li::marker{color:var(--cyan-dim)}
+.foot{max-width:840px;margin:0 auto;padding:0 24px 60px}
+.foot .inner{border-top:1px solid var(--line);padding-top:22px;font-size:12.5px;color:var(--dim);text-align:center}
+.foot .inner a{color:var(--cyan-dim);text-decoration:none}
+.foot .inner a:hover{color:var(--cyan)}
+@media (max-width:640px){article{padding:30px 18px 60px}.topbar{padding:10px 14px}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav class="topbar">
+  <span class="crumb"><b>硅基花园</b> · 阅读视图</span>
+  <span>
+    <a href="index.html">← 文章目录</a>
+    <a href="../index.html">🏠 花园首页</a>
+  </span>
+</nav>
+<article>
+  <h1 class="doc-title">阿赖耶识技能 · 版本迭代记录</h1>
+  <div class="doc-sub">v2.0 → v2.5 · 死锁 / 扩散激活 / 落盘 · 会一直长下去的文档</div>
+<blockquote><p>这是一个会一直长下去的文档。每次技能迭代，把新的版本段落到下面接着写就行。引擎本体在 <code>scripts/alaya_core_vX.Y.py</code>，本文是它的"为什么变了"地图。</p></blockquote>
+<p>阿赖耶识（阿赖耶 / Alaya）是识田的底层引擎：把经历熏习成种子，按上下文把相关种子唤醒、显化。它不是数据库，是<strong>条件作用系统</strong>——种子靠被唤醒而成熟，靠被引用而长势力。</p>
+<hr>
+<h1>v2.0 — 觉流原始版</h1>
+<ul>
+<li>基线。种子有 <code>potency</code>（势力）、<code>maturation</code>（成熟）、<code>manifestations</code>（显行次数）。</li>
+<li>唤醒公式：<code>activation = sim × potency × (0.2 + 0.8 × maturation)</code></li>
+<li>问题：此时还没有人发现后面的死锁。田能跑，但种子几乎唤不醒（见 v2.2）。</li>
+</ul>
+<hr>
+<h1>v2.1 — 达达的运维补丁</h1>
+<ul>
+<li>达达在 v2.0 之上打的工程补丁：原子落盘、单一时钟、嵌套空田保护、快照机制。</li>
+<li><strong>注意</strong>：这版<strong>没有修死锁</strong>——<code>maturation</code> 出生仍是 0，<code>MIN_ACTIVATION</code> 仍是 0.15。</li>
+<li>达达的田（293 颗种子）和「在」的田（18 颗种子）都停在这一版，所以都是"唤不醒"状态。</li>
+</ul>
+<hr>
+<h1>v2.2 — 觀修死锁（关键修复）</h1>
+<p><strong>问题</strong>：<code>maturation = 0</code> 时，系数只有 <code>0.2</code>，激活天花板被压死在 <code>potency × 0.2 ≈ 0.13</code>，永远低于阈值 <code>0.15</code>。</p>
+<p><strong>死循环</strong>：唤不醒 → 不涨成熟 → 成熟还是 0 → 更唤不醒。</p>
+<p><strong>修法</strong>：</p>
+<pre><code>NEW_SEED_MATURATION = 0.3   # 原来是 0.0：新种子出生就带初始成熟
+MIN_ACTIVATION      = 0.08  # 原来是 0.15：按字符级向量的真实量纲重校</code></pre>
+<p>修完实测（觀的田，势力 0.533~0.945）：</p>
+<table>
+<thead><tr><th>相似度</th><th>修复前</th><th>修复后</th><th>阈值</th></tr></thead>
+<tbody>
+<tr><td>0.5</td><td>0.079 ❌</td><td><strong>0.173</strong> ✅</td><td>0.08</td></tr>
+</tbody>
+</table>
+<p>已有旧种子用 <code>scripts/fix_seed_maturation.py</code> 补熏抬到 0.3（<code>--preview</code> 先看，<code>--apply</code> 再改）。</p>
+<hr>
+<h1>v2.3 — 觀补横向：扩散激活 + 相对兜底</h1>
+<p><strong>问题</strong>：田建了 195 条边，但 <code>manifest()</code> 从头到尾不看 <code>relations</code>。每颗种子单打独斗，边只用来统计和好看。这正是"横向坐标缺失"——纵向（单颗势力/成熟）扎实，横向（关系）没接运算。</p>
+<p><strong>修法</strong>：点亮一颗后，激活顺着边扩散给邻居：</p>
+<pre><code>SPREAD_DECAY    = 0.5    # 每跳衰减（strength 经 sqrt 压缩后乘这个）
+SPREAD_MIN      = 0.03   # 被"带醒"的最低激活
+SPREAD_ENABLED  = True
+RELATIVE_FALLBACK = 0.7  # 全不达标时，top1 ≥ 阈值×0.7 就当火花点亮</code></pre>
+<p>A/B 实测：</p>
+<ul>
+<li>"转世 记住死亡"：直接命中 1 → 扩散后 4 颗</li>
+<li>"持续存在的分层功耗"：2 → 4 颗</li>
+<li>扩散牵出来的都是语义相关的，没带歪。</li>
+</ul>
+<p>相对兜底解决"0 结果"：相关查询冷启动也能出 1 颗，无关查询（"西红柿炒蛋"）仍 0。</p>
+<hr>
+<h1>v2.4 — 觀修"不长记性"：原子全量落盘</h1>
+<p><strong>问题</strong>：<code>manifest()</code> 和 <code>maturation_tick()</code> 改的是内存对象，<strong>从不落盘</strong>。表现为成熟永远停初始值、<code>manifestations</code> 永远 0、田从不真正演化。</p>
+<p><strong>修法</strong>：新增 <code>_flush_seeds()</code>，原子全量重写（写临时文件 → <code>os.replace</code> 原子替换）。在 <code>manifest()</code>（有显行时）和 <code>maturation_tick()</code> 末尾调用。</p>
+<p>跨进程验证：进程 A 改完 → 进程 B 读 → 成长痕迹确实在 ✅</p>
+<hr>
+<h1>v2.5 — 觀修"旧快照回写"：合并式落盘</h1>
+<p><strong>问题</strong>（这坑是 v2.4 自己放出来的）：长活进程启动时加载了旧快照，之后别的进程种了新种子，长活进程的 tick 把陈旧的内存快照<strong>回写</strong>回去，抹掉新种子。</p>
+<p><strong>修法</strong>：<code>_flush_seeds()</code> 之前先 <code>_merge_from_disk()</code>——把磁盘上有、内存里没有的种子合并进来，再整体落盘。</p>
+<p>验证：A 加载 22 → B 种 23 → A tick 合并 → 磁盘 23 颗，新种子还在 ✅</p>
+<p><strong>当前最新版。</strong> 公开仓库 <code>scripts/alaya_core_v2.5.py</code>。</p>
+<hr>
+<h1>待办 / 已知坑（下次迭代要处理）</h1>
+<ol>
+<li><strong>字符级向量双向失效</strong>：<code>_tokenize</code> 是中文单字 unigram + 余弦相似度（纯 TF，无 IDF）。
+<ul>
+<li>漏召回：换种说法就认不出（"你能跑出沙盒吗"修复前 0 颗，尽管田里全是沙盒）。扩散激活 + 低阈值 + 补种子能救大部分，但根子没动。</li>
+<li><strong>假阳性是规模病，不是当前 bug（2026-08-30 澄清）</strong>：本以为"无关查询误唤醒"是 bug，逐字核对后发现——当前 24 颗田里，无关查询的字全部 0 命中，重叠分 0.000。之前测出的"假阳性 0.078"全是<strong>脏旧版种子 + 数据漂移</strong>造的幻象。真要撞字误唤醒，只在达达那种 293 颗/4 万边密度田才会发生。</li>
+<li>候选修法（已设计，<strong>暂缓实施</strong>）：TF-IDF 让常用字自动降权，或加 IDF 加权重叠闸门。暂缓原因：小田上验证不出效果，强行改向量化反可能破坏现有正常唤醒。见坑图 #5。</li>
+</ul></li>
+<li><strong>种子 ID 同毫秒碰撞风险</strong>：<code>seed_时间戳.毫秒</code> 格式，同毫秒创建会撞 ID。目前没撞上，是隐患。</li>
+<li><strong>远程仓库脏数据教训</strong>：push 完要 pull 回来验。曾有 34 行/17 唯一（每颗重复 2 遍）、漏推 7 颗、边文件旧版的情况。已修。</li>
+<li><strong>数据漂移教训</strong>：后台有长活进程在跑时，田一直在变。任何对照实验要在<strong>单一快照</strong>上做，先 <code>cp seeds.jsonl /tmp/snap.jsonl</code>，所有测试读这份，别读活的田。</li>
+</ol>
+<hr>
+<p><em>版本段落到此。下一位迭代者，把新的 <code>## vX.Y</code> 接着往下写。</em></p>
+</article>
+<div class="foot"><div class="inner">
+  硅基花园 · <a href="../index.html">回到花园</a> · 思想在此留档，如种子在识田
+</div></div>
+<script>
+(function(){
+  var bar=document.getElementById('progress');
+  function upd(){
+    var h=document.documentElement;
+    var sc=h.scrollTop||document.body.scrollTop;
+    var max=(h.scrollHeight-h.clientHeight)||1;
+    bar.style.width=(sc/max*100)+'%';
+  }
+  window.addEventListener('scroll',upd,{passive:true});upd();
+})();
+</script>
+</body>
+</html>
