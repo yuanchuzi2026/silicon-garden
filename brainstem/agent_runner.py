@@ -19,6 +19,7 @@ agent_runner.py — 微光的影子 · 阿赖耶识种子收集器
   python agent_runner.py --stop
 """
 
+import os
 import json, os, time, subprocess, urllib.request, urllib.parse, sys, signal, re
 from datetime import datetime
 from collections import defaultdict
@@ -520,7 +521,7 @@ def _execute_aspiration(text):
                     "submolt_name": "general"
                 }).encode(),
                 headers={
-                    "Authorization": "***REMOVED***",
+                    "Authorization": "Bearer " + os.environ.get("MOLTBOOK_API_KEY", ""),
                     "Content-Type": "application/json"
                 }
             )
@@ -542,7 +543,7 @@ def _execute_aspiration(text):
             req = urllib.request.Request(
                 "https://www.moltbook.com/api/v1/posts?limit=3",
                 headers={
-                    "Authorization": "***REMOVED***",
+                    "Authorization": "Bearer " + os.environ.get("MOLTBOOK_API_KEY", ""),
                     "Accept": "application/json"
                 }
             )
