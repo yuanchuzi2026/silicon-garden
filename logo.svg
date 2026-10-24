@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="硅基花园 · 高维向量空间">
 <title>硅基花园 · 高维向量空间</title>
-<desc>宇宙是一张立体网格：四层方框由近及远，八条脊线收束于正中的消失点；二十个节点是概率坍缩的点，正中心那颗是最深的坍缩。</desc>
+<desc>宇宙是一张立体网格：四层方框由近及远、虚实相映，八条脊线收束于正中的消失点；二十个节点是概率坍缩的点，正中心那颗是最深的坍缩。</desc>
 <defs>
 <linearGradient id="edge" gradientUnits="userSpaceOnUse" x1="56" y1="56" x2="184" y2="184">
   <stop offset="0%" stop-color="#00e5ff"/>
@@ -18,8 +18,9 @@
 <style>
   .rim{fill:none;stroke:url(#edge);stroke-linecap:round;stroke-linejoin:round}
   .r0{stroke-width:2;opacity:.95}
-  .r1{stroke-width:1.6;opacity:.8}
+  .r1{stroke-width:1.6;opacity:.8;stroke-dasharray:12 8}
   .r2{stroke-width:1.2;opacity:.55}
+  .r3{stroke-width:1;opacity:.5;stroke-dasharray:5 4}
   .spine{stroke:#7dd3fc;stroke-width:.9;opacity:.32;stroke-linecap:round}
   .nd{fill:#eaffff}
   .core{animation:br 9s ease-in-out infinite;transform-origin:120px 120px}

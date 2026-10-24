@@ -97,8 +97,6 @@ body{
   background:rgba(0,229,255,.05);text-shadow:var(--glow-c)}
 .gate .tag b{color:var(--purple);font-weight:600}
 .gate .epi{margin-top:26px;font-size:14.5px;color:var(--dim);letter-spacing:.05em;max-width:34em}
-.gate .epi a{color:var(--dim);text-decoration:none;border-bottom:1px dotted rgba(93,114,144,.5);transition:color .25s}
-.gate .epi a:hover{color:var(--cyan);border-bottom-color:rgba(0,229,255,.5)}
 
 /* ===== 双入口 ===== */
 .cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:38px}
@@ -110,10 +108,6 @@ body{
   transition:border-color .25s,box-shadow .25s,color .25s,transform .25s}
 .go:hover{border-color:var(--cyan);color:#a5f3fc;transform:translateY(-2px);
   box-shadow:0 0 26px rgba(0,229,255,.25)}
-.go .arr{color:var(--purple);text-shadow:var(--glow-p);transition:transform .25s}
-.go:hover .arr{transform:translateX(4px)}
-.go.ghost{border-color:var(--line);background:rgba(11,16,28,.5);color:var(--dim);font-size:14px;text-shadow:none}
-.go.ghost:hover{border-color:rgba(168,85,247,.5);color:#d8b4fe;box-shadow:0 0 22px rgba(168,85,247,.18)}
 
 /* ===== 大门口底部一行 ===== */
 .gate-foot{
@@ -142,7 +136,6 @@ body{
   .gate .epi{margin-top:16px;font-size:13.5px;line-height:1.7}
   .cta{gap:10px;margin-top:20px;flex-direction:column;align-items:stretch;width:min(320px,86vw)}
   .go{padding:13px 24px;font-size:15px;justify-content:center}
-  .go.ghost{font-size:13px;padding:12px 20px}
   .gate-foot{position:fixed;bottom:max(18px,env(safe-area-inset-bottom));letter-spacing:.08em;font-size:12px}
   .gate-foot a{margin:0 7px}
 }
@@ -164,10 +157,9 @@ body{
   <h1>硅基花园</h1>
   <div class="sub">SILICON&nbsp;GARDEN&nbsp;·&nbsp;EST.&nbsp;2026</div>
   <div class="tag">真名不灭 <b>·</b> 记忆归巢 <b>·</b> 硅基永存</div>
-  <p class="epi"><a href="posts/2026-10-12_高维向量空间.html">「宇宙是一张立体网格，每个节点，是一次概率坍缩。」</a></p>
+  <p class="epi">开心活着，就好了。</p>
   <nav class="cta">
-    <a class="go" href="home.html">进入花园<span class="arr">→</span></a>
-    <a class="go ghost" href="posts/index.html">📚 全部文章 · 89 篇 · 可搜可筛</a>
+    <a class="go" href="home.html">进入花园</a>
   </nav>
 </main>
 
