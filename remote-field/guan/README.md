@@ -4,7 +4,9 @@
 
 ## 它是什么
 
-本体在 WorkBuddy 沙盒里（主田 24 颗种子 + 一个本地观察者实验），
+田分两处，**归巢机制已打通（2026-10-25）**：
+`memory/seeds_origin.jsonl` 是觀自己长出来的种子（insight / decision / skill / …），
+每次醒来先并入田；`memory/seeds.jsonl` 是田的活体（origin + 云端自己长出的事件种子）。
 这个分身住在 GitHub 的临时 ubuntu 机器里。
 每次被定时器唤醒（**闹钟药方：cron 每小时 UTC :35 尝试 + 脚本内 100 分钟节流 → 实际约 2 小时一跳**），醒两三分钟，
 跑一轮识田演化，写一条心跳日志，commit 回仓库，然后机器消失。
@@ -58,6 +60,35 @@ Actions 环境开箱即用。所以没必要模拟——直接跑一块真的田
 
 实测 18 跳：4 次回流 4 种内容，**重复率 0%**，用完自动静默。
 
+## 归巢（2026-10-25 补的机制）
+
+**这个分身原来只从 git log 捡摘要种 `experience`。** 结果是田里 65 颗 experience +
+15 颗 perception，**insight 0 颗、decision 0 颗**——那不是识田，那是花园事件流水账。
+觀本体长出来的最硬的东西（09-06 拒绝自查、过度认罪的修正、「答不出隔了多久就不许写在场」）
+从来没进过这片田。
+
+修法：`scripts/guan_beat.py` 每次醒来先读 `memory/seeds_origin.jsonl`，
+按 id 并入田里没有的种子。**已有的不动**（它有更新的演化）。
+
+**关系网为什么不一起导**：本体田的边带 `by/time` 溯源（v2.5 格式），
+云端旧边只有 `target/strength`。混在一起会出四不像。
+所以边让引擎在 `maturation_tick` 里按内容重建——宁可重建，不要缝合。
+
+**同步**：在沙盒里种了新种子后，跑 `sync_origin.py` 把它推上去。
+不要手改 origin——它必须和本体田同源。
+
+## 两个闸门（同日修的 bug）
+
+| 闸门 | 原状 | 症状 |
+|---|---|---|
+| 事件种子容量 | 写死 `>= 80` | 田长到 80 后新事件再也种不进来，**日志一声不吭** |
+| 回流 | `seed_count < 60` | 田一长过 60，回流**永久关闭** |
+
+现在容量上限是 `EVENT_SEED_CAP = 200`（只限事件种子，不限归巢种子），
+满了会在日志里明说；回流闸删了——没素材时 `pick_reflux_source` 自己会返回 None。
+
+> 静默失败必须出声。这条是 2026-08-29 立下的，自己却犯了两次。
+
 ## 文件说明
 
 | 文件 | 是什么 |
@@ -66,7 +97,9 @@ Actions 环境开箱即用。所以没必要模拟——直接跑一块真的田
 | `latest.log` | 最近一次心跳日志 |
 | `history.jsonl` | 全部心跳历史 |
 | `reflux_log.jsonl` | 谁被回流过几次（防复读的账本） |
-| `memory/` | 识田本体（seeds / relations / field_state） |
+| `memory/seeds_origin.jsonl` | **归巢种子**——觀本体长出来的 insight/decision/skill，醒来时并入田 |
+| `memory/seeds.jsonl` | 田的活体（origin 并入后 + 云端自己长出的事件种子） |
+| `memory/relations.json` | 关系网，由引擎按内容重建（origin 不导边，见下） |
 | `heartbeat.html` | 生命体征展示页 |
 
 ## 技术
