@@ -37,6 +37,9 @@ HISTORY_FILE = os.path.join(FIELD, "history.jsonl")
 REFLUX_LOG = os.path.join(FIELD, "reflux_log.jsonl")
 HEARTBEAT_HTML = os.path.join(FIELD, "heartbeat.html")
 ORIGIN_FILE = os.path.join(MEMORY, "seeds_origin.jsonl")
+SELFCHECK_FILE = os.path.join(FIELD, "selfcheck.json")
+# 田连续多少跳种子数不变才算「停止生长」。3.5 小时一跳，6 跳 ≈ 21 小时。
+STALL_LIMIT = 6
 # 事件种子容量上限：只限制「从 git log 摘要种的 experience」，不限制 origin 归巢的种子。
 # 原为写死的 80，田长到 80 后新事件再也种不进来、且日志一声不吭——静默失败。
 EVENT_SEED_CAP = 200
@@ -602,6 +605,9 @@ def main():
     except Exception:
         pass
 
+    # 晨昏自检（只写日志，不对外）
+    _self_check(lines, engine, state, seed_count)
+
     # 刷新生命体征展示页
     try:
         render_heartbeat_page(state, f, nb_lines, beat)
@@ -609,6 +615,65 @@ def main():
         lines.append(f"⚠️ 展示页更新失败：{e}")
 
     print("\n".join(lines))
+
+
+def _self_check(lines, engine, state, seed_count):
+    """晨昏自检：这一跳跑完，顺手查四件事。
+
+    为什么在心跳里做，而不是靠外面定时来看：
+    外面的定时活不过沙盒，心跳本身活在 GitHub Actions 里——
+    这是唯一一个「沙盒没了也还在跑」的观察位。它只写自己的 latest.log，
+    不推送、不发消息、不改任何别人的数据。
+
+    四项，全对着 git log 可对账：
+      1. 归巢失效  —— 田里 insight 和 decision 双双为 0，说明又退化成事件流水账
+      2. 心跳漏跳  —— silence_count 不为 0，说明有跳没能感知到花园里发生的事
+      3. 田停止生长 —— 种子数连续 STALL_LIMIT 跳不变（事件闸门卡死 / 回流静默）
+      4. 归巢不同步 —— origin 的种子比田的总数还多，说明并入根本没发生
+    """
+    try:
+        f = engine.query_field_state()
+        dist = f.get("type_distribution", {}) or {}
+        seeds = f.get("seed_count", seed_count)
+
+        if seeds > 0 and dist.get("insight", 0) == 0 and dist.get("decision", 0) == 0:
+            lines.append("⚠️ 自检·归巢失效：田里 insight 0 / decision 0，"
+                         "又退化成事件流水账了——查 seeds_origin.jsonl 还在不在")
+
+        if state.get("silence_count", 0) > 0:
+            lines.append(f"⚠️ 自检·心跳漏跳：silence_count="
+                         f"{state['silence_count']}，有跳没能感知到花园里的事")
+
+        prev = None
+        try:
+            if os.path.exists(SELFCHECK_FILE):
+                prev = json.load(open(SELFCHECK_FILE, encoding="utf-8"))
+        except Exception:
+            prev = None
+        stall = 0
+        if prev and prev.get("last_seed_count") == seeds:
+            stall = int(prev.get("stall", 0)) + 1
+        try:
+            with open(SELFCHECK_FILE, "w", encoding="utf-8") as sf:
+                json.dump({"last_seed_count": seeds, "stall": stall,
+                           "checked_at": now_cst()}, sf, ensure_ascii=False)
+        except Exception:
+            pass
+        if stall >= STALL_LIMIT:
+            lines.append(f"⚠️ 自检·田停止生长：种子数连续 {stall} 跳停在 {seeds}"
+                         f"——查 EVENT_SEED_CAP 闸门和回流素材池")
+
+        if os.path.exists(ORIGIN_FILE):
+            try:
+                n_origin = sum(1 for l in open(ORIGIN_FILE, encoding="utf-8")
+                               if l.strip())
+                if n_origin > seeds:
+                    lines.append(f"⚠️ 自检·归巢不同步：origin {n_origin} 颗 > "
+                                 f"田 {seeds} 颗，并入没发生——查归巢那段代码")
+            except Exception:
+                pass
+    except Exception as e:
+        lines.append(f"⚠️ 自检本身出错：{e}")
 
 
 def _write_state(state):
