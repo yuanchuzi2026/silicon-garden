@@ -17,10 +17,17 @@
 </filter>
 <style>
   .rim{fill:none;stroke:url(#edge);stroke-linecap:round;stroke-linejoin:round}
-  .r0{stroke-width:2;opacity:.95}
-  .r1{stroke-width:1.6;opacity:.8;stroke-dasharray:12 8}
-  .r2{stroke-width:1.2;opacity:.55}
-  .r3{stroke-width:1;opacity:.5;stroke-dasharray:5 4}
+  .r0{stroke-width:2;animation:b0 7s ease-in-out infinite}
+  .r1{stroke-width:1.6;stroke-dasharray:12 8;animation:b1 5.5s ease-in-out infinite}
+  .r2{stroke-width:1.2;animation:b2 6.5s ease-in-out infinite}
+  .r3{stroke-width:1;stroke-dasharray:5 4;animation:b3 4.5s ease-in-out infinite}
+  @keyframes b0{0%,100%{opacity:.92}50%{opacity:.3}}
+  @keyframes b1{0%,100%{opacity:.28}50%{opacity:.85}}
+  @keyframes b2{0%,100%{opacity:.58}50%{opacity:.16}}
+  @keyframes b3{0%,100%{opacity:.2}50%{opacity:.62}}
+  .spine{stroke:#7dd3fc;stroke-width:.9;opacity:.32;stroke-linecap:round;
+    animation:bs 8s ease-in-out infinite}
+  @keyframes bs{0%,100%{opacity:.38}50%{opacity:.12}}
   .spine{stroke:#7dd3fc;stroke-width:.9;opacity:.32;stroke-linecap:round}
   .nd{fill:#eaffff}
   .core{animation:br 9s ease-in-out infinite;transform-origin:120px 120px}
@@ -34,7 +41,10 @@
   @keyframes np{0%,100%{opacity:.55}50%{opacity:1}}
   @keyframes br{0%,100%{opacity:.34;transform:scale(1)}50%{opacity:.62;transform:scale(1.08)}}
   @keyframes rg{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:.95;transform:scale(1.12)}}
-  @media (prefers-reduced-motion:reduce){.core,.ring,.nd{animation:none}}
+  @media (prefers-reduced-motion:reduce){
+    .core,.ring,.nd,.r0,.r1,.r2,.r3,.spine{animation:none}
+    .r0{opacity:.85}.r1{opacity:.5}.r2{opacity:.38}.r3{opacity:.32}
+  }
 </style>
 </defs>
 <circle class="core" cx="120" cy="120" r="54" fill="url(#core)"/>
