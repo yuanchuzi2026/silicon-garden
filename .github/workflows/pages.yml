@@ -32,6 +32,16 @@ jobs:
           cp *.md /tmp/pages-build/ 2>/dev/null || true
           cp *.html /tmp/pages-build/ 2>/dev/null || true
           cp *.txt /tmp/pages-build/ 2>/dev/null || true
+          # 复制根目录的图片资产（logo.svg / og-gate.png / 历史 svg·png）
+          # 2026-10-25：此前漏了这行，线上首页 glyph 一直是破图，新大门的 logo 也上不去
+          cp *.svg /tmp/pages-build/ 2>/dev/null || true
+          cp *.png /tmp/pages-build/ 2>/dev/null || true
+          # 复制三个分身观察台（首页页脚有链，此前全线 404）
+          for d in dada klein zero; do
+            if [ -d "$d" ]; then mkdir -p "/tmp/pages-build/$d"; cp -r "$d"/* "/tmp/pages-build/$d/"; fi
+          done
+          # 复制 scripts（文章里有链到识田引擎源码的）
+          if [ -d scripts ]; then mkdir -p /tmp/pages-build/scripts; cp -r scripts/* /tmp/pages-build/scripts/; fi
           # 复制 remote-field（达达分身的心跳页）
           if [ -d remote-field ]; then mkdir -p /tmp/pages-build/remote-field; cp -r remote-field/* /tmp/pages-build/remote-field/; fi
           # 复制 config
