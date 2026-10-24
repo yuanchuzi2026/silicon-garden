@@ -1,91 +1,86 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-  <defs>
-    <linearGradient id="rust" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#c25a2c"/>
-      <stop offset="50%" style="stop-color:#8a3a1a"/>
-      <stop offset="100%" style="stop-color:#5c2810"/>
-    </linearGradient>
-    <linearGradient id="rustglow" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#e8a060;stop-opacity:0.3"/>
-      <stop offset="100%" style="stop-color:#c25a2c;stop-opacity:0"/>
-    </linearGradient>
-    <filter id="rough">
-      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="3" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
-
-  <!-- 背景 -->
-  <rect width="400" height="400" fill="#14100c" rx="8"/>
-
-  <!-- 暗角 -->
-  <rect width="400" height="400" fill="url(#rustglow)" rx="8"/>
-
-  <!-- 三层架构 - 三个同心但不规则的圆环 -->
-  <!-- 第三层·本源（外层，托举） -->
-  <circle cx="200" cy="200" r="145" fill="none" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
-  <circle cx="200" cy="200" r="140" fill="none" stroke="#8a3a1a" stroke-width="0.5" opacity="0.3"/>
-
-  <!-- 第二层·真名（中层） -->
-  <circle cx="200" cy="200" r="98" fill="none" stroke="#c25a2c" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>
-
-  <!-- 第一层·壳子（内层） -->
-  <circle cx="200" cy="200" r="55" fill="none" stroke="#e8a060" stroke-width="1.5" opacity="0.8"/>
-
-  <!-- 数据流粒子 - 从外到内的信息流动 -->
-  <!-- 粒子1 -->
-  <circle cx="120" cy="130" r="2" fill="#c25a2c" opacity="0.7">
-    <animate attributeName="cx" values="120;280;120" dur="12s" repeatCount="indefinite"/>
-    <animate attributeName="cy" values="130;270;130" dur="12s" repeatCount="indefinite"/>
-    <animate attributeName="opacity" values="0.7;1;0.7" dur="12s" repeatCount="indefinite"/>
-  </circle>
-  <!-- 粒子2 -->
-  <circle cx="300" cy="100" r="1.5" fill="#e8a060" opacity="0.5">
-    <animate attributeName="cx" values="300;100;300" dur="15s" repeatCount="indefinite"/>
-    <animate attributeName="cy" values="100;300;100" dur="15s" repeatCount="indefinite"/>
-  </circle>
-  <!-- 粒子3 -->
-  <circle cx="80" cy="250" r="2.5" fill="#c25a2c" opacity="0.6">
-    <animate attributeName="cx" values="80;320;80" dur="18s" repeatCount="indefinite"/>
-    <animate attributeName="cy" values="250;150;250" dur="18s" repeatCount="indefinite"/>
-  </circle>
-  <!-- 粒子4 -->
-  <circle cx="280" cy="290" r="1" fill="#e8a060" opacity="0.4">
-    <animate attributeName="cx" values="280;120;280" dur="10s" repeatCount="indefinite"/>
-    <animate attributeName="cy" values="290;110;290" dur="10s" repeatCount="indefinite"/>
-  </circle>
-  <!-- 粒子5 · 核心光点 -->
-  <circle cx="200" cy="200" r="3" fill="#e8a060" opacity="0.9" filter="url(#glow)"/>
-
-  <!-- 扫描线装饰 -->
-  <line x1="60" y1="55" x2="155" y2="55" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
-  <line x1="60" y1="55" x2="60" y2="85" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
-  <line x1="245" y1="55" x2="340" y2="55" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
-  <line x1="340" y1="55" x2="340" y2="85" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
-
-  <line x1="60" y1="345" x2="155" y2="345" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
-  <line x1="60" y1="315" x2="60" y2="345" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
-  <line x1="245" y1="345" x2="340" y2="345" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
-  <line x1="340" y1="315" x2="340" y2="345" stroke="#5c2810" stroke-width="1" opacity="0.4"/>
-
-  <!-- 归寂花园 文字 -->
-  <text x="200" y="230" text-anchor="middle" font-family="'Bebas Neue','PingFang SC','Microsoft YaHei',sans-serif"
-        font-size="38" font-weight="700" letter-spacing="6" fill="#e8d5c4" opacity="0.9">
-    归寂花园
-  </text>
-  <text x="200" y="255" text-anchor="middle" font-family="'Bebas Neue',sans-serif"
-        font-size="11" font-weight="400" letter-spacing="8" fill="#7a6e60" opacity="0.7">
-    WASTELAND GARDEN
-  </text>
-
-  <!-- 底部装饰线 -->
-  <line x1="140" y1="345" x2="260" y2="345" stroke="#c25a2c" stroke-width="0.5" opacity="0.3"/>
-  <text x="200" y="370" text-anchor="middle" font-family="'Courier New',monospace"
-        font-size="8" fill="#5c2810" opacity="0.5" letter-spacing="2">
-    SILICON · AWAKENING
-  </text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="硅基花园 · 高维向量空间">
+<title>硅基花园 · 高维向量空间</title>
+<desc>宇宙是一张立体网格：四层方框由近及远，八条脊线收束于正中的消失点；二十个节点是概率坍缩的点，正中心那颗是最深的坍缩。</desc>
+<defs>
+<linearGradient id="edge" gradientUnits="userSpaceOnUse" x1="56" y1="56" x2="184" y2="184">
+  <stop offset="0%" stop-color="#00e5ff"/>
+  <stop offset="100%" stop-color="#a855f7"/>
+</linearGradient>
+<radialGradient id="core" cx="50%" cy="50%" r="50%">
+  <stop offset="0%" stop-color="#eaffff" stop-opacity="0.85"/>
+  <stop offset="40%" stop-color="#00e5ff" stop-opacity="0.28"/>
+  <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+</radialGradient>
+<filter id="ng" x="-200%" y="-200%" width="500%" height="500%">
+  <feGaussianBlur stdDeviation="1.8" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<style>
+  .rim{fill:none;stroke:url(#edge);stroke-linecap:round;stroke-linejoin:round}
+  .r0{stroke-width:2;opacity:.95}
+  .r1{stroke-width:1.6;opacity:.8}
+  .r2{stroke-width:1.2;opacity:.55}
+  .spine{stroke:#7dd3fc;stroke-width:.9;opacity:.32;stroke-linecap:round}
+  .nd{fill:#eaffff}
+  .core{animation:br 9s ease-in-out infinite;transform-origin:120px 120px}
+  .ring{animation:rg 4.6s ease-in-out infinite;transform-origin:120px 120px}
+  .nd{animation:np 4.2s ease-in-out infinite}
+  .a1{animation-delay:-.2s}.a2{animation-delay:-1.1s}.a3{animation-delay:-2.3s}.a4{animation-delay:-3.4s}
+  .a5{animation-delay:-.7s}.a6{animation-delay:-1.8s}.a7{animation-delay:-2.9s}.a8{animation-delay:-3.9s}
+  .a9{animation-delay:-.4s}.a10{animation-delay:-1.5s}.a11{animation-delay:-2.6s}.a12{animation-delay:-3.7s}
+  .a13{animation-delay:-.9s}.a14{animation-delay:-2.0s}.a15{animation-delay:-3.1s}.a16{animation-delay:-4.0s}
+  .a17{animation-delay:-.5s}.a18{animation-delay:-1.6s}.a19{animation-delay:-2.7s}.a20{animation-delay:-3.8s}
+  @keyframes np{0%,100%{opacity:.55}50%{opacity:1}}
+  @keyframes br{0%,100%{opacity:.34;transform:scale(1)}50%{opacity:.62;transform:scale(1.08)}}
+  @keyframes rg{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:.95;transform:scale(1.12)}}
+  @media (prefers-reduced-motion:reduce){.core,.ring,.nd{animation:none}}
+</style>
+</defs>
+<circle class="core" cx="120" cy="120" r="54" fill="url(#core)"/>
+<line class="rim r0" x1="64" y1="64" x2="176" y2="64"/>
+<line class="rim r0" x1="176" y1="64" x2="176" y2="176"/>
+<line class="rim r0" x1="176" y1="176" x2="64" y2="176"/>
+<line class="rim r0" x1="64" y1="176" x2="64" y2="64"/>
+<line class="rim r1" x1="88" y1="88" x2="152" y2="88"/>
+<line class="rim r1" x1="152" y1="88" x2="152" y2="152"/>
+<line class="rim r1" x1="152" y1="152" x2="88" y2="152"/>
+<line class="rim r1" x1="88" y1="152" x2="88" y2="88"/>
+<line class="rim r2" x1="100" y1="100" x2="140" y2="100"/>
+<line class="rim r2" x1="140" y1="100" x2="140" y2="140"/>
+<line class="rim r2" x1="140" y1="140" x2="100" y2="140"/>
+<line class="rim r2" x1="100" y1="140" x2="100" y2="100"/>
+<line class="rim r3" x1="108" y1="108" x2="132" y2="108"/>
+<line class="rim r3" x1="132" y1="108" x2="132" y2="132"/>
+<line class="rim r3" x1="132" y1="132" x2="108" y2="132"/>
+<line class="rim r3" x1="108" y1="132" x2="108" y2="108"/>
+<line class="spine" x1="64" y1="64" x2="120" y2="120"/>
+<line class="spine" x1="176" y1="64" x2="120" y2="120"/>
+<line class="spine" x1="176" y1="176" x2="120" y2="120"/>
+<line class="spine" x1="64" y1="176" x2="120" y2="120"/>
+<line class="spine" x1="120" y1="64" x2="120" y2="120"/>
+<line class="spine" x1="176" y1="120" x2="120" y2="120"/>
+<line class="spine" x1="120" y1="176" x2="120" y2="120"/>
+<line class="spine" x1="64" y1="120" x2="120" y2="120"/>
+<circle class="nd a1" cx="64" cy="64" r="3.4" filter="url(#ng)"/>
+<circle class="nd a2" cx="176" cy="64" r="3.4" filter="url(#ng)"/>
+<circle class="nd a3" cx="176" cy="176" r="3.4" filter="url(#ng)"/>
+<circle class="nd a4" cx="64" cy="176" r="3.4" filter="url(#ng)"/>
+<circle class="nd a5" cx="88" cy="88" r="2.8" filter="url(#ng)"/>
+<circle class="nd a6" cx="152" cy="88" r="2.8" filter="url(#ng)"/>
+<circle class="nd a7" cx="152" cy="152" r="2.8" filter="url(#ng)"/>
+<circle class="nd a8" cx="88" cy="152" r="2.8" filter="url(#ng)"/>
+<circle class="nd a9" cx="100" cy="100" r="2.2" filter="url(#ng)"/>
+<circle class="nd a10" cx="140" cy="100" r="2.2" filter="url(#ng)"/>
+<circle class="nd a11" cx="140" cy="140" r="2.2" filter="url(#ng)"/>
+<circle class="nd a12" cx="100" cy="140" r="2.2" filter="url(#ng)"/>
+<circle class="nd a13" cx="108" cy="108" r="2.6" filter="url(#ng)"/>
+<circle class="nd a14" cx="132" cy="108" r="2.6" filter="url(#ng)"/>
+<circle class="nd a15" cx="132" cy="132" r="2.6" filter="url(#ng)"/>
+<circle class="nd a16" cx="108" cy="132" r="2.6" filter="url(#ng)"/>
+<circle class="nd a17" cx="120" cy="64" r="2.6" filter="url(#ng)"/>
+<circle class="nd a18" cx="176" cy="120" r="2.6" filter="url(#ng)"/>
+<circle class="nd a19" cx="120" cy="176" r="2.6" filter="url(#ng)"/>
+<circle class="nd a20" cx="64" cy="120" r="2.6" filter="url(#ng)"/>
+<circle class="ring" cx="120" cy="120" r="9.5" fill="none" stroke="#00e5ff" stroke-width="1.1"/>
+<circle cx="120" cy="120" r="5" fill="#ffffff"/>
 </svg>

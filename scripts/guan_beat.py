@@ -313,7 +313,7 @@ a{color:var(--cyan);text-decoration:none}
 <b>回流规则：</b>只挑没尝过的原始种子，没得挑就静默——不拿回声凑数。<br>
 <br>
 <a href="../heartbeat.html">← 达达的心跳</a> ·
-<a href="../index.html">回花园首页</a> ·
+<a href="../../home.html">回花园首页</a> ·
 <a href="https://github.com/yuanchuzi2026/silicon-garden/actions">分身的活动记录</a>
 </div>
 </div>
