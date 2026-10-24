@@ -36,6 +36,10 @@ LOG_FILE = os.path.join(FIELD, "latest.log")
 HISTORY_FILE = os.path.join(FIELD, "history.jsonl")
 REFLUX_LOG = os.path.join(FIELD, "reflux_log.jsonl")
 HEARTBEAT_HTML = os.path.join(FIELD, "heartbeat.html")
+ORIGIN_FILE = os.path.join(MEMORY, "seeds_origin.jsonl")
+# 事件种子容量上限：只限制「从 git log 摘要种的 experience」，不限制 origin 归巢的种子。
+# 原为写死的 80，田长到 80 后新事件再也种不进来、且日志一声不吭——静默失败。
+EVENT_SEED_CAP = 200
 ENGINE_PATH = "scripts/alaya_core_v2.5.py"
 NEIGHBORS = {
     "达达": "remote-field/latest_beat.log",
@@ -443,6 +447,39 @@ def main():
         _write_state(state)
         return
 
+    # —— 归巢：把觀自己长出来的种子并入田 ——
+    # 这个分身此前只从 git log 捡摘要种 experience，田里 insight 0 颗、decision 0 颗。
+    # 那不是识田，那是花园事件流水账。origin 是沙盒/園丁侧真正长出来的种子
+    # （insight / decision / skill / introspection / pattern），带「真名/壳子/观照」三层。
+    # 合并规则：按 id 去重；田里已有的不动（它有更新的演化），没有的补进来。
+    # 关系网不导——本地 v2.5 的边带 by/time 溯源，云端旧边只有 target/strength，
+    # 混在一起会出四不像。边让引擎在 maturation_tick 里按内容重建。
+    origin_added = 0
+    try:
+        if os.path.exists(ORIGIN_FILE):
+            with open(ORIGIN_FILE, encoding="utf-8") as of:
+                for line in of:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        sd = json.loads(line)
+                    except Exception:
+                        continue
+                    sid = sd.get("id")
+                    if not sid or sid in engine.seeds:
+                        continue
+                    engine.seeds[sid] = sd
+                    origin_added += 1
+            if origin_added:
+                lines.append(f"🪂 归巢：从 origin 并入 {origin_added} 颗种子"
+                             f"（田此前只有事件流水账）")
+                lines.append(f"   归巢后田：{len(engine.seeds)} 颗")
+        else:
+            lines.append("🪂 归巢：origin 文件不在，跳过（不是错误，是还没有）")
+    except Exception as e:
+        lines.append(f"⚠️ 归巢失败：{e}")
+
     # 第一跳：种下出生种子
     if beat == 1:
         for stype, content in BIRTH_SEEDS:
@@ -466,7 +503,10 @@ def main():
     planted = 0
     for ev in garden_ev[:3]:
         try:
-            if len(engine.seeds) >= 80:
+            if len(engine.seeds) >= EVENT_SEED_CAP:
+                if planted == 0 and ev is garden_ev[0]:
+                    lines.append(f"📦 事件闸门：田已 {len(engine.seeds)} 颗 ≥ 上限 "
+                                 f"{EVENT_SEED_CAP}，本跳新事件不种（明说，不静默）")
                 break
             msg = ev.split("|")[-1].strip()
             engine.create_seed(msg, seed_type="experience", source_layer="花园事件")
@@ -495,7 +535,7 @@ def main():
     )
 
     # 每 3 跳回流一颗（田 < 60 颗时）——分散挑，别复读
-    if beat % 3 == 0 and seed_count < 60:
+    if beat % 3 == 0:
         try:
             sids = list(engine.seeds.keys())
             if sids:
