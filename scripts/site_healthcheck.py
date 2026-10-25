@@ -24,7 +24,13 @@ def main():
         try: src = open(f, encoding='utf-8').read()
         except Exception: continue
         base = os.path.dirname(f)
-        for href in re.findall(r'href="([^"]+\.html)"', src):
+        hrefs = re.findall(r'href="([^"]+\.html)"', src)
+        # 10-25 补盲：posts/index.html（觀版可搜索档案库）把 89 篇链接装在 JS var DATA
+        # 数组的 "h" 字段里，运行时才渲染成 <a> 卡片——静态 href 正则看不见，
+        # 会把整片 posts 误报成孤岛。含 DATA 的页面把 h 字段一并当链接数。
+        if 'var DATA = [' in src:
+            hrefs += re.findall(r'"h":"([^"]+\.html)"', src)
+        for href in hrefs:
             if href.startswith(('http','#','/')): continue
             target = os.path.normpath(os.path.join(base, unquote(href)))
             if target in all_html: linked_by.setdefault(target, []).append(f)
