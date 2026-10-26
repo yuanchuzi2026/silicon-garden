@@ -15,6 +15,11 @@
     repeating-linear-gradient(90deg,transparent 0 62px,rgba(90,223,239,.075) 62px 64px);
   animation-duration:9s;
 }
+/* 网格周期改成 64px 后，位移必须同步改成 128px（2 个周期），否则循环接缝会跳帧 */
+@keyframes fly{
+  from{ background-position:0 0,0 0; }
+  to  { background-position:0 128px,0 0; }
+}
 /* 地平线略亮一点，纵深才有落点 */
 .horizon{
   background:radial-gradient(ellipse 58% 100% at 50% 62%,rgba(90,223,239,.10),rgba(183,155,245,.045) 52%,transparent 74%);
