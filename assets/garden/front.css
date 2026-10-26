@@ -206,12 +206,10 @@ body:has(.go:focus-visible) .stars{ animation-duration:3s,4.5s; }
 footer a:hover{ color:var(--bright); text-shadow:none; }
 footer .motto b{ color:var(--purple); }
 
-@media (max-width:480px){
-  .gate .epi{ letter-spacing:.24em; text-indent:.24em; }
-  .go{ letter-spacing:.16em; text-indent:.16em; }
-  .hero h1{ letter-spacing:.1em; text-indent:.1em; }
-}
- text-indent:.18em; margin-top:22px; }
+@media (max-width:480px), (max-height:760px){
+  .gate{ padding:26vh 20px 7vh; }
+  .gate-logo{ width:min(24vmin,110px); }
+  .gate h1{ font-size:clamp(30px,8.4vw,42px); letter-spacing:.18em; text-indent:.18em; margin-top:22px; }
   .gate .sub{ letter-spacing:.32em; text-indent:.32em; }
   .gate .tag{ margin-top:22px; letter-spacing:.18em; text-indent:.18em; font-size:11.5px; }
   .gate .epi{ margin-top:30px; letter-spacing:.28em; text-indent:.28em; font-size:14.5px; }
