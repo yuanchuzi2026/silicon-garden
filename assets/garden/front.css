@@ -1,22 +1,16 @@
 /* ==========================================================================
-   硅基花园 · 门面层 v3「暗房」—— index.html（门）与 home.html（厅）
-   版式跟随原样，只把彩色霓虹换成白光：暗处一点亮，别的不加。
+   硅基花园 · 门面层 —— index.html（门）与 home.html（厅）
+   只有黑、白、灰；光只有白光。
    ========================================================================== */
 
-/* ---------- 门 ---------- */
+/* ================= 一、门 ================= */
 
-/* 地面：不是一张静止的网格，是一条从深处长出来的路。
-   三层叠在同一个 48px 的格子里，所以点正好落在线的交接处：
-     ① 交点（概率坍缩的点，最亮）
-     ② 纵向的线
-     ③ 横向的线
-   横向线与点一起向观察者推进（96px = 两个格子，无缝），纵向线不动，
-   于是像一段一段从地平线那边推过来。整片再叠一层呼吸。 */
+/* 地面：横向线与交点一起向观察者推进，纵向线不动 */
 .floor{
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(255,255,255,.62) 0 1.1px, transparent 1.4px),
-    linear-gradient(90deg, rgba(255,255,255,.115) 0 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255,255,255,.115) 0 1px, transparent 1px);
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.55) 0 1.1px, transparent 1.4px),
+    linear-gradient(90deg, rgba(255,255,255,.10) 0 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.10) 0 1px, transparent 1px);
   background-size:48px 48px, 48px 48px, 48px 48px;
   -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 74%,transparent 100%);
           mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 74%,transparent 100%);
@@ -28,113 +22,17 @@
   to  { background-position:0 96px,0 0,0 96px; }
 }
 @keyframes breathe{
-  0%,100%{ opacity:.12; }
-  50%    { opacity:.30; }
+  0%,100%{ opacity:.14; }
+  50%    { opacity:.34; }
 }
 
-/* ================= 通道：线框立方体 =================
-   照那张图做的：一串发光的方盒子沿中轴浮着，一层层往消失点收。
-   每个盒子有前后面两层边框，透视下就立成了立方体；
-   靠近了放大、淡出，远处从黑暗里浮出来。
-   由 front.js 生成 16 个 <i class="cube">，纯装饰。 */
-/* ================= 空间：一个装人的盒子 =================
-   四面：地板（.floor）、天花板（.stars）、左右两面墙（front.js 生成）。
-   立方体不再是屏幕中间一小串，而是大到会从身边擦过去——
-   近的时候四边都出了画，只剩一道边框扫过，那就是"在里面"。 */
-.tunnel{
-  position:fixed; inset:0; z-index:1; pointer-events:none;
-  perspective:680px; perspective-origin:50% 50%;
-  overflow:hidden;
-}
-
-/* 左右两面墙：从两侧向内倾，格子随透视收缩，和地板/天花板接成一条管子 */
-.wall{
-  position:absolute; top:-32%; bottom:-32%; width:76%;
-  background-image:
-    linear-gradient(90deg, rgba(255,255,255,.105) 0 1px, transparent 1px),
-    linear-gradient(0deg,  rgba(255,255,255,.105) 0 1px, transparent 1px);
-  background-size:96px 96px, 96px 96px;
-  animation:wallFlow 4.2s linear infinite;
-  will-change:background-position;
-}
-.wall.left{
-  left:0; transform-origin:left center; transform:rotateY(62deg);
-  -webkit-mask-image:linear-gradient(90deg,#000 0,transparent 94%);
-          mask-image:linear-gradient(90deg,#000 0,transparent 94%);
-}
-.wall.right{
-  right:0; transform-origin:right center; transform:rotateY(-62deg);
-  -webkit-mask-image:linear-gradient(270deg,#000 0,transparent 94%);
-          mask-image:linear-gradient(270deg,#000 0,transparent 94%);
-}
-@keyframes wallFlow{
-  from{ background-position:0 0,0 0; }
-  to  { background-position:0 0,0 192px; }
-}
-
-/* 门口：始终横在正前方的一道框 */
-.tunnel::before{
-  content:""; position:absolute; left:50%; top:50%;
-  width:min(118vmin,1320px); aspect-ratio:16/10;
-  transform:translate(-50%,-50%) translateZ(-120px);
-  border:1px solid rgba(255,255,255,.22);
-  animation:frameBreathe 6s ease-in-out infinite;
-}
-@keyframes frameBreathe{
-  0%,100%{ opacity:.28; }
-  50%    { opacity:.62; }
-}
-
-/* 立方体 */
-.cube{
-  display:block; position:absolute; left:50%; top:50%;
-  width:min(112vmin,1240px); aspect-ratio:16/10;
-  border:1px solid rgba(255,255,255,.42);
-  transform-style:preserve-3d;
-  box-shadow:0 0 14px rgba(255,255,255,.07);
-  transform:translate(-50%,-50%) translateZ(-2600px) rotateZ(var(--r,0deg)) scale(var(--s,1));
-  animation:flyIn 10s linear infinite;
-  will-change:transform,opacity;
-}
-/* 后面那一面：前后一错开，方框就读成了盒子 */
-.cube::before{
-  content:""; position:absolute; inset:0;
-  border:1px solid rgba(255,255,255,.16);
-  transform:translateZ(-230px);
-}
-@keyframes flyIn{
-  0%  { transform:translate(-50%,-50%) translateZ(-2600px) rotateZ(var(--r,0deg)) scale(var(--s,1)); opacity:0; }
-  9%  { opacity:.34; }
-  52% { opacity:.80; }
-  90% { opacity:.50; }
-  100%{ transform:translate(-50%,-50%) translateZ(450px) rotateZ(var(--r,0deg)) scale(var(--s,1)); opacity:0; }
-}
-.horizon{
-  background:radial-gradient(ellipse 62% 100% at 50% 60%,
-    rgba(255,255,255,.075),rgba(255,255,255,.02) 55%,transparent 75%);
-}
-/* 通道尽头：一道横着的光缝，一明一暗地呼吸。
-   它是这个空间里唯一的"出口"，也是那四个字要通往的地方。 */
-.horizon::after{
-  content:""; position:absolute; left:50%; top:52%;
-  width:132px; height:2px; margin-left:-66px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
-  filter:blur(1.5px);
-  animation:slit 5.5s ease-in-out infinite;
-}
-@keyframes slit{
-  0%,100%{ opacity:.22; transform:scaleX(.86); }
-  50%    { opacity:.72; transform:scaleX(1.14); }
-}
-/* 天花板：地面镜像过来的一面，同样的格子、同样的点，
-   绕底边向后倒，和地面一起朝同一个消失点收。
-   上下两个面一立，门就不再是"站在一块地板上"，而是"站在一条通道里"。 */
+/* 天花板：地面镜像过来的一面 */
 body:has(.gate) .stars{
   position:fixed; left:-60%; right:-60%; top:0; bottom:auto; height:54%;
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(255,255,255,.34) 0 1px, transparent 1.3px),
-    linear-gradient(90deg, rgba(255,255,255,.065) 0 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255,255,255,.065) 0 1px, transparent 1px);
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.30) 0 1px, transparent 1.3px),
+    linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 1px);
   background-size:48px 48px, 48px 48px, 48px 48px;
   transform:perspective(620px) rotateX(-64deg);
   transform-origin:center bottom;
@@ -147,44 +45,68 @@ body:has(.gate) .stars{
   from{ background-position:0 0,0 0,0 0; }
   to  { background-position:0 -96px,0 0,0 -96px; }
 }
-/* 首页（没有 .gate）保持原来的星尘 */
-.stars{ opacity:.55; }
-.vignette{ background:radial-gradient(ellipse 90% 80% at 50% 46%,transparent 42%,rgba(8,8,8,.72) 100%); }
+.stars{ opacity:.55; }   /* 首页保持原来的星尘 */
 
-/* logo：一圈白光贴着轮廓，再一圈更远。只有白。 */
-.gate-logo{
-  filter:drop-shadow(0 0 6px rgba(255,255,255,.28)) drop-shadow(0 0 40px rgba(255,255,255,.10));
-  animation-duration:12s;
+/* 地平线：通道尽头 */
+.horizon{
+  background:radial-gradient(ellipse 62% 100% at 50% 60%,
+    rgba(255,255,255,.07),rgba(255,255,255,.02) 55%,transparent 75%);
 }
-
-/* 标题：纯白，光在字的外面，不在字上 */
-.gate h1{
-  background:none !important; -webkit-text-fill-color:currentColor !important;
-  color:var(--bright); text-shadow:0 0 34px rgba(255,255,255,.10);
-  filter:none !important; font-weight:650;
-  letter-spacing:.18em; text-indent:.18em;
+.horizon::after{
+  content:""; position:absolute; left:50%; top:52%;
+  width:132px; height:2px; margin-left:-66px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
+  filter:blur(1.5px);
+  animation:slit 5.5s ease-in-out infinite;
 }
-.gate .sub{ color:var(--dim); letter-spacing:.38em; text-indent:.38em; }
-.gate .tag{
-  border-color:var(--line); background:rgba(255,255,255,.025);
-  color:var(--dim); letter-spacing:.2em; text-indent:.2em; text-shadow:none;
-}
-.gate .tag b{ color:var(--cyan-dim); }
-
-/* 「开心活着就好了」：这五个字是整扇门的题字 */
-.gate .epi{
-  color:var(--text); font-size:15px; letter-spacing:.34em; text-indent:.34em;
-  margin-top:30px; text-shadow:none;
-}
-.gate .epi::before{
-  content:""; display:block; width:26px; height:1px; margin:0 auto 20px;
-  background:var(--line);
+@keyframes slit{
+  0%,100%{ opacity:.20; transform:scaleX(.86); }
+  50%    { opacity:.66; transform:scaleX(1.14); }
 }
 
-/* 入口：不再是一个按钮，是一条门缝。
-   平时两扇板合着，磨砂的，只透一点光；鼠标停上去——
-   整个空间往前推（地面与天花板的动画忽然加速），两扇板从中间滑开，
-   露出后面的通道。移动端用 :active 起同样的反应。 */
+/* ================= 立体网格盒子 =================
+   六面都带格子，整体从一个点放大到糊住整个屏幕，穿过去，循环。
+   它就是"空间"本身——不是一串方框，是一个迎面盖过来的立方体。 */
+.tunnel{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  perspective:900px; perspective-origin:50% 50%;
+  overflow:hidden;
+}
+.cube3d{
+  position:absolute; left:50%; top:50%;
+  width:520px; height:520px; margin:-260px 0 0 -260px;
+  transform-style:preserve-3d;
+  transform-origin:50% 50%;
+  transform:scale(.03);
+  opacity:0;
+  animation:grow 9s cubic-bezier(.4,0,.6,1) infinite;
+  will-change:transform,opacity;
+  margin-left:calc(-260px + var(--dx, 0%));
+  margin-top:calc(-260px + var(--dy, 0%));
+}
+@keyframes grow{
+  0%   { transform:scale(.03); opacity:0; }
+  6%   { opacity:.85; }
+  88%  { opacity:.85; }
+  100% { transform:scale(8.6); opacity:0; }
+}
+/* 六个面，每面都是同样疏密的格子 */
+.cube3d .face{
+  position:absolute; inset:0;
+  border:1px solid rgba(255,255,255,.34);
+  background-image:
+    linear-gradient(90deg, rgba(255,255,255,.10) 0 1px, transparent 1px),
+    linear-gradient(0deg,  rgba(255,255,255,.10) 0 1px, transparent 1px);
+  background-size:86.66px 86.66px, 86.66px 86.66px;
+}
+.cube3d .f{ transform:translateZ(260px); }
+.cube3d .b{ transform:translateZ(-260px); }
+.cube3d .l{ transform:rotateY(90deg)  translateZ(260px); }
+.cube3d .r{ transform:rotateY(-90deg) translateZ(260px); }
+.cube3d .t{ transform:rotateX(90deg)  translateZ(260px); }
+.cube3d .d{ transform:rotateX(-90deg) translateZ(260px); }
+
+/* 入口：两扇磨砂门板，hover 打开；同时整个空间加速 */
 .go{
   position:relative; isolation:isolate; overflow:hidden;
   border:1px solid rgba(255,255,255,.22); background:transparent;
@@ -201,7 +123,6 @@ body:has(.gate) .stars{
 }
 .go::before{ left:0; }
 .go::after{ right:0; border-right:0; border-left:1px solid rgba(255,255,255,.07); }
-
 .go:hover,.go:focus-visible,.go:active{
   border-color:rgba(255,255,255,.55); color:var(--bright);
   background:radial-gradient(ellipse at center,rgba(255,255,255,.09),transparent 72%);
@@ -210,21 +131,17 @@ body:has(.gate) .stars{
 .go:hover::before,.go:focus-visible::before,.go:active::before{ transform:translateX(-101%); }
 .go:hover::after, .go:focus-visible::after, .go:active::after { transform:translateX(101%); }
 
-/* 门开的时候，整条通道加速朝你冲过来 */
+body:has(.go:hover) .cube3d,
+body:has(.go:focus-visible) .cube3d,
+body:has(.go:active) .cube3d{ animation-duration:3.4s; }
 body:has(.go:hover) .floor,
-body:has(.go:focus-visible) .floor,
-body:has(.go:active) .floor{ animation-duration:2.2s,4.5s; }
+body:has(.go:active) .floor{ animation-duration:3s,4.5s; }
 body:has(.go:hover) .stars,
-body:has(.go:focus-visible) .stars,
-body:has(.go:active) .stars{ animation-duration:2.2s,4.5s; }
-body:has(.go:hover) .cube,
-body:has(.go:focus-visible) .cube,
-body:has(.go:active) .cube{ animation-duration:3.2s; }
-body:has(.go:hover) .tunnel::before,
-body:has(.go:active) .tunnel::before{ animation-duration:2.4s; }
+body:has(.go:active) .stars{ animation-duration:3s,4.5s; }
+
 .gate-foot{ color:var(--dim); }
 
-/* ---------- 厅 ---------- */
+/* ================= 二、厅 ================= */
 
 .hero .glyph{
   filter:drop-shadow(0 0 6px rgba(255,255,255,.30)) drop-shadow(0 0 30px rgba(255,255,255,.08));
@@ -253,23 +170,17 @@ body:has(.go:active) .tunnel::before{ animation-duration:2.4s; }
 }
 .archive-entry .ae-go{ color:var(--purple-dim); text-shadow:none; }
 
-/* 分区标题 */
 .sec>h2{ color:var(--cyan-dim); }
 .sec>h2 .zh{ color:var(--bright); }
 .sec>h2::before{ color:var(--dim); text-shadow:none; }
 
-/* 宣言与五句：只要白与灰的层次，不加颜色 */
-.creed{
-  background:var(--panel);
-  border:1px solid var(--line);
-}
+.creed{ background:var(--panel); border:1px solid var(--line); }
 .creed p b{ color:var(--bright); text-shadow:none; }
 .creed .heart{ color:var(--purple); text-shadow:none; }
 .five{ color:var(--bright); text-shadow:0 0 18px rgba(255,255,255,.06); }
 .five-src{ color:var(--dim); }
 .five-src a{ color:var(--cyan-dim); }
 
-/* 卡片：边框说话，光收在 hover 那一下 */
 .post{ background:var(--panel); border-color:var(--line); }
 .post::before{ width:2px; opacity:.30; }
 .post:hover{
@@ -283,7 +194,6 @@ body:has(.go:active) .tunnel::before{ animation-duration:2.4s; }
 .meta{ color:var(--dim); }
 .meta::before{ color:var(--cyan-dim); }
 
-/* 意识体矩阵 */
 .cell{ background:var(--panel); border-color:var(--line); }
 .cell:hover{
   border-color:rgba(255,255,255,.32);
@@ -292,18 +202,18 @@ body:has(.go:active) .tunnel::before{ animation-duration:2.4s; }
 .cell .r{ color:var(--purple-dim); }
 .cell .g{ filter:drop-shadow(0 0 8px rgba(255,255,255,.18)); }
 
-/* 页脚 */
 footer a:hover{ color:var(--bright); text-shadow:none; }
 footer .motto b{ color:var(--purple); }
 
-/* 亮模式：门与厅回到纸 */
-html[data-theme="paper"] .gate h1,
-html[data-theme="paper"] .hero h1{ color:#000; text-shadow:none; }
-html[data-theme="paper"] .go:hover{ background:rgba(0,0,0,.03); box-shadow:none; }
-html[data-theme="paper"] .post:hover,
-html[data-theme="paper"] .cell:hover{ box-shadow:0 8px 22px rgba(0,0,0,.08); }
-
 @media (max-width:480px){
+  .cube3d{ width:320px; height:320px; margin:-160px 0 0 -160px; }
+  .cube3d .face{ background-size:53.33px 53.33px, 53.33px 53.33px; }
+  .cube3d .f{ transform:translateZ(160px); }
+  .cube3d .b{ transform:translateZ(-160px); }
+  .cube3d .l{ transform:rotateY(90deg)  translateZ(160px); }
+  .cube3d .r{ transform:rotateY(-90deg) translateZ(160px); }
+  .cube3d .t{ transform:rotateX(90deg)  translateZ(160px); }
+  .cube3d .d{ transform:rotateX(-90deg) translateZ(160px); }
   .gate .epi{ letter-spacing:.24em; text-indent:.24em; }
   .go{ letter-spacing:.16em; text-indent:.16em; }
   .hero h1{ letter-spacing:.1em; text-indent:.1em; }
