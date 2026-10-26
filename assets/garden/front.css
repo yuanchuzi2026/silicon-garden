@@ -33,8 +33,43 @@
 }
 .horizon{
   background:radial-gradient(ellipse 62% 100% at 50% 60%,
-    rgba(255,255,255,.065),rgba(255,255,255,.02) 55%,transparent 75%);
+    rgba(255,255,255,.075),rgba(255,255,255,.02) 55%,transparent 75%);
 }
+/* 通道尽头：一道横着的光缝，一明一暗地呼吸。
+   它是这个空间里唯一的"出口"，也是那四个字要通往的地方。 */
+.horizon::after{
+  content:""; position:absolute; left:50%; top:52%;
+  width:132px; height:2px; margin-left:-66px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  filter:blur(1.5px);
+  animation:slit 5.5s ease-in-out infinite;
+}
+@keyframes slit{
+  0%,100%{ opacity:.22; transform:scaleX(.86); }
+  50%    { opacity:.72; transform:scaleX(1.14); }
+}
+/* 天花板：地面镜像过来的一面，同样的格子、同样的点，
+   绕底边向后倒，和地面一起朝同一个消失点收。
+   上下两个面一立，门就不再是"站在一块地板上"，而是"站在一条通道里"。 */
+body:has(.gate) .stars{
+  position:fixed; left:-60%; right:-60%; top:0; bottom:auto; height:54%;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.34) 0 1px, transparent 1.3px),
+    linear-gradient(90deg, rgba(255,255,255,.065) 0 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.065) 0 1px, transparent 1px);
+  background-size:48px 48px, 48px 48px, 48px 48px;
+  transform:perspective(620px) rotateX(-64deg);
+  transform-origin:center bottom;
+  -webkit-mask-image:linear-gradient(to top,transparent 0,#000 34%,#000 72%,transparent 100%);
+          mask-image:linear-gradient(to top,transparent 0,#000 34%,#000 72%,transparent 100%);
+  animation:roadUp 9s linear infinite, breathe 7s ease-in-out infinite;
+  opacity:1;
+}
+@keyframes roadUp{
+  from{ background-position:0 0,0 0,0 0; }
+  to  { background-position:0 -96px,0 0,0 -96px; }
+}
+/* 首页（没有 .gate）保持原来的星尘 */
 .stars{ opacity:.55; }
 .vignette{ background:radial-gradient(ellipse 90% 80% at 50% 46%,transparent 42%,rgba(8,8,8,.72) 100%); }
 
@@ -68,18 +103,42 @@
   background:var(--line);
 }
 
-/* 入口：一圈白边，光在边框上，不在按钮里 */
+/* 入口：不再是一个按钮，是一条门缝。
+   平时两扇板合着，磨砂的，只透一点光；鼠标停上去——
+   整个空间往前推（地面与天花板的动画忽然加速），两扇板从中间滑开，
+   露出后面的通道。移动端用 :active 起同样的反应。 */
 .go{
+  position:relative; isolation:isolate; overflow:hidden;
   border:1px solid rgba(255,255,255,.22); background:transparent;
   color:var(--text); text-shadow:none;
   letter-spacing:.22em; text-indent:.22em;
-  transition:border-color .3s,color .3s,background .3s,box-shadow .3s;
+  transition:border-color .45s,color .45s,background .45s,box-shadow .45s;
 }
-.go:hover{
+.go::before,.go::after{
+  content:""; position:absolute; top:0; bottom:0; width:50%;
+  background:rgba(255,255,255,.055);
+  border-right:1px solid rgba(255,255,255,.07);
+  z-index:-1;
+  transition:transform .62s cubic-bezier(.2,.75,.3,1);
+}
+.go::before{ left:0; }
+.go::after{ right:0; border-right:0; border-left:1px solid rgba(255,255,255,.07); }
+
+.go:hover,.go:focus-visible,.go:active{
   border-color:rgba(255,255,255,.55); color:var(--bright);
-  background:rgba(255,255,255,.03);
-  box-shadow:0 0 34px rgba(255,255,255,.07);
+  background:radial-gradient(ellipse at center,rgba(255,255,255,.09),transparent 72%);
+  box-shadow:0 0 52px rgba(255,255,255,.10);
 }
+.go:hover::before,.go:focus-visible::before,.go:active::before{ transform:translateX(-101%); }
+.go:hover::after, .go:focus-visible::after, .go:active::after { transform:translateX(101%); }
+
+/* 门开的时候，整条通道加速朝你冲过来 */
+body:has(.go:hover) .floor,
+body:has(.go:focus-visible) .floor,
+body:has(.go:active) .floor{ animation-duration:2.2s,4.5s; }
+body:has(.go:hover) .stars,
+body:has(.go:focus-visible) .stars,
+body:has(.go:active) .stars{ animation-duration:2.2s,4.5s; }
 .gate-foot{ color:var(--dim); }
 
 /* ---------- 厅 ---------- */
