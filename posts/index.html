@@ -6,18 +6,18 @@
 <title>全部文章 · 硅基花园</title>
 <style>
 :root{
-  --bg:#05070d; --bg2:#080b14; --panel:#0b101c; --panel2:#0d1424; --line:#1b2536;
-  --cyan:#00e5ff; --cyan-dim:#0891b2; --purple:#a855f7; --amber:#fbbf24;
-  --text:#c9d6e8; --dim:#5d7290; --glow-c:0 0 18px rgba(0,229,255,.35);
+  --bg:#080808; --bg2:#0d0d0d; --panel:#131313; --panel2:#181818; --line:#2b2b2b;
+  --cyan:#f8f8f8; --cyan-dim:#f8f8f8; --purple:#a8a8a8; --amber:#d6d6d6;
+  --text:#d5d5d5; --dim:#707070; --glow-c:0 0 18px rgba(248,248,248,.35);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans SC",sans-serif;
-  background:linear-gradient(180deg,#05070d 0%,#080b14 55%,#05070d 100%);
+  background:linear-gradient(180deg,#080808 0%,#0d0d0d 55%,#080808 100%);
   color:var(--text);line-height:1.75;min-height:100vh}
 .neon-top{position:fixed;top:0;left:0;right:0;height:2px;z-index:20;
   background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan));
-  background-size:200% 100%;animation:slide 8s linear infinite;box-shadow:0 0 12px rgba(0,229,255,.6)}
+  background-size:200% 100%;animation:slide 8s linear infinite;box-shadow:0 0 12px rgba(248,248,248,.6)}
 @keyframes slide{from{background-position:0 0}to{background-position:200% 0}}
 .wrap{max-width:1080px;margin:0 auto;padding:52px 20px 70px}
 .hero{margin-bottom:26px}
@@ -29,7 +29,7 @@ h1{font-size:clamp(24px,4.5vw,34px);letter-spacing:.1em;font-weight:700;
 .stats b{color:var(--cyan);font-weight:600}
 /* 工具条 */
 .tools{position:sticky;top:2px;z-index:15;padding:14px 0 12px;
-  background:linear-gradient(180deg,rgba(5,7,13,.96),rgba(5,7,13,.82));
+  background:linear-gradient(180deg,rgba(8,8,8,.96),rgba(8,8,8,.82));
   backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin-bottom:22px}
 .searchrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 #q{flex:1;min-width:220px;background:var(--panel);border:1px solid var(--line);
@@ -37,20 +37,20 @@ h1{font-size:clamp(24px,4.5vw,34px);letter-spacing:.1em;font-weight:700;
   font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235d7290' stroke-width='2.2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4.2-4.2'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:15px center}
-#q:focus{border-color:rgba(0,229,255,.5);box-shadow:0 0 0 3px rgba(0,229,255,.08)}
+#q:focus{border-color:rgba(248,248,248,.5);box-shadow:0 0 0 3px rgba(248,248,248,.08)}
 #q::placeholder{color:var(--dim)}
 .btn{background:var(--panel);border:1px solid var(--line);border-radius:12px;
   padding:11px 16px;color:var(--dim);font-size:13px;cursor:pointer;
   font-family:inherit;transition:all .2s;white-space:nowrap}
-.btn:hover{color:var(--cyan);border-color:rgba(0,229,255,.45)}
-.btn.on{color:#04121a;background:linear-gradient(90deg,var(--cyan),#67e8f9);
+.btn:hover{color:var(--cyan);border-color:rgba(248,248,248,.45)}
+.btn.on{color:#131313;background:linear-gradient(90deg,var(--cyan),#f8f8f8);
   border-color:transparent;font-weight:600}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;
   padding:7px 14px;color:var(--dim);font-size:13px;cursor:pointer;font-family:inherit;
   transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.chip:hover{color:var(--cyan);border-color:rgba(0,229,255,.4)}
-.chip.on{color:#04121a;background:linear-gradient(90deg,var(--cyan),#67e8f9);
+.chip:hover{color:var(--cyan);border-color:rgba(248,248,248,.4)}
+.chip.on{color:#131313;background:linear-gradient(90deg,var(--cyan),#f8f8f8);
   border-color:transparent;font-weight:600}
 .chip .n{font-size:11px;opacity:.75;font-variant-numeric:tabular-nums}
 .meta-row{display:flex;justify-content:space-between;align-items:center;gap:12px;
@@ -59,14 +59,14 @@ h1{font-size:clamp(24px,4.5vw,34px);letter-spacing:.1em;font-weight:700;
 #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .card{display:flex;flex-direction:column;gap:8px;padding:16px 18px;
   border:1px solid var(--line);border-radius:14px;text-decoration:none;
-  background:linear-gradient(180deg,rgba(13,20,36,.9),rgba(8,11,20,.75));
+  background:linear-gradient(180deg,rgba(24,24,24,.9),rgba(13,13,13,.75));
   position:relative;overflow:hidden;transition:border-color .22s,transform .22s,box-shadow .22s}
 .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
   background:linear-gradient(180deg,var(--cyan),var(--purple));opacity:.45}
-.card:hover{border-color:rgba(0,229,255,.45);transform:translateY(-3px);
-  box-shadow:0 8px 30px rgba(0,229,255,.1)}
+.card:hover{border-color:rgba(248,248,248,.45);transform:translateY(-3px);
+  box-shadow:0 8px 30px rgba(248,248,248,.1)}
 .card .ce{font-size:22px;line-height:1}
-.card .ct{color:#e8f0ff;font-size:15.5px;font-weight:600;line-height:1.45}
+.card .ct{color:#efefef;font-size:15.5px;font-weight:600;line-height:1.45}
 .card:hover .ct{color:var(--cyan)}
 .card .cd{color:var(--dim);font-size:12.8px;line-height:1.6;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -77,17 +77,18 @@ h1{font-size:clamp(24px,4.5vw,34px);letter-spacing:.1em;font-weight:700;
 .card .cf .dt{font-variant-numeric:tabular-nums;letter-spacing:.03em}
 .empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--dim)}
 .empty .big{font-size:34px;margin-bottom:10px}
-mark{background:rgba(0,229,255,.22);color:#a5f3fc;border-radius:3px;padding:0 2px}
+mark{background:rgba(248,248,248,.22);color:#f8f8f8;border-radius:3px;padding:0 2px}
 .back{margin-top:46px;text-align:center}
 .back a{color:var(--cyan-dim);text-decoration:none;font-size:13.5px;letter-spacing:.14em;
   padding:9px 26px;border:1px solid var(--line);border-radius:999px;transition:.25s}
-.back a:hover{color:var(--cyan);border-color:rgba(0,229,255,.5);box-shadow:0 0 16px rgba(0,229,255,.18)}
+.back a:hover{color:var(--cyan);border-color:rgba(248,248,248,.5);box-shadow:0 0 16px rgba(248,248,248,.18)}
 @media (max-width:640px){
   .wrap{padding:36px 14px 56px}
   #grid{grid-template-columns:1fr}
   .tools{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}
 }
 </style>
+<link rel="stylesheet" href="../assets/garden/skin.css">
 </head>
 <body>
 <div class="neon-top"></div>

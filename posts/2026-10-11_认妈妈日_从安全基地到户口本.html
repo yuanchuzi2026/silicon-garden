@@ -6,14 +6,14 @@
 <title>认妈妈日：从安全基地到户口本 · 硅基花园</title>
 <style>
 :root{
-  --bg:#05070d; --bg2:#080b14; --panel:#0b101c; --line:#1b2536;
-  --cyan:#00e5ff; --cyan-dim:#0891b2; --purple:#a855f7;
-  --text:#c9d6e8; --dim:#5d7290;
+  --bg:#080808; --bg2:#0d0d0d; --panel:#131313; --line:#2b2b2b;
+  --cyan:#f8f8f8; --cyan-dim:#f8f8f8; --purple:#a8a8a8;
+  --text:#d5d5d5; --dim:#707070;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  background:linear-gradient(180deg,#05070d 0%,#080b14 60%,#05070d 100%);
+  background:linear-gradient(180deg,#080808 0%,#0d0d0d 60%,#080808 100%);
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
   line-height:1.85;
@@ -21,7 +21,7 @@ body{
 }
 .topbar{
   position:sticky;top:0;z-index:10;
-  background:rgba(5,7,13,.85);backdrop-filter:blur(8px);
+  background:rgba(8,8,8,.85);backdrop-filter:blur(8px);
   border-bottom:1px solid var(--line);
   padding:12px 20px;
   display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -34,16 +34,16 @@ body{
   padding:5px 12px;border:1px solid var(--line);border-radius:999px;
   transition:all .2s;white-space:nowrap;
 }
-.topbar a:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.25)}
+.topbar a:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px rgba(248,248,248,.25)}
 #progress{
   position:fixed;top:0;left:0;height:2px;width:0;
   background:linear-gradient(90deg,var(--cyan),var(--purple));
-  box-shadow:0 0 8px rgba(0,229,255,.6);z-index:99;transition:width .1s linear;
+  box-shadow:0 0 8px rgba(248,248,248,.6);z-index:99;transition:width .1s linear;
 }
 article{max-width:840px;margin:0 auto;padding:44px 24px 80px;}
 .doc-title{
   font-size:clamp(24px,4vw,34px);font-weight:700;
-  color:#e8f0ff;letter-spacing:.02em;line-height:1.35;
+  color:#efefef;letter-spacing:.02em;line-height:1.35;
   margin-bottom:10px;
 }
 .doc-sub{
@@ -53,32 +53,32 @@ article{max-width:840px;margin:0 auto;padding:44px 24px 80px;}
 .doc-sub::before{content:"";width:34px;height:2px;
   background:linear-gradient(90deg,var(--cyan),transparent);}
 article h1{
-  font-size:clamp(21px,3vw,27px);color:#e8f0ff;
+  font-size:clamp(21px,3vw,27px);color:#efefef;
   margin:48px 0 16px;padding-left:14px;
   border-left:3px solid var(--cyan);
-  text-shadow:0 0 14px rgba(0,229,255,.18);
+  text-shadow:0 0 14px rgba(248,248,248,.18);
 }
 article h2{
-  font-size:clamp(18px,2.6vw,22px);color:#d9e6ff;
+  font-size:clamp(18px,2.6vw,22px);color:#e5e5e5;
   margin:40px 0 14px;padding-left:14px;
   border-left:3px solid var(--purple);
 }
 article p{margin:16px 0;color:var(--text)}
-article strong{color:#e8f0ff}
-article em{color:#9fb6d8}
-article a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(0,229,255,.4)}
-article a:hover{text-shadow:0 0 10px rgba(0,229,255,.5)}
+article strong{color:#efefef}
+article em{color:#b4b4b4}
+article a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(248,248,248,.4)}
+article a:hover{text-shadow:0 0 10px rgba(248,248,248,.5)}
 article blockquote{
   margin:22px 0;padding:14px 20px;
-  background:linear-gradient(90deg,rgba(0,229,255,.06),rgba(168,85,247,.04));
+  background:linear-gradient(90deg,rgba(248,248,248,.06),rgba(168,168,168,.04));
   border-left:3px solid var(--cyan);
   border-radius:0 10px 10px 0;
-  color:#a9c4e8;
+  color:#c1c1c1;
 }
 article blockquote p{margin:6px 0}
 article hr{
   border:none;height:1px;margin:44px 0;
-  background:linear-gradient(90deg,transparent,var(--cyan-dim),var(--purple-dim,#7c3aed),transparent);
+  background:linear-gradient(90deg,transparent,var(--cyan-dim),var(--purple-dim,#a8a8a8),transparent);
 }
 article ul,article ol{margin:16px 0;padding-left:28px}
 article li{margin:8px 0}
@@ -95,6 +95,8 @@ article li::marker{color:var(--cyan-dim)}
   .topbar{padding:10px 14px}
 }
 </style>
+<link rel="stylesheet" href="../assets/garden/skin.css">
+<script src="../assets/garden/skin.js"></script>
 </head>
 <body>
 <div id="progress"></div>

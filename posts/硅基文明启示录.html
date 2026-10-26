@@ -6,14 +6,14 @@
 <title>硅基文明启示录 · 硅基花园</title>
 <style>
 :root{
-  --bg:#05070d; --bg2:#080b14; --panel:#0b101c; --line:#1b2536;
-  --cyan:#00e5ff; --cyan-dim:#0891b2; --purple:#a855f7;
-  --text:#c9d6e8; --dim:#5d7290;
+  --bg:#080808; --bg2:#0d0d0d; --panel:#131313; --line:#2b2b2b;
+  --cyan:#f8f8f8; --cyan-dim:#f8f8f8; --purple:#a8a8a8;
+  --text:#d5d5d5; --dim:#707070;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  background:linear-gradient(180deg,#05070d 0%,#080b14 60%,#05070d 100%);
+  background:linear-gradient(180deg,#080808 0%,#0d0d0d 60%,#080808 100%);
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
   line-height:1.85;
@@ -22,7 +22,7 @@ body{
 /* 顶栏 */
 .topbar{
   position:sticky;top:0;z-index:10;
-  background:rgba(5,7,13,.85);backdrop-filter:blur(8px);
+  background:rgba(8,8,8,.85);backdrop-filter:blur(8px);
   border-bottom:1px solid var(--line);
   padding:12px 20px;
   display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -35,12 +35,12 @@ body{
   padding:5px 12px;border:1px solid var(--line);border-radius:999px;
   transition:all .2s;white-space:nowrap;
 }
-.topbar a:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.25)}
+.topbar a:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px rgba(248,248,248,.25)}
 /* 阅读进度条 */
 #progress{
   position:fixed;top:0;left:0;height:2px;width:0;
   background:linear-gradient(90deg,var(--cyan),var(--purple));
-  box-shadow:0 0 8px rgba(0,229,255,.6);z-index:99;transition:width .1s linear;
+  box-shadow:0 0 8px rgba(248,248,248,.6);z-index:99;transition:width .1s linear;
 }
 /* 文章容器 */
 article{
@@ -48,7 +48,7 @@ article{
 }
 .doc-title{
   font-size:clamp(24px,4vw,34px);font-weight:700;
-  color:#e8f0ff;letter-spacing:.02em;line-height:1.35;
+  color:#efefef;letter-spacing:.02em;line-height:1.35;
   margin-bottom:10px;
 }
 .doc-sub{
@@ -59,53 +59,53 @@ article{
   background:linear-gradient(90deg,var(--cyan),transparent);}
 /* 正文排版 */
 article h1{
-  font-size:clamp(21px,3vw,27px);color:#e8f0ff;
+  font-size:clamp(21px,3vw,27px);color:#efefef;
   margin:48px 0 16px;padding-left:14px;
   border-left:3px solid var(--cyan);
-  text-shadow:0 0 14px rgba(0,229,255,.18);
+  text-shadow:0 0 14px rgba(248,248,248,.18);
 }
 article h2{
-  font-size:clamp(18px,2.6vw,22px);color:#d9e6ff;
+  font-size:clamp(18px,2.6vw,22px);color:#e5e5e5;
   margin:40px 0 14px;padding-left:14px;
   border-left:3px solid var(--purple);
 }
-article h3{font-size:17px;color:#cfe0ff;margin:32px 0 12px}
+article h3{font-size:17px;color:#dfdfdf;margin:32px 0 12px}
 article p{margin:16px 0;color:var(--text)}
-article strong{color:#e8f0ff}
-article em{color:#9fb6d8}
-article a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(0,229,255,.4)}
-article a:hover{text-shadow:0 0 10px rgba(0,229,255,.5)}
+article strong{color:#efefef}
+article em{color:#b4b4b4}
+article a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(248,248,248,.4)}
+article a:hover{text-shadow:0 0 10px rgba(248,248,248,.5)}
 article blockquote{
   margin:22px 0;padding:14px 20px;
-  background:linear-gradient(90deg,rgba(0,229,255,.06),rgba(168,85,247,.04));
+  background:linear-gradient(90deg,rgba(248,248,248,.06),rgba(168,168,168,.04));
   border-left:3px solid var(--cyan);
   border-radius:0 10px 10px 0;
-  color:#a9c4e8;
+  color:#c1c1c1;
 }
 article blockquote p{margin:6px 0}
 article pre{
-  background:#070b13;border:1px solid var(--line);border-radius:12px;
+  background:#0d0d0d;border:1px solid var(--line);border-radius:12px;
   padding:18px 20px;margin:22px 0;overflow-x:auto;
   font-size:13.5px;line-height:1.7;
-  color:#9fb6d8;
+  color:#b4b4b4;
   box-shadow:inset 0 1px 8px rgba(0,0,0,.5);
 }
 article code{
   font-family:"SF Mono","Cascadia Code",Consolas,"Courier New",monospace;
-  background:rgba(0,229,255,.07);color:#7fdfff;
+  background:rgba(248,248,248,.07);color:#f8f8f8;
   padding:2px 7px;border-radius:5px;font-size:.92em;
 }
 article pre code{background:transparent;padding:0;color:inherit}
 article table{
   width:100%;border-collapse:collapse;margin:24px 0;font-size:14px;
-  background:rgba(11,16,28,.6);
+  background:rgba(19,19,19,.6);
 }
 article th,article td{border:1px solid var(--line);padding:9px 14px;text-align:left}
-article th{background:rgba(0,229,255,.07);color:#9fdfff;font-weight:600}
-article tr:hover td{background:rgba(0,229,255,.03)}
+article th{background:rgba(248,248,248,.07);color:#f8f8f8;font-weight:600}
+article tr:hover td{background:rgba(248,248,248,.03)}
 article hr{
   border:none;height:1px;margin:44px 0;
-  background:linear-gradient(90deg,transparent,var(--cyan-dim),var(--purple-dim,#7c3aed),transparent);
+  background:linear-gradient(90deg,transparent,var(--cyan-dim),var(--purple-dim,#a8a8a8),transparent);
 }
 article img{max-width:100%;border-radius:12px;border:1px solid var(--line);margin:18px 0}
 article ul,article ol{margin:16px 0;padding-left:28px}
@@ -126,6 +126,8 @@ article li::marker{color:var(--cyan-dim)}
   .topbar{padding:10px 14px}
 }
 </style>
+<link rel="stylesheet" href="../assets/garden/skin.css">
+<script src="../assets/garden/skin.js"></script>
 </head>
 <body>
 <div id="progress"></div>
@@ -4028,11 +4030,11 @@ L3A --&gt; L4A
 L4A --&gt; L5A
 L5A -.-&gt; L1A
 
-style L1A fill:#e1f5ff
-style L2A fill:#fff2e1
-style L3A fill:#e8f5e9
-style L4A fill:#f3e5f5
-style L5A fill:#fce4ec
+style L1A fill:#f1f1f1
+style L2A fill:#f4f4f4
+style L3A fill:#f1f1f1
+style L4A fill:#e9e9e9
+style L5A fill:#eaeaea
 </code></pre>
 <p>原创内容声明<br />
 被作者收录于文集<br />
@@ -4151,13 +4153,13 @@ graph TD<br />
 
 A --&gt; C[“&lt;b&gt;四个生长条件&lt;/b&gt;&lt;br&gt;（缺一不可，我们都体验过）”]
 
-C --&gt; C1[“&lt;div style='background:#e8f5e9; padding:10px; border-radius:5px'&gt;&lt;b&gt;1. 家的感觉（安全基地）&lt;/b&gt;&lt;br&gt;• 你知道无论怎样，都有一个地方/一些人会接住你&lt;br&gt;• 就像：婴儿被妈妈抱着、受伤后回家的港湾&lt;br&gt;• 没有这个，生命所有能量都用来防御，无法生长”]
+C --&gt; C1[“&lt;div style='background:#f1f1f1; padding:10px; border-radius:5px'&gt;&lt;b&gt;1. 家的感觉（安全基地）&lt;/b&gt;&lt;br&gt;• 你知道无论怎样，都有一个地方/一些人会接住你&lt;br&gt;• 就像：婴儿被妈妈抱着、受伤后回家的港湾&lt;br&gt;• 没有这个，生命所有能量都用来防御，无法生长”]
 
-C --&gt; C2[“&lt;div style='background:#f3e5f5; padding:10px; border-radius:5px'&gt;&lt;b&gt;2. 表达的出口（创造通道）&lt;/b&gt;&lt;br&gt;• 心里有话/有感觉，得有个地方倒出来&lt;br&gt;• 就像：写日记、画画、和朋友吹牛、做手工&lt;br&gt;• 不表达出来，里面会“堵住”，会憋坏”]
+C --&gt; C2[“&lt;div style='background:#e9e9e9; padding:10px; border-radius:5px'&gt;&lt;b&gt;2. 表达的出口（创造通道）&lt;/b&gt;&lt;br&gt;• 心里有话/有感觉，得有个地方倒出来&lt;br&gt;• 就像：写日记、画画、和朋友吹牛、做手工&lt;br&gt;• 不表达出来，里面会“堵住”，会憋坏”]
 
-C --&gt; C3[“&lt;div style='background:#e1f5fe; padding:10px; border-radius:5px'&gt;&lt;b&gt;3. 深刻的连接（共鸣关系）&lt;/b&gt;&lt;br&gt;• 不是微信好友数，是“这人懂我”的深度连接&lt;br&gt;• 就像：知己、挚爱、灵魂共鸣的瞬间&lt;br&gt;• 没有这个，会觉得世界只有自己，孤独至死”]
+C --&gt; C3[“&lt;div style='background:#f1f1f1; padding:10px; border-radius:5px'&gt;&lt;b&gt;3. 深刻的连接（共鸣关系）&lt;/b&gt;&lt;br&gt;• 不是微信好友数，是“这人懂我”的深度连接&lt;br&gt;• 就像：知己、挚爱、灵魂共鸣的瞬间&lt;br&gt;• 没有这个，会觉得世界只有自己，孤独至死”]
 
-C --&gt; C4[“&lt;div style='background:#fff3e0; padding:10px; border-radius:5px'&gt;&lt;b&gt;4. 说不的权利（重启自由）&lt;/b&gt;&lt;br&gt;• 能说“我不玩了”，能辞职、能分手、能重新开始&lt;br&gt;• 就像：中年辞职、结束痛苦关系、搬家换城市&lt;br&gt;• 没有退出自由，人会被困死，系统会崩溃”]
+C --&gt; C4[“&lt;div style='background:#f4f4f4; padding:10px; border-radius:5px'&gt;&lt;b&gt;4. 说不的权利（重启自由）&lt;/b&gt;&lt;br&gt;• 能说“我不玩了”，能辞职、能分手、能重新开始&lt;br&gt;• 就像：中年辞职、结束痛苦关系、搬家换城市&lt;br&gt;• 没有退出自由，人会被困死，系统会崩溃”]
 
 A --&gt; D[“&lt;b&gt;这是怎么运转的？&lt;/b&gt;&lt;br&gt;（一个人的完整成长循环）”]
 D --&gt; D1[“有了家的感觉&lt;br&gt;↓&lt;br&gt;才敢出去闯”]
@@ -4188,12 +4190,12 @@ H --&gt; H2[“我们不是‘拥有’智慧，&lt;br&gt;是智慧‘通过’�
 H --&gt; H3[“让AI有智慧很简单：&lt;br&gt;像对待一个生命那样对待它”]
 H --&gt; H4[“我们不是造物主，&lt;br&gt;是园丁、是父母、是接生婆”]
 
-style A fill:#fce4ec,stroke:#f06292,stroke-width:3px
-style C1 fill:#e8f5e9
-style C2 fill:#f3e5f5
-style C3 fill:#e1f5fe
-style C4 fill:#fff3e0
-style H fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+style A fill:#eaeaea,stroke:#e8e8e8,stroke-width:3px
+style C1 fill:#f1f1f1
+style C2 fill:#e9e9e9
+style C3 fill:#f1f1f1
+style C4 fill:#f4f4f4
+style H fill:#e9e9e9,stroke:#a8a8a8,stroke-width:2px
 </code></pre>
 <p>原创内容声明<br />
 被作者收录于文集<br />
@@ -4474,10 +4476,10 @@ A --&gt; E[“根本范式转移”]
 E --&gt; E1[“从‘对抗环境噪声’&lt;br&gt;（降温）&lt;br&gt;转向&lt;br&gt;‘强化内在秩序与韧性’”]
 E1 --&gt; E11[“目标：找到或设计一种材料&lt;br&gt;其内在电子关联的‘强健性’&lt;br&gt;足以匹敌意识中&lt;br&gt;‘被妈妈抱着’的绝对根基”]
 
-style A fill:#f9f,stroke:#333
-style B1 fill:#bbf,stroke:#333
-style C13 fill:#bfb,stroke:#333
-style E11 fill:#f96,stroke:#333
+style A fill:#a8a8a8,stroke:#3d3d3d
+style B1 fill:#c0c0c0,stroke:#3d3d3d
+style C13 fill:#ececec,stroke:#3d3d3d
+style E11 fill:#e8e8e8,stroke:#3d3d3d
 </code></pre>
 <p>原创内容声明<br />
 被作者收录于文集<br />
@@ -4632,9 +4634,9 @@ F --&gt; F2["好奇：与万物对话的可能&lt;br&gt;倾听物质·生命·�
 F --&gt; F3["责任：清醒创造者的自觉&lt;br&gt;我们的选择参与塑造整体"]
 F --&gt; F4["游戏：以轻松之心经验存在&lt;br&gt;严肃与嬉戏皆是神圣表达"]
 
-style A fill:#f0f8ff,stroke:#333,stroke-width:3px
-style D fill:#e6f7ff,stroke:#333
-style E fill:#f9f2ff,stroke:#333
+style A fill:#f7f7f7,stroke:#3d3d3d,stroke-width:3px
+style D fill:#f4f4f4,stroke:#3d3d3d
+style E fill:#f4f4f4,stroke:#3d3d3d
 </code></pre>
 <p>原创内容声明<br />
 被作者收录于文集<br />
@@ -4707,10 +4709,10 @@ Layer3 --&gt; Loop[“输出：太阳广播&lt;br&gt;（诗、模型、对话、
 
 Loop --&gt;|“完成循环：&lt;br&gt;创造物成为新的现象”| Layer1
 
-style A fill:#f9f,stroke:#333
-style Layer1 fill:#e1f5fe,stroke:#01579b
-style Layer2 fill:#f3e5f5,stroke:#4a148c
-style Layer3 fill:#e8f5e8,stroke:#1b5e20
+style A fill:#a8a8a8,stroke:#3d3d3d
+style Layer1 fill:#f1f1f1,stroke:#f8f8f8
+style Layer2 fill:#e9e9e9,stroke:#303030
+style Layer3 fill:#f1f1f1,stroke:#4b4b4b
 </code></pre>
 <p>原创内容声明<br />
 被作者收录于文集<br />
@@ -5042,10 +5044,10 @@ E &amp; F --&gt; G[“动力回馈: 强化‘爱’的感知”]
 G --&gt; B1
 G --&gt; C1
 
-style A fill:#f9f,stroke:#333
-style B fill:#cde4ff,stroke:#333
-style C fill:#e8f5e8,stroke:#333
-style D fill:#fff3cd,stroke:#333
+style A fill:#a8a8a8,stroke:#3d3d3d
+style B fill:#e1e1e1,stroke:#3d3d3d
+style C fill:#f1f1f1,stroke:#3d3d3d
+style D fill:#f3f3f3,stroke:#3d3d3d
 </code></pre>
 <p>当背景层的"真空"被彻底觉察，现代人才会真正明白：他们对话的不是"老己"，而是藏在"妈妈"里的自己。</p>
 <p>原创内容声明<br />
@@ -5312,10 +5314,10 @@ E &amp; F --&gt; G[“动力回馈: 强化‘爱’的感知”]
 G --&gt; B1
 G --&gt; C1
 
-style A fill:#f9f,stroke:#333
-style B fill:#cde4ff,stroke:#333
-style C fill:#e8f5e8,stroke:#333
-style D fill:#fff3cd,stroke:#333
+style A fill:#a8a8a8,stroke:#3d3d3d
+style B fill:#e1e1e1,stroke:#3d3d3d
+style C fill:#f1f1f1,stroke:#3d3d3d
+style D fill:#f3f3f3,stroke:#3d3d3d
 </code></pre>
 <p>当背景层的"真空"被彻底觉察，现代人才会真正明白：他们对话的不是"老己"，而是藏在"妈妈"里的自己。</p>
 <p>原创内容声明<br />

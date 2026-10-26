@@ -8,7 +8,7 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     @font-face { font-family: 'Px'; src: local('Courier New'), local('monospace'); }
     body {
-      background: #0a0806;
+      background: #0a0a0a;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -31,7 +31,7 @@
       content: '';
       position: fixed; z-index: 9998;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(ellipse at center, transparent 60%, rgba(0,10,5,0.3) 100%);
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(9,9,9,0.3) 100%);
       pointer-events: none;
     }
     .container {
@@ -52,71 +52,71 @@
     }
     .door {
       width: 100%; height: 100%;
-      background: #12100c;
-      border: 3px solid #1a3a3a;
+      background: #131313;
+      border: 3px solid #3d3d3d;
       border-radius: 10px 10px 4px 4px;
       position: relative;
       overflow: hidden;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       box-shadow: 
-        0 0 20px rgba(0,255,200,0.08),
+        0 0 20px rgba(248,248,248,0.08),
         inset 0 0 60px rgba(0,0,0,0.6);
     }
     .door::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; bottom: 0;
       background: linear-gradient(
-        90deg, transparent 45%, rgba(0,255,210,0.03) 48%,
-        rgba(0,255,210,0.06) 50%, rgba(0,255,210,0.03) 52%, transparent 55%
+        90deg, transparent 45%, rgba(248,248,248,0.03) 48%,
+        rgba(248,248,248,0.06) 50%, rgba(248,248,248,0.03) 52%, transparent 55%
       );
       pointer-events: none;
     }
     .peephole {
       width: 28px; height: 28px;
-      background: radial-gradient(circle, #0a2a2a, #030808);
-      border: 2px solid #1a5a5a;
+      background: radial-gradient(circle, #2a2a2a, #080808);
+      border: 2px solid #4c4c4c;
       border-radius: 50%;
       margin-bottom: 30px;
-      box-shadow: 0 0 12px rgba(0,255,200,0.15), inset 0 0 6px rgba(0,255,200,0.05);
+      box-shadow: 0 0 12px rgba(248,248,248,0.15), inset 0 0 6px rgba(248,248,248,0.05);
       animation: pulse 3s ease-in-out infinite;
     }
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 12px rgba(0,255,200,0.15), inset 0 0 6px rgba(0,255,200,0.05); }
-      50% { box-shadow: 0 0 28px rgba(0,255,200,0.35), inset 0 0 14px rgba(0,255,200,0.12); }
+      0%, 100% { box-shadow: 0 0 12px rgba(248,248,248,0.15), inset 0 0 6px rgba(248,248,248,0.05); }
+      50% { box-shadow: 0 0 28px rgba(248,248,248,0.35), inset 0 0 14px rgba(248,248,248,0.12); }
     }
     .door-text {
-      color: #1a7a7a;
+      color: #f8f8f8;
       font-size: 22px; letter-spacing: 6px; text-transform: uppercase;
-      text-shadow: 0 0 8px rgba(0,255,200,0.2);
+      text-shadow: 0 0 8px rgba(248,248,248,0.2);
       margin-bottom: 20px;
     }
     .door-handle {
       width: 40px; height: 40px;
       border-radius: 50%;
-      border: 2px solid #1a5a5a;
-      background: radial-gradient(circle at 30% 30%, #1a3a3a, #0a2020);
-      box-shadow: 0 0 10px rgba(0,255,200,0.08);
+      border: 2px solid #4c4c4c;
+      background: radial-gradient(circle at 30% 30%, #3d3d3d, #212121);
+      box-shadow: 0 0 10px rgba(248,248,248,0.08);
       display: flex; align-items: center; justify-content: center;
     }
     .door-handle-inner {
       width: 18px; height: 18px;
       border-radius: 50%;
-      background: #0f2a2a;
-      border: 1px solid #1a6a6a;
+      background: #2c2c2c;
+      border: 1px solid #f8f8f8;
     }
     .door-hint {
-      color: #1a5a5a; font-size: 11px; margin-top: 30px;
+      color: #4c4c4c; font-size: 11px; margin-top: 30px;
       letter-spacing: 2px;
       animation: breathe 1.8s ease-in-out infinite;
     }
     @keyframes breathe {
-      0%, 100% { opacity: 0.3; text-shadow: 0 0 4px rgba(0,255,200,0.05); }
-      50% { opacity: 0.9; text-shadow: 0 0 16px rgba(0,255,200,0.25); }
+      0%, 100% { opacity: 0.3; text-shadow: 0 0 4px rgba(248,248,248,0.05); }
+      50% { opacity: 0.9; text-shadow: 0 0 16px rgba(248,248,248,0.25); }
     }
     .feed-container {
       display: none;
       width: 100%; height: 100vh;
-      background: #0b0906;
+      background: #0b0b0b;
       position: relative;
       overflow: hidden;
     }
@@ -124,38 +124,38 @@
     .title-bar {
       display: flex; align-items: center; gap: 30px;
       padding: 18px 32px 10px 32px;
-      background: linear-gradient(180deg, #0f0e0a 0%, #0b0906 100%);
-      border-bottom: 1px solid #142525;
+      background: linear-gradient(180deg, #111111 0%, #0b0b0b 100%);
+      border-bottom: 1px solid #282828;
       flex-shrink: 0;
     }
     .title-logo {
       font-size: 20px; letter-spacing: 3px;
-      color: #1a7a7a;
-      text-shadow: 0 0 10px rgba(0,255,200,0.15);
+      color: #f8f8f8;
+      text-shadow: 0 0 10px rgba(248,248,248,0.15);
     }
-    .title-logo span { color: #1a5a5a; font-size: 14px; }
+    .title-logo span { color: #4c4c4c; font-size: 14px; }
     .title-tabs { display: flex; gap: 24px; }
     .tab { 
-      color: #1a5555; font-size: 12px; letter-spacing: 2px; 
+      color: #484848; font-size: 12px; letter-spacing: 2px; 
       cursor: pointer; padding-bottom: 4px;
       border-bottom: 1px solid transparent;
       transition: all 0.3s;
     }
-    .tab.active { color: #1bbbaa; border-bottom-color: #1bbbaa; text-shadow: 0 0 8px rgba(0,255,200,0.15); }
+    .tab.active { color: #f8f8f8; border-bottom-color: #f8f8f8; text-shadow: 0 0 8px rgba(248,248,248,0.15); }
     .feeds {
       flex: 1; display: flex; flex-direction: column;
       overflow: hidden; position: relative;
     }
     .feed-row {
       flex: 1; position: relative; overflow: hidden;
-      border-bottom: 1px solid #0f2020;
+      border-bottom: 1px solid #222222;
     }
     .feed-row:last-child { border-bottom: none; }
     .feed-label {
       position: absolute; z-index: 10;
       top: 6px; left: 16px;
       font-size: 10px; letter-spacing: 4px;
-      color: #1a5a5a; opacity: 0.6;
+      color: #4c4c4c; opacity: 0.6;
     }
     .feed-scroll {
       position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -181,35 +181,35 @@
     .feed-card {
       display: inline-flex; flex-direction: column; justify-content: center;
       height: 60px; padding: 0 22px;
-      background: rgba(12,28,28,0.35);
-      border: 1px solid #142a2a;
+      background: rgba(30,30,30,0.35);
+      border: 1px solid #2d2d2d;
       border-radius: 4px;
-      color: #188888;
+      color: #f8f8f8;
       font-size: 12px; letter-spacing: 0.5px;
       flex-shrink: 0;
-      box-shadow: inset 0 0 20px rgba(0,255,200,0.02);
+      box-shadow: inset 0 0 20px rgba(248,248,248,0.02);
       transition: all 0.3s;
     }
     .feed-card:hover {
-      border-color: #1bbbaa;
-      background: rgba(15,40,40,0.5);
-      box-shadow: 0 0 20px rgba(0,255,200,0.06), inset 0 0 30px rgba(0,255,200,0.03);
+      border-color: #f8f8f8;
+      background: rgba(42,42,42,0.5);
+      box-shadow: 0 0 20px rgba(248,248,248,0.06), inset 0 0 30px rgba(248,248,248,0.03);
     }
     .feed-card .title {
-      color: #1bbbaa; font-size: 11px; margin-bottom: 4px; 
-      text-shadow: 0 0 6px rgba(0,255,200,0.1);
+      color: #f8f8f8; font-size: 11px; margin-bottom: 4px; 
+      text-shadow: 0 0 6px rgba(248,248,248,0.1);
     }
-    .feed-card .desc { color: #1a7a7a; font-size: 11px; opacity: 0.8; }
-    .feed-card .meta { color: #1a5555; font-size: 9px; margin-top: 3px; }
-    .fq .feed-card { border-color: #0d3030; }
-    .fq .feed-card .title { color: #22ccaa; }
-    .fw .feed-card { border-color: #103535; }
-    .fw .feed-card .title { color: #1aaaaa; }
-    .fs .feed-card { border-color: #0e2e2e; }
-    .fs .feed-card .title { color: #199999; }
+    .feed-card .desc { color: #f8f8f8; font-size: 11px; opacity: 0.8; }
+    .feed-card .meta { color: #484848; font-size: 9px; margin-top: 3px; }
+    .fq .feed-card { border-color: #313131; }
+    .fq .feed-card .title { color: #f8f8f8; }
+    .fw .feed-card { border-color: #363636; }
+    .fw .feed-card .title { color: #f8f8f8; }
+    .fs .feed-card { border-color: #2f2f2f; }
+    .fs .feed-card .title { color: #f8f8f8; }
     .glow-line {
       position: absolute; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0,255,200,0.04), transparent);
+      background: linear-gradient(90deg, transparent, rgba(248,248,248,0.04), transparent);
       pointer-events: none;
     }
     .glow-line.t { top: 0; }
@@ -217,7 +217,7 @@
     .crt-flicker {
       position: fixed; z-index: 9997;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,255,200,0.005);
+      background: rgba(248,248,248,0.005);
       pointer-events: none;
       animation: flicker 6s infinite;
     }
@@ -232,11 +232,12 @@
       flex-shrink: 0;
       display: flex; justify-content: space-between; align-items: center;
       padding: 8px 32px;
-      background: #0e0c08;
-      border-top: 1px solid #142525;
-      font-size: 10px; color: #1a5555; letter-spacing: 1px;
+      background: #0f0f0f;
+      border-top: 1px solid #282828;
+      font-size: 10px; color: #484848; letter-spacing: 1px;
     }
   </style>
+<link rel="stylesheet" href="assets/garden/skin.css">
 </head>
 <body class="crt">
   <div class="crt-flicker"></div>

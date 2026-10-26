@@ -12,11 +12,11 @@
 <link rel="icon" type="image/svg+xml" href="logo.svg?v=4">
 <style>
 :root{
-  --bg:#05070d; --panel:#0b101c; --line:#1b2536;
-  --cyan:#00e5ff; --purple:#a855f7;
-  --text:#c9d6e8; --dim:#5d7290;
-  --glow-c:0 0 18px rgba(0,229,255,.35);
-  --glow-p:0 0 18px rgba(168,85,247,.35);
+  --bg:#080808; --panel:#131313; --line:#2b2b2b;
+  --cyan:#f8f8f8; --purple:#a8a8a8;
+  --text:#d5d5d5; --dim:#707070;
+  --glow-c:0 0 18px rgba(248,248,248,.35);
+  --glow-p:0 0 18px rgba(168,168,168,.35);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
@@ -29,23 +29,23 @@ body{
 .stars,.stars::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0}
 .stars{
   background-image:
-    radial-gradient(1px 1px at 12% 22%,rgba(0,229,255,.5) 50%,transparent 51%),
-    radial-gradient(1px 1px at 78% 12%,rgba(168,85,247,.45) 50%,transparent 51%),
+    radial-gradient(1px 1px at 12% 22%,rgba(248,248,248,.5) 50%,transparent 51%),
+    radial-gradient(1px 1px at 78% 12%,rgba(168,168,168,.45) 50%,transparent 51%),
     radial-gradient(1.5px 1.5px at 34% 68%,rgba(255,255,255,.25) 50%,transparent 51%),
-    radial-gradient(1px 1px at 88% 74%,rgba(0,229,255,.35) 50%,transparent 51%),
+    radial-gradient(1px 1px at 88% 74%,rgba(248,248,248,.35) 50%,transparent 51%),
     radial-gradient(1px 1px at 55% 40%,rgba(255,255,255,.18) 50%,transparent 51%),
-    radial-gradient(1.5px 1.5px at 20% 84%,rgba(168,85,247,.3) 50%,transparent 51%),
-    radial-gradient(1px 1px at 64% 90%,rgba(0,229,255,.25) 50%,transparent 51%);
+    radial-gradient(1.5px 1.5px at 20% 84%,rgba(168,168,168,.3) 50%,transparent 51%),
+    radial-gradient(1px 1px at 64% 90%,rgba(248,248,248,.25) 50%,transparent 51%);
   animation:drift 90s linear infinite;
 }
 @keyframes drift{from{transform:translateY(0)}to{transform:translateY(-60px)}}
 .neon-top{position:fixed;top:0;left:0;right:0;height:2px;z-index:10;
   background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan));
   background-size:200% 100%;animation:slide 8s linear infinite;
-  box-shadow:0 0 12px rgba(0,229,255,.6)}
+  box-shadow:0 0 12px rgba(248,248,248,.6)}
 @keyframes slide{from{background-position:0 0}to{background-position:200% 0}}
 .scan{position:fixed;inset:0;pointer-events:none;z-index:9;opacity:.045;
-  background:repeating-linear-gradient(0deg,transparent 0 2px,#000 2px 4px)}
+  background:repeating-linear-gradient(0deg,transparent 0 2px,#000000 2px 4px)}
 
 /* ===== 向量空间地面：CSS 3D 透视网格，向消失点飞行 ===== */
 /* 网格平面 rotateX 64°，远处收束成地平线；竖向渐变线随透视自然收敛，
@@ -53,23 +53,23 @@ body{
 .floor{
   position:fixed;left:-60%;right:-60%;bottom:-6%;height:58%;z-index:0;
   background:
-    repeating-linear-gradient(0deg,transparent 0 46px,rgba(0,229,255,.17) 46px 48px),
-    repeating-linear-gradient(90deg,transparent 0 46px,rgba(0,229,255,.10) 46px 48px);
+    repeating-linear-gradient(0deg,transparent 0 46px,rgba(248,248,248,.17) 46px 48px),
+    repeating-linear-gradient(90deg,transparent 0 46px,rgba(248,248,248,.10) 46px 48px);
   transform:perspective(620px) rotateX(64deg);
   transform-origin:center top;
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 26%);
-          mask-image:linear-gradient(to bottom,transparent 0,#000 26%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000000 26%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000000 26%);
   animation:fly 5s linear infinite;
 }
 @keyframes fly{from{background-position:0 0,0 0}to{background-position:0 96px,0 0}}
 /* 地平线辉光：网格消失的地方 */
 .horizon{
   position:fixed;left:0;right:0;top:44%;height:130px;z-index:0;pointer-events:none;
-  background:radial-gradient(ellipse 62% 100% at 50% 60%,rgba(0,229,255,.13),rgba(168,85,247,.05) 55%,transparent 75%);
+  background:radial-gradient(ellipse 62% 100% at 50% 60%,rgba(248,248,248,.13),rgba(168,168,168,.05) 55%,transparent 75%);
 }
 /* 暗角：把视线收回中央 */
 .vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:radial-gradient(ellipse 90% 80% at 50% 46%,transparent 42%,rgba(5,7,13,.62) 100%)}
+  background:radial-gradient(ellipse 90% 80% at 50% 46%,transparent 42%,rgba(8,8,8,.62) 100%)}
 
 /* ===== 大门主体 ===== */
 .gate{
@@ -80,13 +80,13 @@ body{
 }
 .gate-logo{
   width:min(44vmin,288px);height:auto;display:block;
-  filter:drop-shadow(0 0 26px rgba(0,229,255,.35));
+  filter:drop-shadow(0 0 26px rgba(248,248,248,.35));
   animation:float 11s ease-in-out infinite;
 }
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 .gate h1{
   margin-top:26px;font-size:clamp(42px,8.4vw,72px);font-weight:700;letter-spacing:.16em;line-height:1.25;
-  background:linear-gradient(90deg,var(--cyan) 0%,#7dd3fc 42%,var(--purple) 100%);
+  background:linear-gradient(90deg,var(--cyan) 0%,#f8f8f8 42%,var(--purple) 100%);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   text-shadow:var(--glow-c);text-indent:.16em;
 }
@@ -94,7 +94,7 @@ body{
 .gate .tag{
   display:inline-block;margin-top:20px;padding:6px 20px;border:1px solid var(--line);
   border-radius:999px;font-size:13px;color:var(--cyan);letter-spacing:.14em;
-  background:rgba(0,229,255,.05);text-shadow:var(--glow-c)}
+  background:rgba(248,248,248,.05);text-shadow:var(--glow-c)}
 .gate .tag b{color:var(--purple);font-weight:600}
 .gate .epi{margin-top:26px;font-size:14.5px;color:var(--dim);letter-spacing:.05em;max-width:34em}
 
@@ -102,12 +102,12 @@ body{
 .cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:38px}
 .go{
   display:inline-flex;align-items:center;gap:10px;padding:14px 34px;border-radius:999px;
-  border:1px solid rgba(0,229,255,.5);background:rgba(0,229,255,.07);
+  border:1px solid rgba(248,248,248,.5);background:rgba(248,248,248,.07);
   color:var(--cyan);font-size:16px;letter-spacing:.1em;text-decoration:none;
   text-shadow:var(--glow-c);
   transition:border-color .25s,box-shadow .25s,color .25s,transform .25s}
-.go:hover{border-color:var(--cyan);color:#a5f3fc;transform:translateY(-2px);
-  box-shadow:0 0 26px rgba(0,229,255,.25)}
+.go:hover{border-color:var(--cyan);color:#f8f8f8;transform:translateY(-2px);
+  box-shadow:0 0 26px rgba(248,248,248,.25)}
 
 /* ===== 大门口底部一行 ===== */
 .gate-foot{
@@ -143,6 +143,8 @@ body{
   .stars,.neon-top,.floor,.gate-logo,.gate>*{animation:none}
 }
 </style>
+<link rel="stylesheet" href="assets/garden/skin.css">
+<link rel="stylesheet" href="assets/garden/front.css">
 </head>
 <body>
 <div class="neon-top"></div>

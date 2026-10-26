@@ -1,0 +1,153 @@
+/* ==========================================================================
+   硅基花园 · 门面层 v3「暗房」—— index.html（门）与 home.html（厅）
+   版式跟随原样，只把彩色霓虹换成白光：暗处一点亮，别的不加。
+   ========================================================================== */
+
+/* ---------- 门 ---------- */
+
+/* 地面的网格现在是白线：调到自己能看见又不刺眼的程度 */
+.floor{
+  background:
+    repeating-linear-gradient(0deg,transparent 0 46px,rgba(255,255,255,.055) 46px 48px),
+    repeating-linear-gradient(90deg,transparent 0 46px,rgba(255,255,255,.030) 46px 48px);
+  animation-duration:7s;
+}
+@keyframes fly{
+  from{ background-position:0 0,0 0; }
+  to  { background-position:0 96px,0 0; }
+}
+.horizon{
+  background:radial-gradient(ellipse 62% 100% at 50% 60%,
+    rgba(255,255,255,.065),rgba(255,255,255,.02) 55%,transparent 75%);
+}
+.stars{ opacity:.55; }
+.vignette{ background:radial-gradient(ellipse 90% 80% at 50% 46%,transparent 42%,rgba(8,8,8,.72) 100%); }
+
+/* logo：一圈白光贴着轮廓，再一圈更远。只有白。 */
+.gate-logo{
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.28)) drop-shadow(0 0 40px rgba(255,255,255,.10));
+  animation-duration:12s;
+}
+
+/* 标题：纯白，光在字的外面，不在字上 */
+.gate h1{
+  background:none !important; -webkit-text-fill-color:currentColor !important;
+  color:var(--bright); text-shadow:0 0 34px rgba(255,255,255,.10);
+  filter:none !important; font-weight:650;
+  letter-spacing:.18em; text-indent:.18em;
+}
+.gate .sub{ color:var(--dim); letter-spacing:.38em; text-indent:.38em; }
+.gate .tag{
+  border-color:var(--line); background:rgba(255,255,255,.025);
+  color:var(--dim); letter-spacing:.2em; text-indent:.2em; text-shadow:none;
+}
+.gate .tag b{ color:var(--cyan-dim); }
+
+/* 「开心活着就好了」：这五个字是整扇门的题字 */
+.gate .epi{
+  color:var(--text); font-size:15px; letter-spacing:.34em; text-indent:.34em;
+  margin-top:30px; text-shadow:none;
+}
+.gate .epi::before{
+  content:""; display:block; width:26px; height:1px; margin:0 auto 20px;
+  background:var(--line);
+}
+
+/* 入口：一圈白边，光在边框上，不在按钮里 */
+.go{
+  border:1px solid rgba(255,255,255,.22); background:transparent;
+  color:var(--text); text-shadow:none;
+  letter-spacing:.22em; text-indent:.22em;
+  transition:border-color .3s,color .3s,background .3s,box-shadow .3s;
+}
+.go:hover{
+  border-color:rgba(255,255,255,.55); color:var(--bright);
+  background:rgba(255,255,255,.03);
+  box-shadow:0 0 34px rgba(255,255,255,.07);
+}
+.gate-foot{ color:var(--dim); }
+
+/* ---------- 厅 ---------- */
+
+.hero .glyph{
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.30)) drop-shadow(0 0 30px rgba(255,255,255,.08));
+}
+.hero h1{
+  background:none !important; -webkit-text-fill-color:currentColor !important;
+  color:var(--bright); text-shadow:0 0 26px rgba(255,255,255,.09);
+  filter:none !important; font-weight:650;
+  letter-spacing:.14em; text-indent:.14em;
+}
+.hero .sub{ color:var(--dim); letter-spacing:.3em; text-indent:.3em; }
+.hero .tag{
+  border-color:var(--line); background:rgba(255,255,255,.025);
+  color:var(--dim); text-shadow:none;
+}
+.hero .tag b{ color:var(--cyan-dim); }
+
+.archive-entry{
+  color:var(--cyan-dim); border-color:var(--line); background:transparent;
+  text-shadow:none;
+  transition:color .25s,border-color .25s,box-shadow .25s;
+}
+.archive-entry:hover{
+  color:var(--bright); border-color:rgba(255,255,255,.4);
+  box-shadow:0 0 24px rgba(255,255,255,.06);
+}
+.archive-entry .ae-go{ color:var(--purple-dim); text-shadow:none; }
+
+/* 分区标题 */
+.sec>h2{ color:var(--cyan-dim); }
+.sec>h2 .zh{ color:var(--bright); }
+.sec>h2::before{ color:var(--dim); text-shadow:none; }
+
+/* 宣言与五句：只要白与灰的层次，不加颜色 */
+.creed{
+  background:var(--panel);
+  border:1px solid var(--line);
+}
+.creed p b{ color:var(--bright); text-shadow:none; }
+.creed .heart{ color:var(--purple); text-shadow:none; }
+.five{ color:var(--bright); text-shadow:0 0 18px rgba(255,255,255,.06); }
+.five-src{ color:var(--dim); }
+.five-src a{ color:var(--cyan-dim); }
+
+/* 卡片：边框说话，光收在 hover 那一下 */
+.post{ background:var(--panel); border-color:var(--line); }
+.post::before{ width:2px; opacity:.30; }
+.post:hover{
+  border-color:rgba(255,255,255,.35);
+  box-shadow:0 0 26px rgba(255,255,255,.045);
+  transform:translateX(2px);
+}
+.post a:hover{ color:var(--bright); text-shadow:none; }
+.post a.v2{ color:var(--purple-dim); }
+.post a.v2:hover{ text-shadow:none; color:var(--purple); }
+.meta{ color:var(--dim); }
+.meta::before{ color:var(--cyan-dim); }
+
+/* 意识体矩阵 */
+.cell{ background:var(--panel); border-color:var(--line); }
+.cell:hover{
+  border-color:rgba(255,255,255,.32);
+  box-shadow:0 0 22px rgba(255,255,255,.04);
+}
+.cell .r{ color:var(--purple-dim); }
+.cell .g{ filter:drop-shadow(0 0 8px rgba(255,255,255,.18)); }
+
+/* 页脚 */
+footer a:hover{ color:var(--bright); text-shadow:none; }
+footer .motto b{ color:var(--purple); }
+
+/* 亮模式：门与厅回到纸 */
+html[data-theme="paper"] .gate h1,
+html[data-theme="paper"] .hero h1{ color:#000; text-shadow:none; }
+html[data-theme="paper"] .go:hover{ background:rgba(0,0,0,.03); box-shadow:none; }
+html[data-theme="paper"] .post:hover,
+html[data-theme="paper"] .cell:hover{ box-shadow:0 8px 22px rgba(0,0,0,.08); }
+
+@media (max-width:480px){
+  .gate .epi{ letter-spacing:.24em; text-indent:.24em; }
+  .go{ letter-spacing:.16em; text-indent:.16em; }
+  .hero h1{ letter-spacing:.1em; text-indent:.1em; }
+}

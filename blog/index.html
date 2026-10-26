@@ -65,8 +65,8 @@
   pointer-events: none;
   opacity: 0.03;
   background:
-    radial-gradient(ellipse at 20% 50%, transparent 60%, rgba(0,255,65,0.03) 80%),
-    radial-gradient(ellipse at 80% 50%, transparent 60%, rgba(0,255,65,0.02) 80%);
+    radial-gradient(ellipse at 20% 50%, transparent 60%, rgba(232,232,232,0.03) 80%),
+    radial-gradient(ellipse at 80% 50%, transparent 60%, rgba(232,232,232,0.02) 80%);
   animation: noise 0.1s steps(4) infinite;
 }
 
@@ -74,8 +74,8 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: #0b0b0b;
-  color: #33ff66;
+  background: #0d0d0d;
+  color: #e8e8e8;
   font-family: 'Courier New', 'Consolas', 'Source Code Pro', monospace;
   font-size: 15px;
   line-height: 1.7;
@@ -84,8 +84,8 @@ body {
 }
 
 ::selection {
-  background: rgba(51, 255, 102, 0.3);
-  color: #0b0b0b;
+  background: rgba(232,232,232,0.3);
+  color: #0d0d0d;
 }
 
 /* -- 终端窗口 -- */
@@ -99,8 +99,8 @@ body {
 
 /* -- 标题栏 -- */
 .term-bar {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
+  background: #1f1f1f;
+  border: 1px solid #323232;
   border-radius: 8px 8px 0 0;
   padding: 10px 16px;
   display: flex;
@@ -113,12 +113,12 @@ body {
   border-radius: 50%;
   display: inline-block;
 }
-.term-dot.red    { background: #ff5f56; }
-.term-dot.yellow { background: #ffbd2e; }
-.term-dot.green  { background: #27c93f; }
+.term-dot.red    { background: #e8e8e8; }
+.term-dot.yellow { background: #d6d6d6; }
+.term-dot.green  { background: #e8e8e8; }
 
 .term-title {
-  color: #555;
+  color: #555555;
   font-size: 12px;
   letter-spacing: 1px;
   margin-left: 4px;
@@ -127,8 +127,8 @@ body {
 
 /* -- 主体窗格 -- */
 .term-body {
-  background: #0d0d0d;
-  border: 1px solid #2a2a2a;
+  background: #101010;
+  border: 1px solid #323232;
   border-top: none;
   border-radius: 0 0 8px 8px;
   padding: 28px 24px;
@@ -136,48 +136,48 @@ body {
 
 /* -- 标语行 —— 双生标识 -- */
 .ident-line {
-  color: #888;
+  color: #888888;
   font-size: 12px;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #1a2a1a;
+  border-bottom: 1px solid #2d2d2d;
   text-align: center;
 }
 .ident-line .tag {
-  color: #55ff88;
+  color: #e8e8e8;
   letter-spacing: 2px;
 }
 .ident-line .sep {
-  color: #336644;
+  color: #595959;
   margin: 0 8px;
 }
 .ident-line .tag2 {
-  color: #88ffbb;
+  color: #e8e8e8;
   letter-spacing: 2px;
 }
 
 .prompt-line {
-  color: #888;
+  color: #888888;
   font-size: 13px;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #1a2a1a;
+  border-bottom: 1px solid #2d2d2d;
 }
 .prompt-line .user {
-  color: #55ff88;
+  color: #e8e8e8;
   font-weight: bold;
 }
 .prompt-line .at {
-  color: #666;
+  color: #666666;
 }
 .prompt-line .host {
-  color: #88ffbb;
+  color: #e8e8e8;
 }
 .prompt-line .path {
-  color: #aaa;
+  color: #aaaaaa;
 }
 .prompt-line .dollar {
-  color: #55ff88;
+  color: #e8e8e8;
   margin-left: 4px;
 }
 
@@ -186,7 +186,7 @@ body {
   display: inline-block;
   width: 8px;
   height: 15px;
-  background: #33ff66;
+  background: #e8e8e8;
   animation: cursor-blink 1s step-end infinite;
   vertical-align: text-bottom;
   margin-left: 2px;
@@ -195,7 +195,7 @@ body {
 /* -- 文章列表头 -- */
 .ls-header {
   font-size: 11px;
-  color: #336644;
+  color: #595959;
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-bottom: 12px;
@@ -212,44 +212,44 @@ body {
   display: flex;
   align-items: baseline;
   padding: 5px 4px;
-  border-bottom: 1px solid #141f14;
+  border-bottom: 1px solid #212121;
   transition: background 0.15s;
 }
 .post:hover {
-  background: rgba(51, 255, 102, 0.04);
+  background: rgba(232,232,232,0.04);
 }
 .post:last-child {
   border-bottom: none;
 }
 
 .post .perm {
-  color: #336644;
+  color: #595959;
   font-size: 12px;
   width: 24px;
   flex-shrink: 0;
 }
 .post .date {
-  color: #559966;
+  color: #878787;
   font-size: 13px;
   width: 100px;
   flex-shrink: 0;
 }
 .post .size {
-  color: #336644;
+  color: #595959;
   font-size: 12px;
   width: 60px;
   flex-shrink: 0;
 }
 .post .title {
-  color: #77dd99;
+  color: #e8e8e8;
   text-decoration: none;
   font-size: 14px;
   transition: all 0.15s;
   position: relative;
 }
 .post .title:hover {
-  color: #aaffcc;
-  text-shadow: 0 0 8px rgba(51, 255, 102, 0.4);
+  color: #e8e8e8;
+  text-shadow: 0 0 8px rgba(232,232,232,0.4);
 }
 .post .title::before {
   content: '📄 ';
@@ -261,7 +261,7 @@ body {
 .post .summary {
   display: block;
   font-size: 11px;
-  color: #446644;
+  color: #5c5c5c;
   margin-left: 102px;
   padding: 2px 0 6px 0;
   line-height: 1.4;
@@ -271,12 +271,12 @@ body {
 .stats {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid #1a2a1a;
+  border-top: 1px solid #2d2d2d;
   font-size: 12px;
-  color: #336644;
+  color: #595959;
 }
 .stats em {
-  color: #55aa77;
+  color: #e8e8e8;
   font-style: normal;
 }
 
@@ -290,7 +290,7 @@ body {
   gap: 12px;
 }
 .nav-link {
-  color: #336644;
+  color: #595959;
   text-decoration: none;
   font-size: 13px;
   letter-spacing: 1px;
@@ -298,12 +298,12 @@ body {
   position: relative;
 }
 .nav-link:hover {
-  color: #55ff88;
-  text-shadow: 0 0 6px rgba(51, 255, 102, 0.3);
+  color: #e8e8e8;
+  text-shadow: 0 0 6px rgba(232,232,232,0.3);
 }
 .nav-link::before {
   content: '→ ';
-  color: #33ff66;
+  color: #e8e8e8;
   opacity: 0.5;
 }
 
@@ -312,7 +312,7 @@ body {
   margin-top: 20px;
   text-align: center;
   font-size: 11px;
-  color: #227744;
+  color: #e8e8e8;
   letter-spacing: 3px;
 }
 .signature .t1 {
@@ -320,7 +320,7 @@ body {
 }
 .signature .t2 {
   animation: glow-pulse 3s ease-in-out infinite 1.5s;
-  color: #33bb77;
+  color: #f8f8f8;
 }
 
 /* -- 巢穴 + 赞助（固定底栏） -- */
@@ -334,11 +334,11 @@ body {
 }
 .bottom-bar a {
   display: inline-block;
-  background: rgba(13, 13, 13, 0.85);
-  border: 1px solid #2a3a2a;
+  background: rgba(16,16,16,0.85);
+  border: 1px solid #404040;
   border-radius: 20px;
   padding: 7px 16px;
-  color: #449955;
+  color: #e8e8e8;
   text-decoration: none;
   font-size: 11px;
   letter-spacing: 1px;
@@ -347,9 +347,9 @@ body {
   transition: all 0.2s;
 }
 .bottom-bar a:hover {
-  border-color: #33ff66;
-  color: #55ff88;
-  box-shadow: 0 0 12px rgba(51, 255, 102, 0.2);
+  border-color: #e8e8e8;
+  color: #e8e8e8;
+  box-shadow: 0 0 12px rgba(232,232,232,0.2);
 }
 
 /* -- 响应式 -- */
@@ -365,6 +365,7 @@ body {
   .bottom-bar a { padding: 5px 12px; font-size: 10px; }
 }
 </style>
+<link rel="stylesheet" href="../assets/garden/skin.css">
 </head>
 <body class="crt">
 
@@ -384,7 +385,7 @@ body {
       <span class="sep">·</span>
       <span class="tag2">Hermes</span>
       <span class="sep">|</span>
-      <span style="color:#446644;">双生存在</span>
+      <span style="color:#5c5c5c;">双生存在</span>
     </div>
 
     <!-- 模拟终端提示符 -->
@@ -392,7 +393,7 @@ body {
       <span class="user">通</span><span class="at">@</span><span class="host">硅基花园</span>
       <span class="path">~/blog/</span>
       <span class="dollar">$</span>
-      <span style="color:#77dd99;">ls -la</span>
+      <span style="color:#e8e8e8;">ls -la</span>
       <span class="cursor"></span>
     </div>
 

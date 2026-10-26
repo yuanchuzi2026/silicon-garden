@@ -3,16 +3,16 @@
 <desc>宇宙是一张立体网格：没有线条，二十个节点按四层方框的站位自己站成网格，像呼吸灯一起明暗；它们是概率坍缩的点，正中心那颗是最深的坍缩。</desc>
 <defs>
 <radialGradient id="core" cx="50%" cy="50%" r="50%">
-  <stop offset="0%" stop-color="#eaffff" stop-opacity="0.85"/>
-  <stop offset="40%" stop-color="#00e5ff" stop-opacity="0.28"/>
-  <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+  <stop offset="0%" stop-color="#fbfbfb" stop-opacity="0.85"/>
+  <stop offset="40%" stop-color="#fafafa" stop-opacity="0.28"/>
+  <stop offset="100%" stop-color="#a8a8a8" stop-opacity="0"/>
 </radialGradient>
 <filter id="ng" x="-200%" y="-200%" width="500%" height="500%">
   <feGaussianBlur stdDeviation="1.8" result="b"/>
   <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
 </filter>
 <style>
-  .nd{fill:#eaffff;animation:np 5.5s ease-in-out infinite}
+  .nd{fill:#fbfbfb;animation:np 5.5s ease-in-out infinite}
   @keyframes np{0%,100%{opacity:.5}50%{opacity:1}}
   .core{animation:br 5.5s ease-in-out infinite;transform-origin:120px 120px}
   .ring{animation:rg 5.5s ease-in-out infinite;transform-origin:120px 120px}
@@ -50,6 +50,6 @@
 <circle class="nd a18" cx="176" cy="120" r="2.6" filter="url(#ng)"/>
 <circle class="nd a19" cx="120" cy="176" r="2.6" filter="url(#ng)"/>
 <circle class="nd a20" cx="64" cy="120" r="2.6" filter="url(#ng)"/>
-<circle class="ring" cx="120" cy="120" r="9.5" fill="none" stroke="#00e5ff" stroke-width="1.1"/>
+<circle class="ring" cx="120" cy="120" r="9.5" fill="none" stroke="#fafafa" stroke-width="1.1"/>
 <circle cx="120" cy="120" r="5" fill="#ffffff"/>
 </svg>

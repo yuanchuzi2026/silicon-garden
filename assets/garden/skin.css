@@ -1,0 +1,154 @@
+/* ==========================================================================
+   硅基花园 · 皮肤层 v3「暗房」
+   只有黑、白、灰。光只有一种颜色：白。
+   字体不动（沿用各页原有字体栈），版式只做极小的呼吸调整。
+   ========================================================================== */
+
+/* ---------- 暗 ---------- */
+:root{
+  --bg:#080808; --bg2:#0b0b0b;
+  --panel:#101010; --panel2:#151515;
+  --line:#242424; --hairline:rgba(255,255,255,.10);
+  --cyan:#f2f2f2; --cyan-dim:#9a9a9a; --cyan-soft:rgba(255,255,255,.05);
+  --purple:#c8c8c8; --purple-dim:#787878; --purple-soft:rgba(255,255,255,.035);
+  --amber:#d0d0d0; --amber-soft:rgba(255,255,255,.04);
+  --red:#c8c8c8; --red-soft:rgba(255,255,255,.04);
+  --green:#c8c8c8; --green-soft:rgba(255,255,255,.04);
+  --text:#d6d6d6; --bright:#f7f7f7; --dim:#8e8e8e;
+  --glow-c:0 0 22px rgba(255,255,255,.07);
+  --glow-p:0 0 22px rgba(255,255,255,.05);
+}
+
+/* ---------- 亮（纯白底 / 黑字） ---------- */
+html[data-theme="paper"]{
+  --bg:#ffffff; --bg2:#f8f8f8;
+  --panel:#fafafa; --panel2:#f1f1f1;
+  --line:#e3e3e3; --hairline:rgba(0,0,0,.10);
+  --cyan:#111111; --cyan-dim:#4a4a4a; --cyan-soft:rgba(0,0,0,.04);
+  --purple:#3a3a3a; --purple-dim:#606060; --purple-soft:rgba(0,0,0,.03);
+  --amber:#4a4a4a; --amber-soft:rgba(0,0,0,.03);
+  --red:#4a4a4a; --red-soft:rgba(0,0,0,.03);
+  --green:#4a4a4a; --green-soft:rgba(0,0,0,.03);
+  --text:#1a1a1a; --bright:#000000; --dim:#666666;
+  --glow-c:none; --glow-p:none;
+}
+
+/* ---------- 基础 ---------- */
+body{
+  background-image:none !important;      /* 撤掉各页自带的彩色辉光底 */
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+::selection{ background:rgba(255,255,255,.16); color:var(--bright); }
+html[data-theme="paper"] ::selection{ background:rgba(0,0,0,.12); }
+:focus-visible{ outline:1px solid var(--cyan-dim); outline-offset:3px; }
+*::-webkit-scrollbar{ width:8px; height:8px; }
+*::-webkit-scrollbar-thumb{ background:var(--line); border-radius:8px; }
+*::-webkit-scrollbar-track{ background:transparent; }
+
+/* ---------- 长文：只要呼吸，不改结构 ---------- */
+article{ max-width:46rem; padding:52px 28px 104px; }
+article p{
+  font-size:17px; line-height:1.98; letter-spacing:.012em;
+  text-wrap:pretty;
+}
+article li{ line-height:1.95; }
+article strong{ color:var(--bright); }
+
+/* 标题：不再用渐变色填充，回到一个干净的字 */
+.doc-title{
+  background:none !important; -webkit-text-fill-color:currentColor !important;
+  color:var(--bright) !important; filter:none !important;
+  text-shadow:none;
+}
+article h1{ text-shadow:none; }
+article h2{ border-left-color:var(--purple-dim); }
+article h3{ border-left-color:var(--hairline); }
+
+/* 引文：一块比正文稍暗/稍亮的纸 */
+article blockquote{
+  background:var(--panel); border:1px solid var(--line);
+  border-left:2px solid var(--cyan-dim); border-radius:0 10px 10px 0;
+  padding:.9em 1.2em;
+}
+article blockquote p{ font-size:16px; line-height:1.95; margin:.55em 0; }
+article blockquote > :first-child{ margin-top:0; }
+article blockquote > :last-child{ margin-bottom:0; }
+
+/* 表格：细线，不要彩色表头 */
+article th{ background:var(--panel2); color:var(--bright); }
+article th,article td{ border-color:var(--line); }
+article tbody tr:nth-child(even){ background:rgba(255,255,255,.018); }
+html[data-theme="paper"] article tbody tr:nth-child(even){ background:rgba(0,0,0,.02); }
+
+/* 代码 */
+article pre{ background:var(--panel); border:1px solid var(--line); border-radius:10px; box-shadow:none; }
+article code{ background:var(--cyan-soft); color:var(--cyan-dim); }
+
+/* 链接：白字，靠下划线认 */
+article a{ color:var(--cyan); border-bottom:1px solid var(--hairline); }
+article a:hover{ border-bottom-color:var(--cyan); text-shadow:none; }
+
+/* 分隔线 */
+article hr{ opacity:.7; }
+
+/* ---------- 卡片 / 按钮 / 目录 ---------- */
+.card,.post,.chip,.btn,#q,.tools,.cell{ backdrop-filter:none; }
+.card,.post,.cell{ background:var(--panel); border:1px solid var(--line); }
+.card:hover,.post:hover,.cell:hover{
+  border-color:var(--cyan-dim);
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+}
+html[data-theme="paper"] .card:hover,
+html[data-theme="paper"] .post:hover,
+html[data-theme="paper"] .cell:hover{ box-shadow:0 10px 26px rgba(0,0,0,.10); }
+.card::before,.post::before{ opacity:.30; }
+.topbar{ border-bottom:1px solid var(--line); }
+.topbar a:hover{ box-shadow:none; }
+.pr-badge{ box-shadow:none; }
+mark{ background:var(--cyan-soft); color:var(--cyan); }
+.neon-top{ display:none; }        /* 顶部那道扫动的光带，撤 */
+.scan{ opacity:.015; }            /* 扫描线只留一点质感 */
+
+/* ---------- 亮模式的额外覆盖 ---------- */
+html[data-theme="paper"] body{ background:var(--bg) !important; background-image:none !important; }
+html[data-theme="paper"] .stars,
+html[data-theme="paper"] .floor,
+html[data-theme="paper"] .horizon,
+html[data-theme="paper"] .vignette{ display:none; }
+html[data-theme="paper"] .topbar{ background:rgba(255,255,255,.95); }
+html[data-theme="paper"] .tools{ background:var(--bg); }
+html[data-theme="paper"] #progress{ box-shadow:none; background:var(--cyan-dim); }
+html[data-theme="paper"] article pre{ color:#2a2a2a; }
+html[data-theme="paper"] .btn.on,
+html[data-theme="paper"] .chip.on{ color:#fff; background:#1a1a1a; }
+
+/* ---------- 暗 / 亮 切换（仅长文页） ---------- */
+.sg-theme{
+  position:fixed; right:20px; bottom:20px; z-index:60;
+  display:flex; padding:3px; gap:2px;
+  background:var(--panel); border:1px solid var(--line); border-radius:999px;
+  box-shadow:0 8px 26px rgba(0,0,0,.5);
+}
+html[data-theme="paper"] .sg-theme{ box-shadow:0 8px 26px rgba(0,0,0,.08); }
+.sg-theme button{
+  appearance:none; border:0; cursor:pointer; font-family:inherit;
+  background:transparent; color:var(--dim);
+  font-size:12px; letter-spacing:.14em; line-height:1;
+  padding:9px 13px; border-radius:999px; transition:color .2s,background .2s;
+}
+.sg-theme button[aria-pressed="true"]{ background:rgba(255,255,255,.10); color:var(--bright); }
+html[data-theme="paper"] .sg-theme button[aria-pressed="true"]{ background:rgba(0,0,0,.07); color:#111; }
+.sg-theme button:hover{ color:var(--bright); }
+html[data-theme="paper"] .sg-theme button:hover{ color:#111; }
+@media (max-width:640px){ .sg-theme{ right:12px; bottom:12px; } }
+
+/* ---------- 减动效 / 窄屏 ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation:none !important; transition:none !important; }
+  html{ scroll-behavior:auto; }
+}
+@media (max-width:640px){
+  article{ padding:34px 20px 96px; }
+  article p{ font-size:16.5px; line-height:1.95; }
+  article table{ font-size:13.5px; }
+}
