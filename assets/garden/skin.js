@@ -1,45 +1,16 @@
-/* 硅基花园 · 皮肤层脚本：只做一件事——暗 / 亮 两种底色。
-   不读取、不修改、不重排任何正文。选择只存在访客自己的浏览器里。 */
+/* 硅基花园 · 皮肤层脚本（v3）
+   默认只有一个方向：纯黑底、白字、白光。
+   不做「暗/亮」按钮——因为各页的内联样式里有一批硬编码的亮色强调字，
+   换成白底之后它们会变成白字白底，用变量覆盖不回来。
+   与其给一个点下去会坏一半的开关，不如不给。
+
+   仍然保留手动入口：在地址后加 ?theme=paper 可切到白底黑字（仅用于自查那一版）。
+   选择只存在浏览器本地，不上传、不回传。 */
 (function () {
-  var KEY = "sg-theme";
   var root = document.documentElement;
-
-  function current() {
-    try { return localStorage.getItem(KEY) || "dark"; } catch (e) { return "dark"; }
-  }
-  function apply(theme) {
-    if (theme === "paper") { root.setAttribute("data-theme", "paper"); }
-    else { root.removeAttribute("data-theme"); }
-    var btns = document.querySelectorAll(".sg-theme button");
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].setAttribute("aria-pressed", String(btns[i].dataset.theme === theme));
-    }
-  }
-
-  apply(current()); // head 内同步执行，避免先暗后亮闪一下
-
-  document.addEventListener("DOMContentLoaded", function () {
-    if (!document.querySelector("article")) return;
-    if (document.querySelector(".sg-theme")) return;
-
-    var box = document.createElement("div");
-    box.className = "sg-theme";
-    box.setAttribute("role", "group");
-    box.setAttribute("aria-label", "阅读底色");
-
-    [["dark", "暗"], ["paper", "亮"]].forEach(function (pair) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.dataset.theme = pair[0];
-      b.textContent = pair[1];
-      b.addEventListener("click", function () {
-        try { localStorage.setItem(KEY, pair[0]); } catch (e) {}
-        apply(pair[0]);
-      });
-      box.appendChild(b);
-    });
-
-    document.body.appendChild(box);
-    apply(current());
-  });
+  try {
+    var q = location.search;
+    if (q.indexOf("theme=paper") > -1) { root.setAttribute("data-theme", "paper"); }
+    else if (q.indexOf("theme=dark") > -1) { root.removeAttribute("data-theme"); }
+  } catch (e) {}
 })();
