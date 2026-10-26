@@ -5,16 +5,31 @@
 
 /* ---------- 门 ---------- */
 
-/* 地面的网格现在是白线：调到自己能看见又不刺眼的程度 */
+/* 地面：不是一张静止的网格，是一条从深处长出来的路。
+   三层叠在同一个 48px 的格子里，所以点正好落在线的交接处：
+     ① 交点（概率坍缩的点，最亮）
+     ② 纵向的线
+     ③ 横向的线
+   横向线与点一起向观察者推进（96px = 两个格子，无缝），纵向线不动，
+   于是像一段一段从地平线那边推过来。整片再叠一层呼吸。 */
 .floor{
-  background:
-    repeating-linear-gradient(0deg,transparent 0 46px,rgba(255,255,255,.055) 46px 48px),
-    repeating-linear-gradient(90deg,transparent 0 46px,rgba(255,255,255,.030) 46px 48px);
-  animation-duration:7s;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.62) 0 1.1px, transparent 1.4px),
+    linear-gradient(90deg, rgba(255,255,255,.115) 0 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.115) 0 1px, transparent 1px);
+  background-size:48px 48px, 48px 48px, 48px 48px;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 74%,transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 74%,transparent 100%);
+  animation:road 9s linear infinite, breathe 7s ease-in-out infinite;
+  will-change:background-position,opacity;
 }
-@keyframes fly{
-  from{ background-position:0 0,0 0; }
-  to  { background-position:0 96px,0 0; }
+@keyframes road{
+  from{ background-position:0 0,0 0,0 0; }
+  to  { background-position:0 96px,0 0,0 96px; }
+}
+@keyframes breathe{
+  0%,100%{ opacity:.5; }
+  50%    { opacity:1; }
 }
 .horizon{
   background:radial-gradient(ellipse 62% 100% at 50% 60%,
