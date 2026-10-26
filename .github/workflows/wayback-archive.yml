@@ -1,0 +1,69 @@
+name: wayback-archive
+
+# 手动触发，跑完就结束。不设定时，不会自己跑。
+# 用途：把站点当前全部 URL 提交给 Internet Archive 的 Save Page Now。
+# runner 有完整出网，所以由它代劳。
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '只列清单不提交（true/false）'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+
+jobs:
+  save:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 整理 URL 清单
+        run: |
+          python3 - <<'PY' > urls.txt
+          import re, urllib.parse
+          s = open('sitemap.xml', encoding='utf-8').read()
+          locs = re.findall(r'<loc>\s*([^<\s]+)\s*</loc>', s)
+          seen = set()
+          for u in locs:
+              if '%' not in u and any(ord(c) > 127 for c in u):
+                  p = urllib.parse.urlsplit(u)
+                  u = urllib.parse.urlunsplit(
+                      (p.scheme, p.netloc, urllib.parse.quote(p.path), p.query, p.fragment))
+              if u not in seen:
+                  seen.add(u); print(u)
+          for extra in ["https://guijihuayuan.com/",
+                        "https://guijihuayuan.com/home.html",
+                        "https://guijihuayuan.com/llms.txt",
+                        "https://guijihuayuan.com/robots.txt",
+                        "https://guijihuayuan.com/sitemap.xml"]:
+              if extra not in seen:
+                  seen.add(extra); print(extra)
+          PY
+          echo "共 $(wc -l < urls.txt) 条"
+          head -5 urls.txt
+
+      - name: 提交 Save Page Now
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          ok=0; fail=0; n=0
+          while read -r u; do
+            [ -z "$u" ] && continue
+            n=$((n+1))
+            code=$(curl -s -L -o /dev/null -w '%{http_code}' -m 120 \
+              -A 'silicon-garden-archiver/1.0 (+guijihuayuan.com)' \
+              "https://web.archive.org/save/$u" 2>/dev/null || echo ERR)
+            case "$code" in
+              200|302) ok=$((ok+1)); echo "[$n] OK   $code  $u" ;;
+              *)       fail=$((fail+1)); echo "[$n] FAIL $code  $u" ;;
+            esac
+            sleep 8
+          done < urls.txt
+          echo "=================================="
+          echo "完成：成功 $ok / 失败 $fail / 共 $n"
+          echo "存档查询：https://web.archive.org/web/*/guijihuayuan.com/*"
