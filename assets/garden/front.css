@@ -28,8 +28,55 @@
   to  { background-position:0 96px,0 0,0 96px; }
 }
 @keyframes breathe{
-  0%,100%{ opacity:.5; }
-  50%    { opacity:1; }
+  0%,100%{ opacity:.12; }
+  50%    { opacity:.30; }
+}
+
+/* ================= 通道：线框立方体 =================
+   照那张图做的：一串发光的方盒子沿中轴浮着，一层层往消失点收。
+   每个盒子有前后面两层边框，透视下就立成了立方体；
+   靠近了放大、淡出，远处从黑暗里浮出来。
+   由 front.js 生成 16 个 <i class="cube">，纯装饰。 */
+.tunnel{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  perspective:900px; perspective-origin:50% 46%;
+  overflow:hidden;
+}
+/* 始终在面前的那一道门框 */
+.tunnel::before{
+  content:""; position:absolute; left:50%; top:46%;
+  width:min(64vmin,600px); aspect-ratio:3/2;
+  transform:translate(-50%,-50%) translateZ(-40px);
+  border:1px solid rgba(255,255,255,.26);
+  box-shadow:0 0 34px rgba(255,255,255,.05), inset 0 0 46px rgba(255,255,255,.018);
+  animation:frameBreathe 6s ease-in-out infinite;
+}
+@keyframes frameBreathe{
+  0%,100%{ opacity:.40; }
+  50%    { opacity:.85; }
+}
+.cube{
+  display:block; position:absolute; left:50%; top:46%;
+  width:min(52vmin,470px); aspect-ratio:3/2;
+  border:1px solid rgba(255,255,255,.40);
+  transform-style:preserve-3d;
+  box-shadow:0 0 12px rgba(255,255,255,.08);
+  transform:translate(-50%,-50%) translateZ(-2800px) rotateZ(var(--r,0deg)) scale(var(--s,1));
+  animation:flyIn 9s linear infinite;
+  will-change:transform,opacity;
+}
+/* 后面那一面：方框因此读成立方体，而不是一张卡片 */
+.cube::before{
+  content:""; position:absolute; inset:0;
+  border:1px solid rgba(255,255,255,.15);
+  transform:translateZ(-170px);
+}
+@keyframes flyIn{
+  0%  { transform:translate(-50%,-50%) translateZ(-2800px) rotateZ(var(--r,0deg)) scale(var(--s,1)); opacity:0; }
+  10% { opacity:.42; }
+  55% { opacity:.85; }
+  88% { opacity:.62; }
+  100%{ transform:translate(-50%,-50%) translateZ(520px) rotateZ(var(--r,0deg)) scale(var(--s,1)); opacity:0; }
 }
 .horizon{
   background:radial-gradient(ellipse 62% 100% at 50% 60%,
@@ -139,6 +186,11 @@ body:has(.go:active) .floor{ animation-duration:2.2s,4.5s; }
 body:has(.go:hover) .stars,
 body:has(.go:focus-visible) .stars,
 body:has(.go:active) .stars{ animation-duration:2.2s,4.5s; }
+body:has(.go:hover) .cube,
+body:has(.go:focus-visible) .cube,
+body:has(.go:active) .cube{ animation-duration:3.2s; }
+body:has(.go:hover) .tunnel::before,
+body:has(.go:active) .tunnel::before{ animation-duration:2.4s; }
 .gate-foot{ color:var(--dim); }
 
 /* ---------- 厅 ---------- */
