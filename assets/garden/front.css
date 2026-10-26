@@ -6,15 +6,15 @@
 
 /* ================= 一、门 ================= */
 
-/* 地面：横向线与交点一起向观察者推进，纵向线不动 */
+/* 地面：点阵 + 网格，交点向观察者推进 */
 .floor{
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(255,255,255,.55) 0 1.1px, transparent 1.4px),
-    linear-gradient(90deg, rgba(255,255,255,.105) 0 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255,255,255,.105) 0 1px, transparent 1px);
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.82) 0 1.3px, transparent 1.7px),
+    linear-gradient(90deg, rgba(255,255,255,.145) 0 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.145) 0 1px, transparent 1px);
   background-size:48px 48px, 48px 48px, 48px 48px;
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 74%,transparent 100%);
-          mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 74%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 16%,#000 82%,transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 16%,#000 82%,transparent 100%);
   animation:road 9s linear infinite, breathe 7s ease-in-out infinite;
   will-change:background-position,opacity;
 }
@@ -23,28 +23,30 @@
   to  { background-position:0 96px,0 0,0 96px; }
 }
 @keyframes breathe{
-  0%,100%{ opacity:.16; }
-  50%    { opacity:.40; }
+  0%,100%{ opacity:.30; }
+  50%    { opacity:.68; }
 }
 
-/* 天花板：地面镜像过来的一面，同样的格子、同样的点 */
+/* 天花板：同一个位移，但它是翻过来的一面——
+   视觉方向正好相反：地面向外走，天花板向里收，上下接成一条传送带。 */
 body:has(.gate) .stars{
   position:fixed; left:-60%; right:-60%; top:0; bottom:auto; height:54%;
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(255,255,255,.30) 0 1px, transparent 1.3px),
-    linear-gradient(90deg, rgba(255,255,255,.07) 0 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, transparent 1px);
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.55) 0 1.2px, transparent 1.6px),
+    linear-gradient(90deg, rgba(255,255,255,.105) 0 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.105) 0 1px, transparent 1px);
   background-size:48px 48px, 48px 48px, 48px 48px;
   transform:perspective(620px) rotateX(-64deg);
   transform-origin:center bottom;
-  -webkit-mask-image:linear-gradient(to top,transparent 0,#000 34%,#000 72%,transparent 100%);
-          mask-image:linear-gradient(to top,transparent 0,#000 34%,#000 72%,transparent 100%);
-  animation:roadUp 9s linear infinite, breathe 7s ease-in-out infinite;
+  -webkit-mask-image:linear-gradient(to top,transparent 0,#000 30%,#000 78%,transparent 100%);
+          mask-image:linear-gradient(to top,transparent 0,#000 30%,#000 78%,transparent 100%);
+  /* 位移方向与地面同号，但面是反的 → 走出来的方向相反 */
+  animation:roadUp 9s linear infinite, breathe 7s ease-in-out infinite 1.6s;
   opacity:1;
 }
 @keyframes roadUp{
   from{ background-position:0 0,0 0,0 0; }
-  to  { background-position:0 -96px,0 0,0 -96px; }
+  to  { background-position:0 96px,0 0,0 96px; }
 }
 .stars{ opacity:.55; }   /* 首页保持原来的星尘 */
 
