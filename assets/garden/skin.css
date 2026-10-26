@@ -1,217 +1,248 @@
 /* ==========================================================================
-   硅基花园 · 皮肤层（skin.css）
-   只覆盖外观：色板、字距、版心、组件质感。不承载、也不修改任何正文。
-   原理：各页原有的 :root 变量与本层同名，后加载者生效；
-         因此换色、减光、排版都能在不碰原样式表的情况下完成。
-   两种底色：夜（默认，保留原有的青紫霓虹）／ 纸（长文阅读，html[data-theme=paper]）
+   硅基花园 · 皮肤层 v2 「墨与硅」
+   v1 是把霓虹调柔；v2 是换一套语言：
+     它不是飞船，是一本夜里翻开的书，书页下面走着一层极细的电路。
+   分工未变：只覆盖外观，不承载、不修改任何正文。
+   三套字：正文宋（书）／元信息等宽（页边批注）／界面无衬线（门牌）
+   两套底色：墨（默认）／宣（html[data-theme="paper"]）
    ========================================================================== */
 
-/* ---------- 夜 ---------- */
+/* ---------- 墨 ---------- */
 :root{
-  --bg:#06080d; --bg2:#090d15;
-  --panel:#0c121d; --panel2:#111a29;
-  --line:#1d2739;
-  --cyan:#5adfef; --cyan-dim:#43a9bf; --cyan-soft:rgba(90,223,239,.10);
-  --purple:#b79bf5; --purple-dim:#8f76cf; --purple-soft:rgba(183,155,245,.10);
-  --amber:#e8b26a; --amber-soft:rgba(232,178,106,.10);
-  --red:#e9707f; --red-soft:rgba(233,112,127,.10);
-  --green:#5ecfa4; --green-soft:rgba(94,207,164,.10);
-  --text:#cfd8e4; --bright:#eef3fa; --dim:#8896ab;
-  /* 光只留一点，字就不再糊 */
-  --glow-c:0 0 14px rgba(90,223,239,.16);
-  --glow-p:0 0 14px rgba(183,155,245,.16);
-  --hairline:rgba(140,165,200,.14);
-}
-
-/* ---------- 纸 ---------- */
-html[data-theme="paper"]{
-  --bg:#f6f4ef; --bg2:#efece4;
-  --panel:#fffdf8; --panel2:#f1ede3;
-  --line:#e3ddcf;
-  --cyan:#0f7d8c; --cyan-dim:#0d6b78; --cyan-soft:rgba(15,125,140,.08);
-  --purple:#7a5bc0; --purple-dim:#6a4fad; --purple-soft:rgba(122,91,192,.08);
-  --amber:#9a6a1f; --amber-soft:rgba(154,106,31,.08);
-  --red:#b23a4a; --red-soft:rgba(178,58,74,.08);
-  --green:#2c7d5c; --green-soft:rgba(44,125,92,.08);
-  --text:#2c3540; --bright:#131a23; --dim:#6d7787;
+  --bg:#0b0c0e; --bg2:#0e1013;
+  --panel:#101216; --panel2:#14171c;
+  --line:#22262c; --hairline:rgba(190,186,178,.12);
+  --cyan:#78b6c2; --cyan-dim:#5b939e; --cyan-soft:rgba(120,182,194,.07);
+  --purple:#a79ad0; --purple-dim:#8879b8; --purple-soft:rgba(167,154,208,.07);
+  --amber:#c9a227; --amber-soft:rgba(201,162,39,.08);
+  --red:#c86a72; --red-soft:rgba(200,106,114,.08);
+  --green:#7fae93; --green-soft:rgba(127,174,147,.08);
+  --text:#cbc6bd; --bright:#f1ece2; --dim:#8b867d;
   --glow-c:none; --glow-p:none;
-  --hairline:rgba(40,55,75,.14);
+  --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN",
+          "Songti TC",STSong,SimSun,"Times New Roman",Georgia,serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans SC",
+         "Hiragino Sans GB","Microsoft YaHei",sans-serif;
 }
 
-/* ---------- 全站基础 ---------- */
-body{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
-::selection{ background:var(--cyan-soft); color:var(--bright); }
-a{ text-underline-offset:3px; }
-a:focus-visible,button:focus-visible,input:focus-visible{
-  outline:2px solid var(--cyan-dim); outline-offset:3px; border-radius:6px;
+/* ---------- 宣 ---------- */
+html[data-theme="paper"]{
+  --bg:#f4f0e7; --bg2:#efeade;
+  --panel:#fbf8f1; --panel2:#f2ede2;
+  --line:#ddd5c6; --hairline:rgba(60,50,35,.14);
+  --cyan:#2c6d78; --cyan-dim:#255b63; --cyan-soft:rgba(44,109,120,.06);
+  --purple:#6b5a9e; --purple-dim:#5b4c89; --purple-soft:rgba(107,90,158,.06);
+  --amber:#8a6a10; --amber-soft:rgba(138,106,16,.07);
+  --red:#9c3b44; --red-soft:rgba(156,59,68,.07);
+  --green:#3f7358; --green-soft:rgba(63,115,88,.07);
+  --text:#33302a; --bright:#15130f; --dim:#6f6a60;
+  --glow-c:none; --glow-p:none;
 }
-/* 细一点的滚动条，不抢戏 */
-*::-webkit-scrollbar{ width:9px; height:9px; }
-*::-webkit-scrollbar-thumb{ background:var(--line); border-radius:9px; }
+
+/* ---------- 基础 ---------- */
+body{
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  background-image:none !important;   /* 撤掉各页自带的径向辉光 */
+}
+::selection{ background:rgba(120,182,194,.18); color:var(--bright); }
+a{ text-underline-offset:3px; }
+:focus-visible{ outline:1px solid var(--cyan-dim); outline-offset:3px; }
+*::-webkit-scrollbar{ width:8px; height:8px; }
+*::-webkit-scrollbar-thumb{ background:var(--line); border-radius:8px; }
 *::-webkit-scrollbar-track{ background:transparent; }
 
-/* ---------- 长文排版：版心、节奏、呼吸 ---------- */
+/* ==========================================================================
+   长文：这一块是整站的主角
+   ========================================================================== */
 article{
-  max-width:44rem;                 /* 中文每行约 34–38 字，长文不累 */
-  padding:56px 28px 110px;
+  max-width:41rem;                 /* 约 32–34 字/行，书的口径 */
+  margin:0 auto; padding:64px 26px 120px;
+  font-family:var(--serif);
 }
 article p{
-  margin:1.15em 0;
-  font-size:17px; line-height:2.02; letter-spacing:.012em;
-  text-wrap:pretty;
+  margin:1.2em 0; font-size:17.5px; line-height:2.05;
+  letter-spacing:.015em; text-align:justify;
+  text-justify:inter-ideograph; text-wrap:pretty;
 }
-article li{ line-height:1.95; }
-article strong{ color:var(--bright); font-weight:650; }
+article li{ line-height:2.0; margin:.45em 0; }
+article strong{ color:var(--bright); font-weight:700; }
 
-/* 大标题：从渐变字回到一个干净的字 */
+/* 文章题：像印在扉页上，不用渐变色 */
 .doc-title{
-  background:none; -webkit-text-fill-color:currentColor;
-  color:var(--bright); filter:none;
-  font-weight:700; letter-spacing:.03em; line-height:1.38;
+  background:none !important; -webkit-text-fill-color:currentColor !important;
+  color:var(--bright) !important; filter:none !important;
+  font-family:var(--serif); font-weight:700;
+  font-size:clamp(26px,3.6vw,36px); line-height:1.45;
+  letter-spacing:.02em; text-align:center; margin-bottom:14px;
 }
-.doc-sub{ letter-spacing:.04em; }
+.doc-sub{
+  justify-content:center; font-family:var(--mono);
+  font-size:11.5px; letter-spacing:.12em; color:var(--dim);
+}
+.doc-sub::before{ display:none; }          /* 去掉那道青线，扉页不需要 */
+.pr-badge{ font-family:var(--mono); box-shadow:none; background:var(--panel);
+  border:1px solid var(--line); color:var(--dim); border-radius:4px; }
 
-/* 标题层级：靠字重和留白分层，不再靠粗色条 */
+/* 章节：书的分节靠空和一条短线，不靠色块 */
 article h1{
-  margin:3rem 0 1.1rem; padding:0 0 .75rem;
-  border-left:none; border-bottom:1px solid var(--line);
-  font-size:1.62rem; font-weight:650; line-height:1.5;
-  letter-spacing:.02em; text-shadow:none; text-wrap:balance;
+  font-family:var(--serif); font-weight:700;
+  font-size:1.5rem; line-height:1.6; margin:3.4rem 0 1.2rem;
+  padding:0; border:none; text-align:center; color:var(--bright);
+  text-wrap:balance;
 }
-article h1::after{ display:none; }
+article h1::after{
+  content:""; display:block; width:24px; height:1px; margin:1.1rem auto 0;
+  background:var(--cyan-dim); opacity:.55;
+}
 article h2{
-  margin:2.6rem 0 1rem; padding:0 0 0 .7rem;
-  border-left:2px solid var(--purple-dim);
-  font-size:1.3rem; font-weight:650; line-height:1.55; text-wrap:balance;
+  font-family:var(--serif); font-weight:700;
+  font-size:1.22rem; line-height:1.7; margin:2.8rem 0 1rem;
+  padding:0 0 0 .75rem; border-left:1px solid var(--cyan-dim);
+  color:var(--bright); text-wrap:balance;
 }
 article h3{
-  margin:2.1rem 0 .85rem; padding:0;
-  border-left:none; color:var(--bright);
-  font-size:1.1rem; font-weight:650; letter-spacing:.02em;
+  font-family:var(--serif); font-weight:700;
+  font-size:1.06rem; margin:2.2rem 0 .8rem;
+  padding:0; border:none; color:var(--bright); letter-spacing:.02em;
 }
-article h4{ font-size:1rem; font-weight:650; color:var(--text); }
+article h4{ font-size:1rem; font-weight:700; color:var(--text); margin:1.7rem 0 .6rem; }
 
-/* 引文：口述、批注、对话都住在里面，给它一个安静的盒子 */
+/* 引文：口述、批注、对话都在这儿。给它一个大引号，不给边框 */
 article blockquote{
-  margin:1.7em 0; padding:.85em 1.25em;
-  background:var(--panel);
-  border:1px solid var(--line); border-left:2px solid var(--cyan-dim);
-  border-radius:0 12px 12px 0;
+  margin:1.9em 0; padding:0 0 0 1.6em;
+  background:none; border:none; border-left:1px solid var(--line); border-radius:0;
+  position:relative; color:var(--text);
 }
-article blockquote p{ margin:.55em 0; font-size:16px; line-height:1.95; }
+article blockquote::before{
+  content:"“"; position:absolute; left:-.06em; top:-.55em;
+  font-family:var(--serif); font-size:2.4em; line-height:1;
+  color:var(--cyan-dim); opacity:.35;
+}
+article blockquote p{
+  font-size:16.5px; line-height:2.0; margin:.6em 0; text-align:left;
+}
 article blockquote > :first-child{ margin-top:0; }
 article blockquote > :last-child{ margin-bottom:0; }
 
-/* 表格：细线、斑马纹、数字对齐 */
+/* 表格：细线，无斑马纹——书里的表就是几根线 */
 article table{
-  margin:1.8em 0; font-size:14px; line-height:1.8;
-  border:1px solid var(--line); border-radius:12px;
+  margin:2em 0; font-size:14.5px; line-height:1.85;
+  border:none; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  border-radius:0; font-family:var(--sans);
 }
 article th{
-  background:var(--panel2); color:var(--bright);
-  font-weight:600; letter-spacing:.03em;
+  background:none !important; color:var(--bright);
+  font-weight:600; letter-spacing:.04em;
+  border-bottom:1px solid var(--line) !important;
 }
-article th,article td{ padding:11px 15px; border-color:var(--line); }
-article tbody tr:nth-child(even){ background:rgba(150,180,220,.035); }
-html[data-theme="paper"] article tbody tr:nth-child(even){ background:rgba(60,50,30,.03); }
+article th,article td{ padding:11px 14px; border-color:var(--line); }
+article tbody tr:nth-child(even){ background:none; }
 
-/* 代码与手稿 */
+/* 代码与手稿：像书里夹的一张终端打印纸 */
 article pre{
-  background:var(--panel); border:1px solid var(--line);
-  border-radius:12px; padding:18px 20px;
-  font-size:13px; line-height:1.85; box-shadow:none;
+  background:var(--panel); border:1px solid var(--line); border-radius:3px;
+  padding:18px 20px; font-size:13px; line-height:1.9; box-shadow:none;
+  font-family:var(--mono);
 }
-article code,pre,code{
-  font-family:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Consolas,monospace;
+article code{ font-family:var(--mono); background:var(--cyan-soft);
+  color:var(--cyan-dim); padding:1px 6px; border-radius:3px; font-size:.9em; }
+article pre code{ background:none; color:inherit; padding:0; }
+
+/* 分隔：一个居中的小点，像书里的分节符 */
+article hr{
+  border:none; height:auto; margin:3.2rem 0; width:auto;
+  background:none; text-align:center; opacity:1;
 }
-article code{ background:var(--cyan-soft); color:var(--cyan-dim); }
-article pre code{ color:inherit; background:transparent; }
+article hr::after{
+  content:"◆"; font-size:8px; color:var(--dim); opacity:.5; letter-spacing:0;
+}
 
-/* 分隔线：收细、收淡 */
-article hr{ margin:3rem auto; width:64%; opacity:.75; }
-
-/* 链接：下划线淡入，不再靠发光 */
+/* 链接：只靠一根细下划线说话 */
 article a{
   color:var(--cyan); text-decoration:none;
   border-bottom:1px solid var(--hairline);
-  transition:border-color .2s,color .2s,background .2s;
+  transition:border-color .2s,color .2s;
 }
-article a:hover{ text-shadow:none; border-bottom-color:var(--cyan); }
+article a:hover{ border-bottom-color:var(--cyan); text-shadow:none; }
 
-/* ---------- 卡片、按钮、目录 ---------- */
-.card,.post,.chip,.btn,#q,.tools{ backdrop-filter:none; }
-.card,.post{
-  background:var(--panel); border:1px solid var(--line); border-radius:14px;
+/* 装订线：宽屏时在版心右侧一条极淡的竖线，提醒这是一页 */
+@media (min-width:1180px){
+  article::after{
+    content:""; position:fixed; top:0; bottom:0;
+    left:calc(50% + 20.5rem + 22px); width:1px;
+    background:linear-gradient(180deg,transparent,var(--line) 18%,var(--line) 82%,transparent);
+    opacity:.7; pointer-events:none;
+  }
 }
-.card:hover,.post:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 30px rgba(0,0,0,.28);
-  border-color:var(--cyan-dim);
+
+/* ==========================================================================
+   目录、卡片、按钮
+   ========================================================================== */
+.card,.post,.chip,.btn,#q,.tools,.cell{ backdrop-filter:none; }
+.card,.post,.cell{
+  background:var(--panel); border:1px solid var(--line); border-radius:4px;
 }
-.post:hover{ transform:translateX(2px); }
-.card::before,.post::before{ opacity:.35; }
-.card .ct,.post a{ letter-spacing:.015em; }
-.card .cd{ line-height:1.75; }
+.card:hover,.post:hover,.cell:hover{
+  box-shadow:none; border-color:var(--cyan-dim); transform:none;
+}
+.card::before,.post::before{ display:none; }     /* 撤掉彩色竖条 */
+.card .ct,.post a{ font-family:var(--serif); letter-spacing:.01em; }
+.card .cd,.meta{ font-family:var(--sans); }
 .topbar{ border-bottom:1px solid var(--line); }
-.topbar a{ border-radius:8px; }
+.topbar a{ border-radius:3px; font-family:var(--mono); letter-spacing:.06em; }
 .topbar a:hover{ box-shadow:none; }
-.hero h1,.sec>h2{ letter-spacing:.12em; }
-.sec>h2::before{ opacity:.8; }
-.stats b{ font-variant-numeric:tabular-nums; }
-.pr-badge{ box-shadow:none; }
+.hero h1,.sec>h2{ letter-spacing:.1em; }
+.mark,.stats b{ font-variant-numeric:tabular-nums; }
 mark{ background:var(--cyan-soft); color:var(--cyan); }
+.neon-top{ display:none; }        /* 那道扫动的霓虹横线，撤 */
+.scan{ display:none; }            /* 扫描线，撤 */
 
-/* ---------- 纸模式的额外覆盖（原页面里写死的深色） ---------- */
+/* ==========================================================================
+   宣纸模式
+   ========================================================================== */
 html[data-theme="paper"] body{
   background:var(--bg) !important; background-image:none !important; color:var(--text);
 }
 html[data-theme="paper"] .stars,
-html[data-theme="paper"] .scan,
 html[data-theme="paper"] .floor,
 html[data-theme="paper"] .horizon,
-html[data-theme="paper"] .vignette,
-html[data-theme="paper"] .neon-top{ display:none; }
-html[data-theme="paper"] .topbar{ background:rgba(246,244,239,.94); }
+html[data-theme="paper"] .vignette{ display:none; }
+html[data-theme="paper"] .topbar{ background:rgba(244,240,231,.95); }
 html[data-theme="paper"] .tools{ background:var(--bg); }
-html[data-theme="paper"] #progress{ box-shadow:none; }
-html[data-theme="paper"] .card:hover,
-html[data-theme="paper"] .post:hover{ box-shadow:0 10px 26px rgba(60,50,30,.10); }
-html[data-theme="paper"] .card .ct{ color:var(--bright); }
+html[data-theme="paper"] #progress{ box-shadow:none; background:var(--cyan-dim); }
+html[data-theme="paper"] article pre{ color:#3a352d; }
 html[data-theme="paper"] .btn.on,
-html[data-theme="paper"] .chip.on{ color:#fffdf8; background:var(--cyan-dim); }
-html[data-theme="paper"] article pre{ color:#3b4656; }
-html[data-theme="paper"] .hero h1,
-html[data-theme="paper"] .doc-title{ text-shadow:none; }
+html[data-theme="paper"] .chip.on{ color:#fbf8f1; background:var(--cyan-dim); }
 
-/* ---------- 主题切换钮（JS 注入，仅文章页） ---------- */
+/* ==========================================================================
+   夜 / 纸 切换（仅文章页，JS 注入）
+   ========================================================================== */
 .sg-theme{
-  position:fixed; right:20px; bottom:22px; z-index:60;
-  display:flex; padding:4px; gap:2px;
-  background:var(--panel); border:1px solid var(--line); border-radius:999px;
-  box-shadow:0 6px 22px rgba(0,0,0,.25);
-  font-family:inherit;
+  position:fixed; right:22px; bottom:22px; z-index:60;
+  display:flex; gap:0; padding:3px;
+  background:var(--panel); border:1px solid var(--line); border-radius:3px;
+  box-shadow:none; font-family:var(--mono);
 }
 .sg-theme button{
-  appearance:none; border:0; cursor:pointer; font-family:inherit;
+  appearance:none; border:0; cursor:pointer; font-family:var(--mono);
   background:transparent; color:var(--dim);
-  font-size:12px; letter-spacing:.14em; line-height:1;
-  padding:9px 14px; border-radius:999px; transition:color .2s,background .2s;
+  font-size:11px; letter-spacing:.1em; line-height:1;
+  padding:8px 11px; border-radius:2px; transition:color .2s,background .2s;
 }
-.sg-theme button[aria-pressed="true"]{ background:var(--cyan-soft); color:var(--cyan); }
+.sg-theme button[aria-pressed="true"]{ background:var(--panel2); color:var(--cyan); }
 .sg-theme button:hover{ color:var(--cyan); }
 @media (max-width:640px){ .sg-theme{ right:12px; bottom:14px; } }
 
-/* ---------- 尊重系统的减动效设置 ---------- */
+/* ---------- 减动效 / 窄屏 ---------- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ animation:none !important; transition:none !important; }
   html{ scroll-behavior:auto; }
 }
-
-/* ---------- 窄屏 ---------- */
 @media (max-width:640px){
-  article{ padding:36px 20px 96px; }
-  article p{ font-size:16.5px; line-height:1.98; }
-  article h1{ font-size:1.42rem; margin-top:2.4rem; }
-  article table{ font-size:13px; }
-  article th,article td{ padding:9px 11px; }
+  article{ padding:36px 20px 100px; }
+  article p{ font-size:17px; line-height:2.0; text-align:left; }
+  article h1{ font-size:1.32rem; margin-top:2.6rem; }
+  article table{ font-size:13.5px; }
+  article th,article td{ padding:9px 10px; }
 }
