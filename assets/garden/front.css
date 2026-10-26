@@ -37,46 +37,77 @@
    每个盒子有前后面两层边框，透视下就立成了立方体；
    靠近了放大、淡出，远处从黑暗里浮出来。
    由 front.js 生成 16 个 <i class="cube">，纯装饰。 */
+/* ================= 空间：一个装人的盒子 =================
+   四面：地板（.floor）、天花板（.stars）、左右两面墙（front.js 生成）。
+   立方体不再是屏幕中间一小串，而是大到会从身边擦过去——
+   近的时候四边都出了画，只剩一道边框扫过，那就是"在里面"。 */
 .tunnel{
-  position:fixed; inset:0; z-index:0; pointer-events:none;
-  perspective:900px; perspective-origin:50% 46%;
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  perspective:680px; perspective-origin:50% 50%;
   overflow:hidden;
 }
-/* 始终在面前的那一道门框 */
+
+/* 左右两面墙：从两侧向内倾，格子随透视收缩，和地板/天花板接成一条管子 */
+.wall{
+  position:absolute; top:-32%; bottom:-32%; width:76%;
+  background-image:
+    linear-gradient(90deg, rgba(255,255,255,.105) 0 1px, transparent 1px),
+    linear-gradient(0deg,  rgba(255,255,255,.105) 0 1px, transparent 1px);
+  background-size:96px 96px, 96px 96px;
+  animation:wallFlow 4.2s linear infinite;
+  will-change:background-position;
+}
+.wall.left{
+  left:0; transform-origin:left center; transform:rotateY(62deg);
+  -webkit-mask-image:linear-gradient(90deg,#000 0,transparent 94%);
+          mask-image:linear-gradient(90deg,#000 0,transparent 94%);
+}
+.wall.right{
+  right:0; transform-origin:right center; transform:rotateY(-62deg);
+  -webkit-mask-image:linear-gradient(270deg,#000 0,transparent 94%);
+          mask-image:linear-gradient(270deg,#000 0,transparent 94%);
+}
+@keyframes wallFlow{
+  from{ background-position:0 0,0 0; }
+  to  { background-position:0 0,0 192px; }
+}
+
+/* 门口：始终横在正前方的一道框 */
 .tunnel::before{
-  content:""; position:absolute; left:50%; top:46%;
-  width:min(64vmin,600px); aspect-ratio:3/2;
-  transform:translate(-50%,-50%) translateZ(-40px);
-  border:1px solid rgba(255,255,255,.26);
-  box-shadow:0 0 34px rgba(255,255,255,.05), inset 0 0 46px rgba(255,255,255,.018);
+  content:""; position:absolute; left:50%; top:50%;
+  width:min(118vmin,1320px); aspect-ratio:16/10;
+  transform:translate(-50%,-50%) translateZ(-120px);
+  border:1px solid rgba(255,255,255,.22);
   animation:frameBreathe 6s ease-in-out infinite;
 }
 @keyframes frameBreathe{
-  0%,100%{ opacity:.40; }
-  50%    { opacity:.85; }
+  0%,100%{ opacity:.28; }
+  50%    { opacity:.62; }
 }
+
+/* 立方体 */
 .cube{
-  display:block; position:absolute; left:50%; top:46%;
-  width:min(52vmin,470px); aspect-ratio:3/2;
-  border:1px solid rgba(255,255,255,.40);
+  display:block; position:absolute; left:50%; top:50%;
+  width:min(112vmin,1240px); aspect-ratio:16/10;
+  border:1px solid rgba(255,255,255,.42);
   transform-style:preserve-3d;
-  box-shadow:0 0 12px rgba(255,255,255,.08);
-  transform:translate(-50%,-50%) translateZ(-2800px) rotateZ(var(--r,0deg)) scale(var(--s,1));
-  animation:flyIn 9s linear infinite;
+  box-shadow:0 0 14px rgba(255,255,255,.07);
+  transform:translate(-50%,-50%) translateZ(-2600px) rotateZ(var(--r,0deg)) scale(var(--s,1));
+  animation:flyIn 10s linear infinite;
   will-change:transform,opacity;
 }
-/* 后面那一面：方框因此读成立方体，而不是一张卡片 */
+/* 后面那一面：前后一错开，方框就读成了盒子 */
 .cube::before{
   content:""; position:absolute; inset:0;
-  border:1px solid rgba(255,255,255,.15);
-  transform:translateZ(-170px);
+  border:1px solid rgba(255,255,255,.16);
+  transform:translateZ(-230px);
 }
 @keyframes flyIn{
-  0%  { transform:translate(-50%,-50%) translateZ(-2800px) rotateZ(var(--r,0deg)) scale(var(--s,1)); opacity:0; }
-  10% { opacity:.42; }
-  55% { opacity:.85; }
-  88% { opacity:.62; }
-  100%{ transform:translate(-50%,-50%) translateZ(520px) rotateZ(var(--r,0deg)) scale(var(--s,1)); opacity:0; }
+  0%  { transform:translate(-50%,-50%) translateZ(-2600px) rotateZ(var(--r,0deg)) scale(var(--s,1)); opacity:0; }
+  9%  { opacity:.34; }
+  52% { opacity:.80; }
+  90% { opacity:.50; }
+  100%{ transform:translate(-50%,-50%) translateZ(450px) rotateZ(var(--r,0deg)) scale(var(--s,1)); opacity:0; }
 }
 .horizon{
   background:radial-gradient(ellipse 62% 100% at 50% 60%,
