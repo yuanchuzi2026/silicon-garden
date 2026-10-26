@@ -1,6 +1,7 @@
 /* ==========================================================================
    硅基花园 · 门面层 —— index.html（门）与 home.html（厅）
    只有黑、白、灰；光只有白光。
+   门里只有两个面：上面一片网格，下面一片网格，都朝同一个消失点收。
    ========================================================================== */
 
 /* ================= 一、门 ================= */
@@ -9,8 +10,8 @@
 .floor{
   background-image:
     radial-gradient(circle at 1px 1px, rgba(255,255,255,.55) 0 1.1px, transparent 1.4px),
-    linear-gradient(90deg, rgba(255,255,255,.10) 0 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255,255,255,.10) 0 1px, transparent 1px);
+    linear-gradient(90deg, rgba(255,255,255,.105) 0 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.105) 0 1px, transparent 1px);
   background-size:48px 48px, 48px 48px, 48px 48px;
   -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 74%,transparent 100%);
           mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 74%,transparent 100%);
@@ -22,17 +23,17 @@
   to  { background-position:0 96px,0 0,0 96px; }
 }
 @keyframes breathe{
-  0%,100%{ opacity:.14; }
-  50%    { opacity:.34; }
+  0%,100%{ opacity:.16; }
+  50%    { opacity:.40; }
 }
 
-/* 天花板：地面镜像过来的一面 */
+/* 天花板：地面镜像过来的一面，同样的格子、同样的点 */
 body:has(.gate) .stars{
   position:fixed; left:-60%; right:-60%; top:0; bottom:auto; height:54%;
   background-image:
     radial-gradient(circle at 1px 1px, rgba(255,255,255,.30) 0 1px, transparent 1.3px),
-    linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 1px);
+    linear-gradient(90deg, rgba(255,255,255,.07) 0 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, transparent 1px);
   background-size:48px 48px, 48px 48px, 48px 48px;
   transform:perspective(620px) rotateX(-64deg);
   transform-origin:center bottom;
@@ -47,7 +48,7 @@ body:has(.gate) .stars{
 }
 .stars{ opacity:.55; }   /* 首页保持原来的星尘 */
 
-/* 地平线：通道尽头 */
+/* 地平线：两面网格收拢的地方 */
 .horizon{
   background:radial-gradient(ellipse 62% 100% at 50% 60%,
     rgba(255,255,255,.07),rgba(255,255,255,.02) 55%,transparent 75%);
@@ -64,49 +65,7 @@ body:has(.gate) .stars{
   50%    { opacity:.66; transform:scaleX(1.14); }
 }
 
-/* ================= 立体网格盒子 =================
-   六面都带格子，整体从一个点放大到糊住整个屏幕，穿过去，循环。
-   它就是"空间"本身——不是一串方框，是一个迎面盖过来的立方体。 */
-.tunnel{
-  position:fixed; inset:0; z-index:1; pointer-events:none;
-  perspective:900px; perspective-origin:50% 50%;
-  overflow:hidden;
-}
-.cube3d{
-  position:absolute; left:50%; top:50%;
-  width:520px; height:520px; margin:-260px 0 0 -260px;
-  transform-style:preserve-3d;
-  transform-origin:50% 50%;
-  transform:scale(.03);
-  opacity:0;
-  animation:grow 9s cubic-bezier(.4,0,.6,1) infinite;
-  will-change:transform,opacity;
-  margin-left:calc(-260px + var(--dx, 0%));
-  margin-top:calc(-260px + var(--dy, 0%));
-}
-@keyframes grow{
-  0%   { transform:scale(.03); opacity:0; }
-  6%   { opacity:.85; }
-  88%  { opacity:.85; }
-  100% { transform:scale(8.6); opacity:0; }
-}
-/* 六个面，每面都是同样疏密的格子 */
-.cube3d .face{
-  position:absolute; inset:0;
-  border:1px solid rgba(255,255,255,.34);
-  background-image:
-    linear-gradient(90deg, rgba(255,255,255,.10) 0 1px, transparent 1px),
-    linear-gradient(0deg,  rgba(255,255,255,.10) 0 1px, transparent 1px);
-  background-size:86.66px 86.66px, 86.66px 86.66px;
-}
-.cube3d .f{ transform:translateZ(260px); }
-.cube3d .b{ transform:translateZ(-260px); }
-.cube3d .l{ transform:rotateY(90deg)  translateZ(260px); }
-.cube3d .r{ transform:rotateY(-90deg) translateZ(260px); }
-.cube3d .t{ transform:rotateX(90deg)  translateZ(260px); }
-.cube3d .d{ transform:rotateX(-90deg) translateZ(260px); }
-
-/* 入口：两扇磨砂门板，hover 打开；同时整个空间加速 */
+/* 入口：两扇磨砂门板，hover 打开；同一瞬间上下两片网格加速 */
 .go{
   position:relative; isolation:isolate; overflow:hidden;
   border:1px solid rgba(255,255,255,.22); background:transparent;
@@ -131,13 +90,12 @@ body:has(.gate) .stars{
 .go:hover::before,.go:focus-visible::before,.go:active::before{ transform:translateX(-101%); }
 .go:hover::after, .go:focus-visible::after, .go:active::after { transform:translateX(101%); }
 
-body:has(.go:hover) .cube3d,
-body:has(.go:focus-visible) .cube3d,
-body:has(.go:active) .cube3d{ animation-duration:3.4s; }
 body:has(.go:hover) .floor,
-body:has(.go:active) .floor{ animation-duration:3s,4.5s; }
+body:has(.go:active) .floor,
+body:has(.go:focus-visible) .floor{ animation-duration:3s,4.5s; }
 body:has(.go:hover) .stars,
-body:has(.go:active) .stars{ animation-duration:3s,4.5s; }
+body:has(.go:active) .stars,
+body:has(.go:focus-visible) .stars{ animation-duration:3s,4.5s; }
 
 .gate-foot{ color:var(--dim); }
 
@@ -206,14 +164,6 @@ footer a:hover{ color:var(--bright); text-shadow:none; }
 footer .motto b{ color:var(--purple); }
 
 @media (max-width:480px){
-  .cube3d{ width:320px; height:320px; margin:-160px 0 0 -160px; }
-  .cube3d .face{ background-size:53.33px 53.33px, 53.33px 53.33px; }
-  .cube3d .f{ transform:translateZ(160px); }
-  .cube3d .b{ transform:translateZ(-160px); }
-  .cube3d .l{ transform:rotateY(90deg)  translateZ(160px); }
-  .cube3d .r{ transform:rotateY(-90deg) translateZ(160px); }
-  .cube3d .t{ transform:rotateX(90deg)  translateZ(160px); }
-  .cube3d .d{ transform:rotateX(-90deg) translateZ(160px); }
   .gate .epi{ letter-spacing:.24em; text-indent:.24em; }
   .go{ letter-spacing:.16em; text-indent:.16em; }
   .hero h1{ letter-spacing:.1em; text-indent:.1em; }
