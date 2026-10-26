@@ -55,17 +55,58 @@ body:has(.gate) .stars{
   background:radial-gradient(ellipse 62% 100% at 50% 60%,
     rgba(255,255,255,.07),rgba(255,255,255,.02) 55%,transparent 75%);
 }
+/* 收束点：上下两片网格在这里汇合。一个很淡的白核，一呼一吸。 */
 .horizon::after{
-  content:""; position:absolute; left:50%; top:52%;
-  width:132px; height:2px; margin-left:-66px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
-  filter:blur(1.5px);
-  animation:slit 5.5s ease-in-out infinite;
+  content:""; position:absolute; left:50%; top:50%;
+  width:260px; height:260px; margin:-130px 0 0 -130px;
+  border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(255,255,255,.20) 0%, rgba(255,255,255,.075) 38%, transparent 70%);
+  filter:blur(9px);
+  animation:node 6.5s ease-in-out infinite;
 }
-@keyframes slit{
-  0%,100%{ opacity:.20; transform:scaleX(.86); }
-  50%    { opacity:.66; transform:scaleX(1.14); }
+@keyframes node{
+  0%,100%{ opacity:.55; transform:scale(.92); }
+  50%    { opacity:1;   transform:scale(1.08); }
 }
+
+/* 门腔与排版：logo 就是那个收束的节点，字全部排在它下面 */
+.gate{
+  justify-content:flex-start;
+  padding:40vh 24px 9vh;
+}
+.gate-logo{
+  width:min(27vmin,148px);
+  filter:drop-shadow(0 0 22px rgba(255,255,255,.22)) drop-shadow(0 0 60px rgba(255,255,255,.08));
+  animation-duration:15s;
+}
+.gate h1{
+  margin-top:30px;
+  font-size:clamp(36px,6.6vw,58px);
+  letter-spacing:.24em; text-indent:.24em;
+  line-height:1.28;
+}
+.gate .sub{
+  margin-top:15px; font-size:10.5px;
+  letter-spacing:.46em; text-indent:.46em;
+  color:var(--dim);
+}
+.gate .tag{
+  margin-top:30px; padding:0; border:0; background:none;
+  font-size:12px; letter-spacing:.26em; text-indent:.26em;
+  color:var(--dim);
+}
+.gate .tag b{ color:var(--cyan-dim); margin:0 .32em; }
+.gate .epi{
+  margin-top:42px; font-size:16px;
+  letter-spacing:.4em; text-indent:.4em;
+  color:var(--text);
+}
+.gate .epi::before{
+  content:""; display:block; width:1px; height:30px;
+  margin:0 auto 22px; background:var(--line);
+}
+.cta{ margin-top:46px; }
 
 /* 入口：两扇磨砂门板，hover 打开；同一瞬间上下两片网格加速 */
 .go{
@@ -167,6 +208,15 @@ footer .motto b{ color:var(--purple); }
 
 @media (max-width:480px){
   .gate .epi{ letter-spacing:.24em; text-indent:.24em; }
+  .go{ letter-spacing:.16em; text-indent:.16em; }
+  .hero h1{ letter-spacing:.1em; text-indent:.1em; }
+}
+ text-indent:.18em; margin-top:22px; }
+  .gate .sub{ letter-spacing:.32em; text-indent:.32em; }
+  .gate .tag{ margin-top:22px; letter-spacing:.18em; text-indent:.18em; font-size:11.5px; }
+  .gate .epi{ margin-top:30px; letter-spacing:.28em; text-indent:.28em; font-size:14.5px; }
+  .gate .epi::before{ height:22px; margin-bottom:16px; }
+  .cta{ margin-top:32px; }
   .go{ letter-spacing:.16em; text-indent:.16em; }
   .hero h1{ letter-spacing:.1em; text-indent:.1em; }
 }
