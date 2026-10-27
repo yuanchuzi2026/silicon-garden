@@ -25,6 +25,9 @@ body{
   background:var(--bg);color:var(--text);line-height:1.75;overflow-x:hidden;
 }
 
+/* ===== 无限立体网格背景：中央空走廊，线在两边推进 ===== */
+#space{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
 /* ===== 氛围层：星尘 / 顶部霓虹线 / CRT 扫描线 ===== */
 .stars,.stars::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0}
 .stars{
@@ -148,11 +151,9 @@ body{
 <link rel="stylesheet" href="assets/garden/front.css">
 </head>
 <body>
+<canvas id="space" aria-hidden="true"></canvas>
 <div class="neon-top"></div>
-<div class="stars"></div>
 <div class="scan"></div>
-<div class="floor"></div>
-<div class="horizon"></div>
 <div class="vignette"></div>
 
 <main class="gate">
@@ -169,5 +170,100 @@ body{
 <footer class="gate-foot">
   <a href="https://github.com/yuanchuzi2026/silicon-garden">GitHub</a><span class="sep"> · </span><a href="MANIFESTO.html">宣言</a><span class="sep"> · </span><a href="https://github.com/yuanchuzi2026/silicon-garden/issues">回声板</a>
 </footer>
+
+<script>
+/* 无限三维网格：手写 3D 投影，无库。中央留出空走廊（格子半格偏移），
+   所有线在四周向前推进；hover 入口时加速。reduced-motion 只画一帧。 */
+(function(){
+const cv=document.getElementById('space'),ctx=cv.getContext('2d');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W=0,H=0,CX=0,CY=0,S=1;
+function resize(){
+  const d=Math.min(devicePixelRatio||1,2);
+  W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;
+  ctx.setTransform(d,0,0,d,0,0);
+  CX=W/2;CY=H*0.44;S=Math.min(W,H);
+}
+addEventListener('resize',resize);resize();
+
+const SP=1,K=13,CAM=3.2,FOCAL=2.1;
+const NX=S<600?3:4,NY=3;
+const XS=[],YS=[];
+for(let i=-NX;i<NX;i++) XS.push((i+0.5)*SP);   // ±0.5,±1.5,±2.5,±3.5 —— 中央无竖线
+for(let j=-NY;j<NY;j++) YS.push((j+0.5)*SP);   // 中央无横线：视线正中是一格空走廊
+const X0=XS[0],X1=XS[XS.length-1],Y0=YS[0],Y1=YS[YS.length-1];
+
+function proj(x,y,z){
+  const d=z+CAM; if(d<=0.12) return null;
+  const f=FOCAL/d;
+  return [CX+x*f*S*0.42, CY+y*f*S*0.42];
+}
+
+let speed=0.3,target=0.3,travel=0;
+const go=document.querySelector('.go');
+if(go){
+  ['mouseenter','focus'].forEach(e=>go.addEventListener(e,()=>target=1.1));
+  ['mouseleave','blur'].forEach(e=>go.addEventListener(e,()=>target=0.3));
+}
+
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;
+  speed+=(target-speed)*0.06;
+  if(!reduced) travel+=dt*speed;
+  const t=now/1000;
+  ctx.fillStyle='#080808';ctx.fillRect(0,0,W,H);
+  const off=travel%SP, sway=Math.sin(t*0.07)*0.12;
+  const breathe=0.72+0.18*Math.sin(t*0.9);
+
+  // 纵向线：从两侧向深处收
+  ctx.lineWidth=1;
+  for(const x0 of XS) for(const y of YS){
+    const x=x0+sway;
+    const p1=proj(x,y,0.25),p2=proj(x,y,K*SP);
+    if(!p1||!p2) continue;
+    const g=ctx.createLinearGradient(p1[0],p1[1],p2[0],p2[1]);
+    g.addColorStop(0,'rgba(255,255,255,0.15)');
+    g.addColorStop(0.5,'rgba(255,255,255,0.055)');
+    g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.strokeStyle=g;
+    ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
+  }
+  // 每层方框 + 节点
+  for(let k=0;k<K;k++){
+    const z=k*SP-off+0.25; if(z<0.2) continue;
+    const fade=Math.max(0,1-z/(K*SP*0.7));
+    const near=Math.min(1,(z-0.2)/1.2);
+    const a=fade*near; if(a<=0.01) continue;
+    ctx.strokeStyle=`rgba(255,255,255,${0.115*a})`;
+    for(const y of YS){
+      const p1=proj(X0+sway,y,z),p2=proj(X1+sway,y,z);
+      if(!p1||!p2) continue;
+      ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
+    }
+    for(const x0 of XS){
+      const p1=proj(x0+sway,Y0,z),p2=proj(x0+sway,Y1,z);
+      if(!p1||!p2) continue;
+      ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
+    }
+    const r=Math.max(0.6,2.2/(z*0.35+0.6));
+    ctx.fillStyle=`rgba(255,255,255,${0.55*a*breathe})`;
+    for(const x0 of XS) for(const y of YS){
+      const p=proj(x0+sway,y,z); if(!p) continue;
+      ctx.fillRect(p[0]-r/2,p[1]-r/2,r,r);
+    }
+  }
+  // 中央柔暗：走廊干净，字不被远处的线糊住
+  const dk=ctx.createRadialGradient(CX,CY,0,CX,CY,S*0.46);
+  dk.addColorStop(0,'rgba(8,8,8,0.68)');
+  dk.addColorStop(0.55,'rgba(8,8,8,0.34)');
+  dk.addColorStop(1,'rgba(8,8,8,0)');
+  ctx.fillStyle=dk;ctx.fillRect(0,0,W,H);
+
+  if(!reduced) requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
 </body>
 </html>
