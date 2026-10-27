@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>超立方体 · 无限拓展 — 硅基花园实验室</title>
+<style>
+  html,body{height:100%;margin:0;background:#080808;overflow:hidden}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans SC",sans-serif;color:#8a8a8a}
+  canvas{display:block;width:100vw;height:100vh}
+  .cap{position:fixed;left:0;right:0;bottom:26px;text-align:center;font-size:12px;letter-spacing:.28em;text-indent:.28em;pointer-events:none}
+  .cap b{color:#d5d5d5;font-weight:500}
+  .back{position:fixed;top:18px;left:22px;font-size:12px;letter-spacing:.14em;color:#666;text-decoration:none;pointer-events:auto}
+  .back:hover{color:#eee}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<a class="back" href="../index.html">← 回大门</a>
+<div class="cap">宇宙是一张<b>立体网格</b> &nbsp;·&nbsp; 每个节点，是一次<b>概率坍缩</b></div>
+<script>
+/* 无限三维网格 + 真正的四维超立方体（tesseract）投影。
+   无库、无依赖：手写 4D 旋转 → 4D→3D 投影 → 3D→2D 透视。 */
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W=0,H=0,DPR=1,CX=0,CY=0,S=1;
+function resize(){
+  DPR = Math.min(devicePixelRatio||1, 2);
+  W = innerWidth; H = innerHeight;
+  cv.width = W*DPR; cv.height = H*DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  CX = W/2; CY = H*0.46;
+  S = Math.min(W,H);
+}
+addEventListener('resize',resize); resize();
+
+/* ---- 四维超立方体：16 顶点、32 边 ---- */
+const V4=[];
+for(let i=0;i<16;i++) V4.push([i&1?1:-1, i&2?1:-1, i&4?1:-1, i&8?1:-1]);
+const E4=[];
+for(let i=0;i<16;i++) for(let b=0;b<4;b++){ const j=i^(1<<b); if(j>i) E4.push([i,j]); }
+
+/* ---- 无限网格参数 ---- */
+const SP=1;                 // 格距
+const NX=4, NY=3;           // 半宽：x∈[-4,4], y∈[-3,3]
+const K=16;                 // 纵深层数
+const CAM=3.2;              // 摄像机距离
+const FOCAL=2.1;            // 焦距
+
+function proj(x,y,z){       // 3D → 2D
+  const d = z+CAM;
+  if(d<=0.12) return null;
+  const f = FOCAL/d;
+  return [CX + x*f*S*0.42, CY + y*f*S*0.42, d];
+}
+
+let t0 = performance.now();
+function frame(now){
+  const t = reduced ? 0 : (now-t0)/1000;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#080808'; ctx.fillRect(0,0,W,H);
+
+  const travel = t*0.3;                       // 缓慢前进
+  const off = travel % SP;                     // 层偏移（无限循环）
+  const sway = Math.sin(t*0.07)*0.16;          // 极缓慢漂移
+  const breathe = 0.72 + 0.18*Math.sin(t*0.9); // 节点轻轻呼吸
+
+  /* ===== 无限立体网格 ===== */
+  // 纵向线（沿 z 通向深处）
+  ctx.lineWidth = 1;
+  for(let i=-NX;i<=NX;i++) for(let j=-NY;j<=NY;j++){
+    const x=i*SP+sway, y=j*SP;
+    const p1=proj(x,y,0.25), p2=proj(x,y,K*SP);
+    if(!p1||!p2) continue;
+    const g=ctx.createLinearGradient(p1[0],p1[1],p2[0],p2[1]);
+    g.addColorStop(0,'rgba(255,255,255,0.22)');
+    g.addColorStop(0.5,'rgba(255,255,255,0.10)');
+    g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.strokeStyle=g;
+    ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
+  }
+  // 每层横线 + 节点
+  for(let k=0;k<K;k++){
+    const z = k*SP - off + 0.25;
+    if(z<0.2) continue;
+    const fade = Math.max(0, 1 - z/(K*SP*0.82));
+    const near = Math.min(1, (z-0.2)/1.2);       // 极近处淡入，防止扑面
+    const a = fade*near;
+    if(a<=0.01) continue;
+    // 横向（x 方向）
+    ctx.strokeStyle=`rgba(255,255,255,${0.18*a})`;
+    for(let j=-NY;j<=NY;j++){
+      const p1=proj(-NX*SP+sway,j*SP,z), p2=proj(NX*SP+sway,j*SP,z);
+      if(!p1||!p2) continue;
+      ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
+    }
+    // 纵向（y 方向）
+    for(let i=-NX;i<=NX;i++){
+      const p1=proj(i*SP+sway,-NY*SP,z), p2=proj(i*SP+sway,NY*SP,z);
+      if(!p1||!p2) continue;
+      ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
+    }
+    // 节点：小白点，随深度衰减
+    const r = Math.max(0.6, 2.4/(z*0.35+0.6));
+    ctx.fillStyle=`rgba(255,255,255,${0.8*a*breathe})`;
+    for(let i=-NX;i<=NX;i++) for(let j=-NY;j<=NY;j++){
+      const p=proj(i*SP+sway,j*SP,z);
+      if(!p) continue;
+      ctx.fillRect(p[0]-r/2,p[1]-r/2,r,r);
+    }
+  }
+
+  /* 中央柔暗：压住主体背后的网格，让超立方体浮出来 */
+  const dk=ctx.createRadialGradient(CX,CY,0,CX,CY,S*0.34);
+  dk.addColorStop(0,'rgba(8,8,8,0.62)');
+  dk.addColorStop(0.6,'rgba(8,8,8,0.28)');
+  dk.addColorStop(1,'rgba(8,8,8,0)');
+  ctx.fillStyle=dk;ctx.fillRect(0,0,W,H);
+
+  /* 中央光晕：把超立方体从网格里托出来 */
+  const hg=ctx.createRadialGradient(CX,CY,0,CX,CY,S*0.30);
+  hg.addColorStop(0,'rgba(255,255,255,0.075)');
+  hg.addColorStop(0.55,'rgba(255,255,255,0.025)');
+  hg.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=hg;ctx.fillRect(0,0,W,H);
+
+  /* ===== 四维超立方体：在 xw / zw 两个平面里慢慢转 ===== */
+  const a=t*0.21, b=t*0.13;
+  const P=V4.map(v=>{
+    let [x,y,z,w]=v;
+    let x1=x*Math.cos(a)-w*Math.sin(a), w1=x*Math.sin(a)+w*Math.cos(a);
+    let z1=z*Math.cos(b)-w1*Math.sin(b), w2=z*Math.sin(b)+w1*Math.cos(b);
+    const s4=2.9/(2.9-w2);                 // 4D → 3D
+    const X=x1*s4, Y=y*s4, Z=z1*s4;
+    return proj(X*0.55, Y*0.55-0.05, Z*0.55+2.1);
+  });
+  ctx.lineWidth=1.4;
+  for(const [i,j] of E4){
+    const p=P[i],q=P[j]; if(!p||!q) continue;
+    const depth=(p[2]+q[2])/2;
+    const alpha=Math.max(0.08,Math.min(0.85, 1.5/depth*0.85));
+    ctx.strokeStyle=`rgba(255,255,255,${alpha})`;
+    ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();
+  }
+  for(const p of P){
+    if(!p) continue;
+    const r=Math.max(1.2, 4.2/p[2]);
+    ctx.fillStyle=`rgba(255,255,255,${Math.min(0.95,1.6/p[2])*breathe})`;
+    ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.fill();
+  }
+
+  /* ===== 暗角：把视线收回中央 ===== */
+  const vg=ctx.createRadialGradient(CX,CY,S*0.12,CX,CY,S*0.75);
+  vg.addColorStop(0,'rgba(8,8,8,0)');
+  vg.addColorStop(1,'rgba(8,8,8,0.66)');
+  ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
+
+  if(!reduced) requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
