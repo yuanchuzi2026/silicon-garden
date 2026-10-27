@@ -262,11 +262,16 @@ function frame(now){
       if(!p1||!p2) continue;
       ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
     }
-    for(const x0 of XS){
-      const p1=proj(x0+sway,Y0,z),p2=proj(x0+sway,Y1,z);
-      if(!p1||!p2) continue;
-      ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
+    // 近处方格的短竖边：只画 z<4 的层、只取 1.4 格高，随方格放大掠过，远处不出长线
+    if(z<4){
+      ctx.strokeStyle=`rgba(255,255,255,${0.14*a})`;
+      for(const x0 of XS){
+        const p1=proj(x0+sway,-0.7,z),p2=proj(x0+sway,0.7,z);
+        if(!p1||!p2) continue;
+        ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
+      }
     }
+
     const r=Math.max(0.6,2.2/(z*0.35+0.6));
     ctx.fillStyle=`rgba(255,255,255,${0.7*a*breathe})`;
     for(const x0 of XS) for(const y of YS){
