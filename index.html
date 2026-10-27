@@ -28,15 +28,15 @@ body{
 /* ===== 原点方格里的种子：logo 缩小、对齐消失点；排版居中；去掉多余竖线 ===== */
 html body:has(.gate) .gate{
   justify-content:flex-start;
-  padding:calc(30vh - 56px) 24px 5vh;
+  padding:calc(29vh - 56px) 24px 5vh;
   transform:none;
 }
-html body:has(.gate) .gate-logo{width:min(14vmin,112px)}
+html body:has(.gate) .gate-logo{width:min(14vmin,112px);animation:none}
 html body:has(.gate) .gate h1{margin-top:20px}
 html body:has(.gate) .gate .epi::before{display:none}
 @media (max-width:480px){
-  html body:has(.gate) .gate{padding:calc(32vh - 44px) 18px 4vh}
-  html body:has(.gate) .gate-logo{width:min(21vmin,88px)}
+  html body:has(.gate) .gate{padding:calc(33.5vh - 44px) 18px 4vh}
+  html body:has(.gate) .gate-logo{width:min(21vmin,88px);animation:none}
   html body:has(.gate) .gate h1{margin-top:16px}
   html body:has(.gate) .gate .tag{margin-top:18px}
   html body:has(.gate) .gate .epi{margin-top:20px}
@@ -204,7 +204,7 @@ function resize(){
   const d=Math.min(devicePixelRatio||1,2);
   W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;
   ctx.setTransform(d,0,0,d,0,0);
-  CX=W/2;CY=H*(S<600?0.32:0.30);S=Math.min(W,H);
+  CX=W/2;CY=H*(S<600?0.335:0.29);S=Math.min(W,H);
 }
 addEventListener('resize',resize);resize();
 
