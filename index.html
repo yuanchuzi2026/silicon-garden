@@ -122,18 +122,20 @@ html body:has(.gate) .stars{
 }
 html body:has(.gate) .stars::before{
   content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.92) 0 1.4px,transparent 1.9px);
-  background-size:48px 48px;
-  animation:roadUp 9s linear infinite,starglow 4.8s ease-in-out infinite;
-  will-change:background-position,opacity,filter;
+  background-image:
+    radial-gradient(circle at 1px 1px,rgba(255,255,255,.85) 0 1.2px,transparent 1.6px),
+    radial-gradient(circle at 1px 1px,rgba(255,255,255,.22) 0 2.4px,transparent 3.2px);
+  background-size:48px 48px,48px 48px;
+  animation:roadUp 9s linear infinite,starglow 6.2s ease-in-out infinite;
+  will-change:background-position,opacity;
 }
 @keyframes starglow{
-  0%,100%{opacity:.3;filter:drop-shadow(0 0 1px rgba(255,255,255,.12)) brightness(.85)}
-  50%{opacity:1;filter:drop-shadow(0 0 4px rgba(255,255,255,.8)) brightness(1.4)}
+  0%,100%{opacity:.5}
+  50%{opacity:.95}
 }
 body:has(.go:hover) .stars::before,
 body:has(.go:active) .stars::before,
-body:has(.go:focus-visible) .stars::before{animation-duration:3s,4.8s}
+body:has(.go:focus-visible) .stars::before{animation-duration:3s,6.2s}
 
 /* ===== 大门口底部一行 ===== */
 .gate-foot{
@@ -167,7 +169,7 @@ body:has(.go:focus-visible) .stars::before{animation-duration:3s,4.8s}
 }
 @media (prefers-reduced-motion:reduce){
   .stars,.neon-top,.floor,.gate-logo,.gate>*{animation:none}
-  html body:has(.gate) .stars::before{animation:none;opacity:.7;filter:drop-shadow(0 0 2px rgba(255,255,255,.3))}
+  html body:has(.gate) .stars::before{animation:none;opacity:.7}
 }
 </style>
 <link rel="stylesheet" href="assets/garden/skin.css">
