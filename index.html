@@ -110,33 +110,6 @@ body{
 .go:hover{border-color:var(--cyan);color:#f8f8f8;transform:translateY(-2px);
   box-shadow:0 0 26px rgba(248,248,248,.25)}
 
-
-/* ===== 天花板网格点阵：每颗小白点带呼吸白光 =====
-   点阵从 .stars 背景拆到 ::before，网格线原地不动；
-   roadUp 与线层同步滚动，starglow 负责一呼一吸。 */
-html body:has(.gate) .stars{
-  background-image:
-    linear-gradient(90deg, rgba(255,255,255,.105) 0 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255,255,255,.105) 0 1px, transparent 1px);
-  background-size:48px 48px,48px 48px;
-}
-html body:has(.gate) .stars::before{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:
-    radial-gradient(circle at 1px 1px,rgba(255,255,255,.85) 0 1.2px,transparent 1.6px),
-    radial-gradient(circle at 1px 1px,rgba(255,255,255,.22) 0 2.4px,transparent 3.2px);
-  background-size:48px 48px,48px 48px;
-  animation:roadUp 9s linear infinite,starglow 6.2s ease-in-out infinite;
-  will-change:background-position,opacity;
-}
-@keyframes starglow{
-  0%,100%{opacity:.5}
-  50%{opacity:.95}
-}
-body:has(.go:hover) .stars::before,
-body:has(.go:active) .stars::before,
-body:has(.go:focus-visible) .stars::before{animation-duration:3s,6.2s}
-
 /* ===== 大门口底部一行 ===== */
 .gate-foot{
   position:fixed;left:0;right:0;bottom:20px;z-index:2;text-align:center;
@@ -169,7 +142,6 @@ body:has(.go:focus-visible) .stars::before{animation-duration:3s,6.2s}
 }
 @media (prefers-reduced-motion:reduce){
   .stars,.neon-top,.floor,.gate-logo,.gate>*{animation:none}
-  html body:has(.gate) .stars::before{animation:none;opacity:.7}
 }
 </style>
 <link rel="stylesheet" href="assets/garden/skin.css">
