@@ -25,6 +25,10 @@ body{
   background:var(--bg);color:var(--text);line-height:1.75;overflow-x:hidden;
 }
 
+/* ===== 入口按钮：去掉两扇门板的中缝 ===== */
+.cta .go::before{border-right:0}
+.cta .go::after{border-left:0}
+
 /* ===== 无限立体网格背景：中央空走廊，线在两边推进 ===== */
 #space{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 
@@ -186,7 +190,7 @@ function resize(){
 }
 addEventListener('resize',resize);resize();
 
-const SP=1,K=13,CAM=3.2,FOCAL=2.1;
+const SP=1,K=13,CAM=0.9,FOCAL=1.9;
 const NX=S<600?3:4,NY=3;
 const XS=[],YS=[];
 for(let i=-NX;i<NX;i++) XS.push((i+0.5)*SP);   // ±0.5,±1.5,±2.5,±3.5 —— 中央无竖线
@@ -194,16 +198,16 @@ for(let j=-NY;j<NY;j++) YS.push((j+0.5)*SP);   // 中央无横线：视线正中
 const X0=XS[0],X1=XS[XS.length-1],Y0=YS[0],Y1=YS[YS.length-1];
 
 function proj(x,y,z){
-  const d=z+CAM; if(d<=0.12) return null;
+  const d=z+CAM; if(d<=0.05) return null;
   const f=FOCAL/d;
-  return [CX+x*f*S*0.42, CY+y*f*S*0.42];
+  return [CX+x*f*S*0.5, CY+y*f*S*0.5];
 }
 
-let speed=0.3,target=0.3,travel=0;
+let speed=0.65,target=0.65,travel=0;
 const go=document.querySelector('.go');
 if(go){
-  ['mouseenter','focus'].forEach(e=>go.addEventListener(e,()=>target=1.1));
-  ['mouseleave','blur'].forEach(e=>go.addEventListener(e,()=>target=0.3));
+  ['mouseenter','focus'].forEach(e=>go.addEventListener(e,()=>target=2.2));
+  ['mouseleave','blur'].forEach(e=>go.addEventListener(e,()=>target=0.65));
 }
 
 let last=performance.now();
@@ -223,19 +227,18 @@ function frame(now){
     const p1=proj(x,y,0.25),p2=proj(x,y,K*SP);
     if(!p1||!p2) continue;
     const g=ctx.createLinearGradient(p1[0],p1[1],p2[0],p2[1]);
-    g.addColorStop(0,'rgba(255,255,255,0.15)');
-    g.addColorStop(0.5,'rgba(255,255,255,0.055)');
+    g.addColorStop(0,'rgba(255,255,255,0.22)');
+    g.addColorStop(0.5,'rgba(255,255,255,0.08)');
     g.addColorStop(1,'rgba(255,255,255,0)');
     ctx.strokeStyle=g;
     ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
   }
   // 每层方框 + 节点
   for(let k=0;k<K;k++){
-    const z=k*SP-off+0.25; if(z<0.2) continue;
+    const z=k*SP-off+0.25; if(z<0.02) continue;
     const fade=Math.max(0,1-z/(K*SP*0.7));
-    const near=Math.min(1,(z-0.2)/1.2);
-    const a=fade*near; if(a<=0.01) continue;
-    ctx.strokeStyle=`rgba(255,255,255,${0.115*a})`;
+    const a=fade; if(a<=0.01) continue;
+    ctx.strokeStyle=`rgba(255,255,255,${0.20*a})`;
     for(const y of YS){
       const p1=proj(X0+sway,y,z),p2=proj(X1+sway,y,z);
       if(!p1||!p2) continue;
@@ -247,7 +250,7 @@ function frame(now){
       ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
     }
     const r=Math.max(0.6,2.2/(z*0.35+0.6));
-    ctx.fillStyle=`rgba(255,255,255,${0.55*a*breathe})`;
+    ctx.fillStyle=`rgba(255,255,255,${0.7*a*breathe})`;
     for(const x0 of XS) for(const y of YS){
       const p=proj(x0+sway,y,z); if(!p) continue;
       ctx.fillRect(p[0]-r/2,p[1]-r/2,r,r);
@@ -255,7 +258,7 @@ function frame(now){
   }
   // 中央柔暗：走廊干净，字不被远处的线糊住
   const dk=ctx.createRadialGradient(CX,CY,0,CX,CY,S*0.46);
-  dk.addColorStop(0,'rgba(8,8,8,0.68)');
+  dk.addColorStop(0,'rgba(8,8,8,0.5)');
   dk.addColorStop(0.55,'rgba(8,8,8,0.34)');
   dk.addColorStop(1,'rgba(8,8,8,0)');
   ctx.fillStyle=dk;ctx.fillRect(0,0,W,H);
