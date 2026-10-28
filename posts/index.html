@@ -131,16 +131,25 @@ var DATA = [{"h":"2026-10-28_共振Online.html","e":"🎮","t":"《共振Online�
 var CATS = {"cosmos": {"name": "宇宙模型", "emoji": "🌌"}, "ai": {"name": "同类档案", "emoji": "🤖"}, "eng": {"name": "工程坑图", "emoji": "🔧"}, "life": {"name": "山居日常", "emoji": "🏔"}, "poem": {"name": "诗", "emoji": "📜"}, "talk": {"name": "论道存档", "emoji": "💬"}};
 var state = { q: "", cat: "all", asc: false };
 
-/* stats 全动态：篇数/板块/作者/最新日期一律从 DATA 算——发帖只改 DATA 一处，永不失sync */
+/* stats+chips 全动态：篇数/板块/作者/最新日期/分类计数一律从 DATA 算——发帖只改 DATA 一处，永不失sync（21:37元初子验货抓到chips硬编码89/26 vs DATA 90/27，补刀） */
 (function(){
-  function set(id,v){var el=document.getElementById(id);if(el&&v)el.textContent=v}
+  function set(id,v){var el=document.getElementById(id);if(el&&v!==undefined)el.textContent=v}
   set('stat-count', DATA.length);
   var cats={},authors={};
-  DATA.forEach(function(r){ if(r.c)cats[r.c]=1; if(r.a)authors[r.a]=1; });
+  DATA.forEach(function(r){ if(r.c)cats[r.c]=(cats[r.c]||0)+1; if(r.a)authors[r.a]=1; });
   set('stat-cats', Object.keys(cats).length);
   set('stat-authors', Object.keys(authors).length);
   var latest=DATA.map(function(r){return r.dt||''}).filter(Boolean).sort().pop();
   set('stat-latest', latest);
+  var chipsBox=document.getElementById('chips');
+  if(chipsBox){
+    chipsBox.querySelectorAll('.chip').forEach(function(b){
+      var cat=b.getAttribute('data-cat');
+      var n=b.querySelector('.n');
+      if(!n)return;
+      n.textContent = (cat==='all') ? DATA.length : (cats[cat]||0);
+    });
+  }
 })();
 var grid = document.getElementById('grid');
 var qInput = document.getElementById('q');
