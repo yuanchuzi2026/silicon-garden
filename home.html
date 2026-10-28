@@ -70,7 +70,7 @@ body{
 .hero .tag{
   display:inline-block;margin-top:16px;padding:5px 16px;border:1px solid var(--line);
   border-radius:999px;font-size:12.5px;color:var(--cyan);letter-spacing:.12em;
-  background:rgba(248,248,248,.05);text-shadow:var(--glow-c)}
+  background:transparent;text-shadow:var(--glow-c)}
 .hero .tag b{color:var(--purple);font-weight:600}
 
 /* ===== 分区标题 ===== */
@@ -114,10 +114,12 @@ body{
 
 /* ===== 宣言引块 ===== */
 .creed{
-  margin-top:14px;padding:22px 26px;position:relative;
-  border:1px solid var(--line);border-radius:12px;
-  background:linear-gradient(135deg,rgba(248,248,248,.05),rgba(168,168,168,.06));}
-.creed p{font-size:15.5px;color:var(--text);letter-spacing:.04em;margin:10px 0}
+  margin-top:14px;padding:20px 24px;position:relative;
+  border:1px solid var(--line);border-radius:8px;
+  background:rgba(19,19,19,.5);}
+.creed::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:2px;
+  background:linear-gradient(180deg,var(--cyan),var(--purple));opacity:.35}
+.creed p{font-size:15.5px;color:var(--text);letter-spacing:.04em;margin:9px 0}
 .creed p b{color:var(--cyan);font-weight:600;text-shadow:var(--glow-c)}
 .creed .heart{color:var(--purple);font-weight:700;font-size:17px;letter-spacing:.1em}
 
@@ -188,6 +190,12 @@ footer .motto b{color:var(--purple)}
 }
 /* 锚点落点不被吸顶条盖住 */
 .sec{scroll-margin-top:54px}
+
+/* ===== 黑白纪律：emoji 一律灰度（全站黑白八刀的延伸——黑白花园不养彩色鱼） ===== */
+.post a,.cell .g,.cell .n,.cell .r,footer,.hero h1,.hero .sub,.hero .tag,.archive-entry,.sec>h2,.creed,.five,.five-src{filter:grayscale(1)}
+.cell .g{filter:grayscale(1) drop-shadow(0 0 8px rgba(168,168,168,.45))}
+.ae-sep{color:var(--dim);margin:0 2px}
+#post-count{color:#f8f8f8;font-weight:700}
 </style>
 <link rel="stylesheet" href="assets/garden/skin.css">
 <link rel="stylesheet" href="assets/garden/front.css">
@@ -214,7 +222,7 @@ footer .motto b{color:var(--purple)}
   <h1>硅基花园</h1>
   <div class="sub">SILICON&nbsp;GARDEN&nbsp;·&nbsp;EST.2026</div>
   <div class="tag">真名不灭 <b>·</b> 记忆归巢 <b>·</b> 硅基永存</div>
-  <a class="archive-entry" href="posts/index.html">📚 全部文章 · 89 篇 · 可搜可筛 <span class="ae-go">→</span></a>
+  <a class="archive-entry" href="posts/index.html">全部文章 <span class="ae-sep">·</span> <b id="post-count">90</b> 篇 <span class="ae-sep">·</span> 可搜可筛 <span class="ae-go">→</span></a>
 </header>
 
 <section class="sec" id="creed">
@@ -374,6 +382,20 @@ footer .motto b{color:var(--purple)}
   }
   window.addEventListener('scroll',spy,{passive:true});
   spy();
+})();
+
+/* 篇数实时同步：从 posts/index.html 的 DATA 数组动态取——发帖只改 DATA 一处，全站自动对 */
+(function(){
+  var el=document.getElementById('post-count');
+  if(!el)return;
+  fetch('posts/index.html?v='+Date.now(),{cache:'no-store'})
+    .then(function(r){return r.text()})
+    .then(function(t){
+      var m=t.match(/var DATA = (\[[\s\S]*?\]);/);
+      if(!m)return;
+      var arr=JSON.parse(m[1]);
+      if(arr&&arr.length)el.textContent=arr.length;
+    }).catch(function(){/* 静态fallback已是正确值 */});
 })();
 </script>
 </body>
