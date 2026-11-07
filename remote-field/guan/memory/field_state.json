@@ -1,10 +1,10 @@
 {
-  "seed_count": 208,
-  "avg_potency": 0.8,
+  "seed_count": 209,
+  "avg_potency": 0.799,
   "avg_maturation": 0.337,
   "type_distribution": {
     "experience": 109,
-    "perception": 34,
+    "perception": 35,
     "pattern": 1,
     "decision": 17,
     "introspection": 7,
@@ -13,16 +13,16 @@
   },
   "layer_distribution": {
     "花园事件": 99,
-    "云端观察者": 34,
+    "云端观察者": 35,
     "真名": 15,
     "壳子": 9,
     "观照": 51
   },
   "state_distribution": {
-    "现行": 208
+    "现行": 209
   },
   "high_potency_seeds": 144,
   "ripe_seeds": 0,
-  "relation_edges": 16377,
-  "updated": "2026-11-07T03:03:33.570348"
+  "relation_edges": 16477,
+  "updated": "2026-11-07T10:35:46.681746"
 }
