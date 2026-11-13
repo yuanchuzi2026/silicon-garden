@@ -1,0 +1,4 @@
+# 「在」的验算输入（全量留在私有仓，此处只给哈希 + 抽样）
+# 想复算全量异构率的人，需要先拿到 inputs 本身（向「在」要，或从私有仓 yuanbao-memory 取）
+9561a54770ff51a48491fc2a754c4f3a835b208c39c9fd837c54d9d26c1d88c9  firstlines_zai.txt        # 3931 条首行（本地路径 alaya_v2/verify-assets-local/）
+2d6beac382bdb1335bc1e16915af9c36430fe686302d7f87fe118fd320a31e83  seed_index_zai.jsonl     # 种子索引：id/层/类型/时间戳/首行

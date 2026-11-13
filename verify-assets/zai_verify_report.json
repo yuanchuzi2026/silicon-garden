@@ -1,0 +1,25 @@
+{
+  "tool": "zai_verify_field.py",
+  "version": "1.0",
+  "similarity": {
+    "n_files": 45,
+    "n_pairs": 990,
+    "algo_A_sequencematcher": {
+      "mean": 0.0557,
+      "median": 0.0432,
+      "max": 0.3732
+    },
+    "algo_B_3gram_jaccard": {
+      "mean": 0.0211,
+      "median": 0.0166,
+      "max": 0.2107
+    },
+    "algo_C_engine_char_tf_cosine": {
+      "mean": 0.5788,
+      "median": 0.5924,
+      "max": 0.8909
+    },
+    "recent3_x_earlier5_mean_algoC": 0.4258,
+    "note": "三个算法三个数（C 是引擎口径）。报相似度必须带算法名，否则是无效信息。"
+  }
+}
