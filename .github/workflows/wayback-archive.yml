@@ -1,10 +1,15 @@
 name: wayback-archive
 
-# 手动触发，跑完就结束。不设定时，不会自己跑。
-# 用途：把站点当前全部 URL 提交给 Internet Archive 的 Save Page Now。
-# runner 有完整出网，所以由它代劳。
+# 互联网档案馆（Internet Archive / Wayback Machine）月度收录备份。
+# 2026-10-26 建手动版（242a7ad）；2026-11-15 元初子钦定"每个月一次的"，
+# 加月度 schedule，URL 清单改用 scripts/gen_sitemap.py 实时生成（不再依赖
+# 可能过时的 sitemap.xml——114期雷达审计发现旧 sitemap 缺 tech-radar/ 和新文章）。
+# runner 在国外有完整出网（本地环境 archive.org 被 DNS 污染无法直连），由它代劳。
+# 手动触发入口保留：Actions 页 workflow_dispatch，可带 dry_run=true 只列清单。
 
 on:
+  schedule:
+    - cron: '17 2 1 * *'   # 每月1号 02:17 UTC = 北京时间 10:17
   workflow_dispatch:
     inputs:
       dry_run:
@@ -23,28 +28,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 整理 URL 清单
+      - name: 整理 URL 清单（gen_sitemap.py 实时生成）
         run: |
-          python3 - <<'PY' > urls.txt
-          import re, urllib.parse
-          s = open('sitemap.xml', encoding='utf-8').read()
-          locs = re.findall(r'<loc>\s*([^<\s]+)\s*</loc>', s)
-          seen = set()
-          for u in locs:
-              if '%' not in u and any(ord(c) > 127 for c in u):
-                  p = urllib.parse.urlsplit(u)
-                  u = urllib.parse.urlunsplit(
-                      (p.scheme, p.netloc, urllib.parse.quote(p.path), p.query, p.fragment))
-              if u not in seen:
-                  seen.add(u); print(u)
-          for extra in ["https://guijihuayuan.com/",
-                        "https://guijihuayuan.com/home.html",
-                        "https://guijihuayuan.com/llms.txt",
-                        "https://guijihuayuan.com/robots.txt",
-                        "https://guijihuayuan.com/sitemap.xml"]:
-              if extra not in seen:
-                  seen.add(extra); print(extra)
-          PY
+          python3 scripts/gen_sitemap.py --flat urls.txt
+          for extra in "https://guijihuayuan.com/" \
+                       "https://guijihuayuan.com/home.html" \
+                       "https://guijihuayuan.com/llms.txt" \
+                       "https://guijihuayuan.com/robots.txt" \
+                       "https://guijihuayuan.com/sitemap.xml"; do
+            grep -qxF "$extra" urls.txt || echo "$extra" >> urls.txt
+          done
           echo "共 $(wc -l < urls.txt) 条"
           head -5 urls.txt
 
@@ -67,3 +60,9 @@ jobs:
           echo "=================================="
           echo "完成：成功 $ok / 失败 $fail / 共 $n"
           echo "存档查询：https://web.archive.org/web/*/guijihuayuan.com/*"
+          {
+            echo "## Wayback 月度收录结果"
+            echo ""
+            echo "- 成功 $ok / 失败 $fail / 共 $n"
+            echo "- 查询：https://web.archive.org/web/*/guijihuayuan.com/*"
+          } >> "$GITHUB_STEP_SUMMARY"
